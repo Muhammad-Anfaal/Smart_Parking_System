@@ -26,7 +26,9 @@ class _SelectTimeState extends State<SelectTime> {
   Future<void> _selectTime(BuildContext context, bool isStartTime) async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
-      initialTime: isStartTime ? startTime ?? TimeOfDay.now() : endTime ?? TimeOfDay.now(),
+      initialTime: isStartTime
+          ? startTime ?? TimeOfDay.now()
+          : endTime ?? TimeOfDay.now(),
     );
 
     if (picked != null) {
@@ -75,24 +77,48 @@ class _SelectTimeState extends State<SelectTime> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Select Time Slot", style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.black,
-        elevation: 0,
-        shape: const ContinuousRectangleBorder(
-          borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(60.0),
-            bottomRight: Radius.circular(60.0),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                  borderRadius: const BorderRadius.only(
+                    bottomRight: Radius.circular(50),
+                    bottomLeft: Radius.circular(50),
+                  ),
+                ),
+                padding: const EdgeInsets.fromLTRB(25, 7, 25, 0),
+                child: AppBar(
+                  centerTitle: true,
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  leading: IconButton(
+                    icon: Icon(Icons.arrow_back, color: Colors.white),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  title: Text(
+                    'Select Time Slot',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 25,
+                    ),
+                  ),
+                ),
+              ),
+              Content(),
+            ],
           ),
         ),
-      ),
-      body: SingleChildScrollView(
-        child: content(),
       ),
     );
   }
 
-  Widget content() {
+  Widget Content() {
     return Padding(
       padding: const EdgeInsets.all(20.0),
       child: Column(
@@ -133,7 +159,8 @@ class _SelectTimeState extends State<SelectTime> {
                       SizedBox(height: 8),
                       ElevatedButton(
                         onPressed: () => _selectTime(context, true),
-                        child: Text('${startTime?.format(context) ?? "Select"}'),
+                        child:
+                            Text('${startTime?.format(context) ?? "Select"}'),
                       ),
                     ],
                   ),
@@ -172,7 +199,7 @@ class _SelectTimeState extends State<SelectTime> {
                   SizedBox(height: 8),
                   Text('Rs $perHourRate',
                       style:
-                      TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 ],
               ),
             ),
@@ -185,9 +212,9 @@ class _SelectTimeState extends State<SelectTime> {
           ElevatedButton(
             onPressed: isTimeSelected()
                 ? () {
-              Navigator.pushNamed(context, '/payment_page');
-              print('Proceed to Payment');
-            }
+                    Navigator.pushNamed(context, '/payment_page');
+                    print('Proceed to Payment');
+                  }
                 : null,
             child: Text('Proceed to Payment'),
           ),
@@ -196,4 +223,3 @@ class _SelectTimeState extends State<SelectTime> {
     );
   }
 }
-
