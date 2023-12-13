@@ -42,6 +42,7 @@ class MyApp extends StatelessWidget {
         '/subscription': (context) => Subscription(),
         '/payment_page': (context) => PaymentPage(),
         '/select_module': (context) => SelectModule(),
+        '/register_parking_area':(context)=>
       },
     );
   }

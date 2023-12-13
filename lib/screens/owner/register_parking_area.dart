@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-void main() {
-  runApp(const CardExamples());
-}
-
-class CardExamples extends StatelessWidget {
-  const CardExamples({Key? key}) : super(key: key);
+class RegisterParkingArea extends StatelessWidget {
+  const RegisterParkingArea({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
