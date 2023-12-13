@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class SelectTime extends StatefulWidget {
-  const SelectTime({super.key});
+  const SelectTime({Key? key}) : super(key: key);
 
   @override
   State<SelectTime> createState() => _SelectTimeState();
@@ -10,8 +11,8 @@ class SelectTime extends StatefulWidget {
 
 class _SelectTimeState extends State<SelectTime> {
   DateTime today = DateTime.now();
-  TimeOfDay startTime = TimeOfDay.now();
-  TimeOfDay endTime = TimeOfDay.now();
+  TimeOfDay? startTime; // Updated: Use TimeOfDay? to allow null values
+  TimeOfDay? endTime; // Updated: Use TimeOfDay? to allow null values
   double perHourRate = 50.0;
 
   void _onDaySelected(DateTime day, DateTime focusedDay) {
@@ -25,9 +26,31 @@ class _SelectTimeState extends State<SelectTime> {
   Future<void> _selectTime(BuildContext context, bool isStartTime) async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
-      initialTime: isStartTime ? startTime : endTime,
+      initialTime: isStartTime ? startTime ?? TimeOfDay.now() : endTime ?? TimeOfDay.now(),
     );
-    if (picked != null && picked != (isStartTime ? startTime : endTime)) {
+
+    if (picked != null) {
+      if (!isStartTime &&
+          (picked.hour < (startTime?.hour ?? 0) ||
+              (picked.hour == (startTime?.hour ?? 0) &&
+                  picked.minute < (startTime?.minute ?? 0)))) {
+        // Show error dialog
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Error'),
+            content: Text('End time cannot be before start time.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        );
+        return; // Exit the method if end time is before start time
+      }
+
       setState(() {
         if (isStartTime) {
           startTime = picked;
@@ -38,9 +61,13 @@ class _SelectTimeState extends State<SelectTime> {
     }
   }
 
+  bool isTimeSelected() {
+    return startTime != null && endTime != null;
+  }
+
   double calculateAmount() {
-    int hours = endTime.hour - startTime.hour;
-    int minutes = endTime.minute - startTime.minute;
+    int hours = (endTime?.hour ?? 0) - (startTime?.hour ?? 0);
+    int minutes = (endTime?.minute ?? 0) - (startTime?.minute ?? 0);
     double totalHours = hours + minutes / 60.0;
     return totalHours * perHourRate;
   }
@@ -48,48 +75,24 @@ class _SelectTimeState extends State<SelectTime> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.black,
-                  borderRadius: const BorderRadius.only(
-                    bottomRight: Radius.circular(50),
-                    bottomLeft: Radius.circular(50),
-                  ),
-                ),
-                padding: const EdgeInsets.fromLTRB(25, 7, 25, 0),
-                child: AppBar(
-                  centerTitle: true,
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                  leading: IconButton(
-                    icon: Icon(Icons.arrow_back, color: Colors.white),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  title: Text(
-                    'Select Time Slot',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 25,
-                    ),
-                  ),
-                ),
-              ),
-              Content(),
-            ],
+      appBar: AppBar(
+        title: Text("Select Time Slot", style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.black,
+        elevation: 0,
+        shape: const ContinuousRectangleBorder(
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(60.0),
+            bottomRight: Radius.circular(60.0),
           ),
         ),
+      ),
+      body: SingleChildScrollView(
+        child: content(),
       ),
     );
   }
 
-  Widget Content() {
+  Widget content() {
     return Padding(
       padding: const EdgeInsets.all(20.0),
       child: Column(
@@ -100,8 +103,10 @@ class _SelectTimeState extends State<SelectTime> {
             child: TableCalendar(
               locale: "en_US",
               rowHeight: 43,
-              headerStyle:
-                  HeaderStyle(formatButtonVisible: false, titleCentered: true),
+              headerStyle: HeaderStyle(
+                formatButtonVisible: false,
+                titleCentered: true,
+              ),
               availableGestures: AvailableGestures.all,
               selectedDayPredicate: (day) => isSameDay(day, today),
               focusedDay: today,
@@ -128,7 +133,7 @@ class _SelectTimeState extends State<SelectTime> {
                       SizedBox(height: 8),
                       ElevatedButton(
                         onPressed: () => _selectTime(context, true),
-                        child: Text('${startTime.format(context)}'),
+                        child: Text('${startTime?.format(context) ?? "Select"}'),
                       ),
                     ],
                   ),
@@ -144,7 +149,7 @@ class _SelectTimeState extends State<SelectTime> {
                       SizedBox(height: 8),
                       ElevatedButton(
                         onPressed: () => _selectTime(context, false),
-                        child: Text('${endTime.format(context)}'),
+                        child: Text('${endTime?.format(context) ?? "Select"}'),
                       ),
                     ],
                   ),
@@ -167,22 +172,23 @@ class _SelectTimeState extends State<SelectTime> {
                   SizedBox(height: 8),
                   Text('Rs $perHourRate',
                       style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                      TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 ],
               ),
             ),
           ),
-          SizedBox(height: 10),
           Text(
             'Amount: Rs ${calculateAmount().toStringAsFixed(2)}',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 10),
+          SizedBox(height: 20),
           ElevatedButton(
-            onPressed: () {
+            onPressed: isTimeSelected()
+                ? () {
               Navigator.pushNamed(context, '/payment_page');
               print('Proceed to Payment');
-            },
+            }
+                : null,
             child: Text('Proceed to Payment'),
           ),
         ],
@@ -190,3 +196,4 @@ class _SelectTimeState extends State<SelectTime> {
     );
   }
 }
+
