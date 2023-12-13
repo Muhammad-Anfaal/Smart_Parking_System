@@ -1,4 +1,4 @@
-package com.example.flutter_front_end;
+package com.example.smart_parking_system;
 
 import io.flutter.embedding.android.FlutterActivity;
 

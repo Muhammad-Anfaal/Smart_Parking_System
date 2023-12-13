@@ -9,6 +9,7 @@ class SignUpPage extends StatefulWidget {
 
 class _SignUpPageState extends State<SignUpPage> {
   bool hidePassword = true;
+  bool hideConfirmPassword = true;
 
   @override
   Widget build(BuildContext context) {
@@ -86,17 +87,17 @@ class _SignUpPageState extends State<SignUpPage> {
                     ),
                     child: TextField(
                       keyboardType: TextInputType.text,
-                      obscureText: hidePassword,
+                      obscureText: hideConfirmPassword,
                       style: const TextStyle(color: Colors.black),
                       decoration: InputDecoration(
                         suffixIcon: IconButton(
                           onPressed: () {
                             setState(() {
-                              hidePassword = !hidePassword;
+                              hideConfirmPassword = !hideConfirmPassword;
                             });
                           },
                           icon: Icon(
-                            hidePassword
+                            hideConfirmPassword
                                 ? Icons.visibility_off
                                 : Icons.visibility,
                           ),

@@ -1,73 +1,83 @@
 import 'package:flutter/material.dart';
-import 'package:postgres/postgres.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert' as convert;
-import 'dart:async';
 import 'package:email_otp/email_otp.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
+// import 'package:email_auth/email_auth.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:pinput/pinput.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-Future connectionBuild() async {
-  final conn = await Connection.open(
-    Endpoint(
-      host: 'localhost',
-      database: 'SmartParkingSystem',
-      username: 'postgres',
-      password: 'hizyph3r..',
-      port: 5432,
-    ),
-    settings: ConnectionSettings(sslMode: SslMode.disable),
-  );
-  print('has connection!');
-}
+Future<void> loginUser(String email) async {
+  final url = Uri.parse('http://localhost:3300/chota/');
 
-// Future getUrlData() async {
-//   var request = http.Request(
-//     'GET',
-//     Uri.parse('http://127.0.0.1:3300/users/'),
-//   );
-//   request.headers.addAll({
-//     "Accept": "application/json",
-//     "Access-Control-Allow-Origin": "*",
-//     "Access-Control-Allow-Credentials": "true",
-//     "Access-Control-Allow-Methods": "GET"
-//   });
-//
-//   print(request);
-//   http.StreamedResponse response = await request.send();
-//   print(response);
-//   var decode = convert.jsonDecode(await response.stream.bytesToString());
-//   return decode;
-// }
-//
-// Future fetchData() async {
-//   var response = await http.get(Uri.parse('http://127.0.0.1:3300/users/'));
-//
-//   if (response.statusCode == 200) {
-//     var jsonResponse = response.bodyBytes;
-//     print('Number of books about http: $jsonResponse.');
-//   } else {
-//     print('Request failed with status: ${response.statusCode}.');
-//   }
-// }
-
-void sendMeassage(String msg) {
-  print(msg);
-  WebSocketChannel channel;
+  // Define the data to be sent in the request body
+  final Map<String, String> data = {
+    'us': email, // Assuming you want to concatenate email and password
+  };
 
   try {
-    channel = WebSocketChannel.connect(Uri.parse('ws://localhost:3000'));
-    channel.sink.add(msg);
+    final response = await http.post(
+      url,
+      body: jsonEncode(data),
+      headers: {
+        'Content-Type': 'application/json',
+        "Access-Control-Allow-Origin": "*", // Required for CORS support to work
+        "Access-Control-Allow-Credentials":
+            'true', // Required for cookies, authorization headers with HTTPS
+        "Access-Control-Allow-Headers":
+            "Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale",
+        "Access-Control-Allow-Methods": "GET, POST, OPTIONS, DELETE, PUT"
+      },
+    );
 
-    channel.stream.listen((msg) {
-      print(msg);
-      channel.sink.close();
-    });
+    if (response.statusCode == 200) {
+      // Request successful, handle the response as needed
+      print('Login successful');
+      print('Response: ${response.body}');
+    } else {
+      // Request failed, handle the error
+      print('Failed to log in. Status code: ${response.statusCode}');
+      print('Response: ${response.body}');
+    }
   } catch (e) {
-    print(e);
+    // Handle any exceptions that occur during the request
+    print('Error: $e');
   }
 }
+
+// final Email email = Email(
+//   body: 'Email body',
+//   subject: 'Email subject',
+//   recipients: ['example@example.com'],
+//   cc: ['cc@example.com'],
+//   bcc: ['bcc@example.com'],
+//   attachmentPaths: ['/path/to/attachment.zip'],
+//   isHTML: false,
+// );
+//
+// await FlutterEmailSender.send(email);
+
+// final Map<String, String> remoteServerConfiguration = {
+//   'server': 'localhost',
+//   'serverKey': '3300' // Assuming you want to concatenate email and password
+// };
+//
+// EmailAuth emailAuth = EmailAuth(sessionName: "Sample session");
+//
+// Future<bool> sendOTP(String email) async {
+//   var res = await emailAuth.sendOtp(recipientMail: email, otpLength: 6);
+//   if (res == true) {
+//     return true;
+//   }
+//   return false;
+// }
+//
+// Future<bool> verifyOTP(String email, String otp) async {
+//   var res = emailAuth.validateOtp(recipientMail: email, userOtp: otp);
+//   if (res == true) {
+//     return true;
+//   }
+//   return false;
+// }
 
 class LogInPage extends StatefulWidget {
   const LogInPage({super.key});
@@ -77,15 +87,21 @@ class LogInPage extends StatefulWidget {
 }
 
 class _LogInPageState extends State<LogInPage> {
+  bool hidePassword = true;
+  bool otpCorrect = true;
+
+  TextEditingController emailTextField = TextEditingController();
+  TextEditingController passwordTextField = TextEditingController();
+  TextEditingController otp = TextEditingController();
+  EmailOTP auth = EmailOTP();
+
+  List<List<String>> data = [
+    ['f200250@cfd.nu.edu.pk', '123'],
+  ];
+  // data.add([emailTextField.text, passwordTextField.text]);
+
   @override
   Widget build(BuildContext context) {
-    bool hidePassword = true;
-
-    TextEditingController emailTextField = TextEditingController();
-    TextEditingController passwordTextField = TextEditingController();
-    TextEditingController otp = TextEditingController();
-    EmailOTP auth = EmailOTP();
-
     const focusedBorderColor = Color.fromRGBO(23, 171, 144, 1);
     const fillColor = Color.fromRGBO(243, 246, 249, 0);
     const borderColor = Color.fromRGBO(23, 171, 144, 0.4);
@@ -103,14 +119,6 @@ class _LogInPageState extends State<LogInPage> {
       ),
     );
 
-    List<List<String>> data = [
-      ['f200250@cfd.nu.edu.pk', '123'],
-    ];
-    // data.add([emailTextField.text, passwordTextField.text]);
-
-    // SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    //   statusBarColor: Colors.transparent,
-    // ));
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -124,6 +132,7 @@ class _LogInPageState extends State<LogInPage> {
           margin: const EdgeInsets.symmetric(horizontal: 20.0),
           child: Column(
             children: [
+              // Image.asset('assets/images/logo.png'),
               const SizedBox(
                 height: 75.0,
               ),
@@ -210,10 +219,7 @@ class _LogInPageState extends State<LogInPage> {
                   ),
                 ),
                 onPressed: () async {
-                  // Navigator.pushNamed(context, '/home_page');
-                  // sendMeassage('Hello bacho');
-                  connectionBuild();
-                  // getUrlData();
+                  // loginUser('exception');
                   if (data[0][0] == emailTextField.text &&
                       data[0][1] == passwordTextField.text) {
                     auth.setConfig(
@@ -223,12 +229,13 @@ class _LogInPageState extends State<LogInPage> {
                         otpLength: 6,
                         otpType: OTPType.digitsOnly);
                     if (await auth.sendOTP() == true) {
+                      // ignore: use_build_context_synchronously
                       Alert(
                           context: context,
                           title: "OTP VERIFICATION",
                           content: Column(
                             children: [
-                              SizedBox(height: 5.0),
+                              const SizedBox(height: 10.0),
                               Pinput(
                                 length: 6,
                                 controller: otp,
@@ -244,12 +251,10 @@ class _LogInPageState extends State<LogInPage> {
                                 onCompleted: (pin) async {
                                   if (await auth.verifyOTP(otp: otp.text) ==
                                       true) {
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(const SnackBar(
-                                      content: Text("OTP is verified"),
-                                    ));
+                                    // ignore: use_build_context_synchronously
                                     Navigator.pushNamed(context, '/home_page');
                                   } else {
+                                    // ignore: use_build_context_synchronously
                                     ScaffoldMessenger.of(context)
                                         .showSnackBar(const SnackBar(
                                       content: Text("Invalid OTP"),
@@ -286,18 +291,18 @@ class _LogInPageState extends State<LogInPage> {
                                 ),
                                 errorPinTheme: defaultPinTheme.copyBorderWith(
                                   border: Border.all(color: Colors.redAccent),
-                                ), /**/
+                                ),
                               ),
                             ],
                           ),
                           buttons: []).show();
-                    } else {
-                      print('OTP did not send');
                     }
                   } else {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text('Incorrect Credentials.'),
-                    ));
+                    Alert(
+                      context: context,
+                      title: '',
+                      desc: 'Invalid Credentials.',
+                    ).show();
                   }
                 },
                 child: Text(
