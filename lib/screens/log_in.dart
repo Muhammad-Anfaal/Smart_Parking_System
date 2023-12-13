@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:email_otp/email_otp.dart';
-// import 'package:email_auth/email_auth.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:pinput/pinput.dart';
 import 'package:http/http.dart' as http;
@@ -9,9 +8,8 @@ import 'dart:convert';
 Future<void> loginUser(String email) async {
   final url = Uri.parse('http://localhost:3300/chota/');
 
-  // Define the data to be sent in the request body
   final Map<String, String> data = {
-    'us': email, // Assuming you want to concatenate email and password
+    'us': email,
   };
 
   try {
@@ -20,12 +18,6 @@ Future<void> loginUser(String email) async {
       body: jsonEncode(data),
       headers: {
         'Content-Type': 'application/json',
-        "Access-Control-Allow-Origin": "*", // Required for CORS support to work
-        "Access-Control-Allow-Credentials":
-            'true', // Required for cookies, authorization headers with HTTPS
-        "Access-Control-Allow-Headers":
-            "Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale",
-        "Access-Control-Allow-Methods": "GET, POST, OPTIONS, DELETE, PUT"
       },
     );
 
@@ -44,43 +36,10 @@ Future<void> loginUser(String email) async {
   }
 }
 
-// final Email email = Email(
-//   body: 'Email body',
-//   subject: 'Email subject',
-//   recipients: ['example@example.com'],
-//   cc: ['cc@example.com'],
-//   bcc: ['bcc@example.com'],
-//   attachmentPaths: ['/path/to/attachment.zip'],
-//   isHTML: false,
-// );
-//
-// await FlutterEmailSender.send(email);
-
-// final Map<String, String> remoteServerConfiguration = {
-//   'server': 'localhost',
-//   'serverKey': '3300' // Assuming you want to concatenate email and password
-// };
-//
-// EmailAuth emailAuth = EmailAuth(sessionName: "Sample session");
-//
-// Future<bool> sendOTP(String email) async {
-//   var res = await emailAuth.sendOtp(recipientMail: email, otpLength: 6);
-//   if (res == true) {
-//     return true;
-//   }
-//   return false;
-// }
-//
-// Future<bool> verifyOTP(String email, String otp) async {
-//   var res = emailAuth.validateOtp(recipientMail: email, userOtp: otp);
-//   if (res == true) {
-//     return true;
-//   }
-//   return false;
-// }
-
 class LogInPage extends StatefulWidget {
-  const LogInPage({super.key});
+  final String userType;
+
+  const LogInPage({super.key, required this.userType});
 
   @override
   State<LogInPage> createState() => _LogInPageState();

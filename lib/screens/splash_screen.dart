@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '/screens/log_in.dart';
+import 'select_module.dart';
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -23,7 +23,7 @@ class SplashScreen extends StatelessWidget {
         ),
       ),
       backgroundColor: Colors.white,
-      nextScreen: LogInPage(),
+      nextScreen: SelectModule(),
       splashIconSize: 250,
       duration: 4000,
       splashTransition: SplashTransition.slideTransition,
