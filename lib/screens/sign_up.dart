@@ -15,14 +15,14 @@ Future<void> signUpUser(String name, String email, String pass, String cnic,
 
   try {
     final Map<dynamic, dynamic> data = {
-      'username': int.parse(name),
-      'useremail': int.parse(email),
-      'userpassword': int.parse(pass),
+      'username': name,
+      'useremail': email,
+      'userpassword': pass,
       'usercnic': int.parse(cnic),
-      'usercity': int.parse(city),
-      'useraddress': int.parse(address),
-      'userphone': int.parse(phone),
-      'usertype': int.parse(userType),
+      'usercity': city,
+      'useraddress': address,
+      'userphonenumber': int.parse(phone),
+      'usertype': userType,
     };
     final response = await http.post(
       url,
@@ -36,7 +36,6 @@ Future<void> signUpUser(String name, String email, String pass, String cnic,
       print('success');
     }
   } catch (e) {
-    // Handle any exceptions that occur during the request
     print('Error: $e');
   }
 }
@@ -327,93 +326,92 @@ class _SignUpPageState extends State<SignUpPage> {
                               address.text,
                               phone.text,
                               widget.userType);
-                          //
-                          //   otp = Random().nextInt(1000000) + 100000;
-                          //   sendEmail(email.text, otp);
-                          //   Alert(
-                          //       context: context,
-                          //       title: "OTP VERIFICATION",
-                          //       content: Column(
-                          //         children: [
-                          //           const SizedBox(height: 10.0),
-                          //           Pinput(
-                          //             length: 6,
-                          //             controller: userOTP,
-                          //             focusNode: FocusNode(),
-                          //             androidSmsAutofillMethod:
-                          //                 AndroidSmsAutofillMethod
-                          //                     .smsUserConsentApi,
-                          //             listenForMultipleSmsOnAndroid: true,
-                          //             defaultPinTheme: defaultPinTheme,
-                          //             separatorBuilder: (index) =>
-                          //                 const SizedBox(width: 8),
-                          //             hapticFeedbackType:
-                          //                 HapticFeedbackType.lightImpact,
-                          //             onCompleted: (pin) {
-                          //               if (int.parse(userOTP.toString()) ==
-                          //                   otp) {
-                          //                 signUpUser(
-                          //                     name.text,
-                          //                     email.text,
-                          //                     password.text,
-                          //                     cnic.text,
-                          //                     city.text,
-                          //                     address.text,
-                          //                     phone.text,
-                          //                     widget.userType);
-                          //                 Alert(
-                          //                   context: context,
-                          //                   title: '',
-                          //                   desc:
-                          //                       'Your account has been created :)',
-                          //                 ).show();
-                          //                 Navigator.pop(context);
-                          //               } else {
-                          //                 Alert(
-                          //                   context: context,
-                          //                   title: '',
-                          //                   desc: 'Invalid OTP.',
-                          //                 ).show();
-                          //               }
-                          //             },
-                          //             cursor: Column(
-                          //               mainAxisAlignment: MainAxisAlignment.end,
-                          //               children: [
-                          //                 Container(
-                          //                   margin:
-                          //                       const EdgeInsets.only(bottom: 9),
-                          //                   width: 22,
-                          //                   height: 1,
-                          //                   color: focusedBorderColor,
-                          //                 ),
-                          //               ],
-                          //             ),
-                          //             focusedPinTheme: defaultPinTheme.copyWith(
-                          //               decoration:
-                          //                   defaultPinTheme.decoration!.copyWith(
-                          //                 borderRadius: BorderRadius.circular(8),
-                          //                 border: Border.all(
-                          //                     color: focusedBorderColor),
-                          //               ),
-                          //             ),
-                          //             submittedPinTheme: defaultPinTheme.copyWith(
-                          //               decoration:
-                          //                   defaultPinTheme.decoration!.copyWith(
-                          //                 color: fillColor,
-                          //                 borderRadius: BorderRadius.circular(19),
-                          //                 border: Border.all(
-                          //                     color: focusedBorderColor),
-                          //               ),
-                          //             ),
-                          //             errorPinTheme:
-                          //                 defaultPinTheme.copyBorderWith(
-                          //               border:
-                          //                   Border.all(color: Colors.redAccent),
-                          //             ),
-                          //           ),
-                          //         ],
-                          //       ),
-                          //       buttons: []).show();
+                          otp = Random().nextInt(1000000) + 100000;
+                          sendEmail(email.text, otp);
+                          Alert(
+                              context: context,
+                              title: "OTP VERIFICATION",
+                              content: Column(
+                                children: [
+                                  const SizedBox(height: 10.0),
+                                  Pinput(
+                                    length: 6,
+                                    controller: userOTP,
+                                    focusNode: FocusNode(),
+                                    androidSmsAutofillMethod:
+                                        AndroidSmsAutofillMethod
+                                            .smsUserConsentApi,
+                                    listenForMultipleSmsOnAndroid: true,
+                                    defaultPinTheme: defaultPinTheme,
+                                    separatorBuilder: (index) =>
+                                        const SizedBox(width: 8),
+                                    hapticFeedbackType:
+                                        HapticFeedbackType.lightImpact,
+                                    onCompleted: (pin) {
+                                      if (int.parse(userOTP.toString()) ==
+                                          otp) {
+                                        signUpUser(
+                                            name.text,
+                                            email.text,
+                                            password.text,
+                                            cnic.text,
+                                            city.text,
+                                            address.text,
+                                            phone.text,
+                                            widget.userType);
+                                        Alert(
+                                          context: context,
+                                          title: '',
+                                          desc:
+                                              'Your account has been created :)',
+                                        ).show();
+                                        Navigator.pop(context);
+                                      } else {
+                                        Alert(
+                                          context: context,
+                                          title: '',
+                                          desc: 'Invalid OTP.',
+                                        ).show();
+                                      }
+                                    },
+                                    cursor: Column(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Container(
+                                          margin:
+                                              const EdgeInsets.only(bottom: 9),
+                                          width: 22,
+                                          height: 1,
+                                          color: focusedBorderColor,
+                                        ),
+                                      ],
+                                    ),
+                                    focusedPinTheme: defaultPinTheme.copyWith(
+                                      decoration:
+                                          defaultPinTheme.decoration!.copyWith(
+                                        borderRadius: BorderRadius.circular(8),
+                                        border: Border.all(
+                                            color: focusedBorderColor),
+                                      ),
+                                    ),
+                                    submittedPinTheme: defaultPinTheme.copyWith(
+                                      decoration:
+                                          defaultPinTheme.decoration!.copyWith(
+                                        color: fillColor,
+                                        borderRadius: BorderRadius.circular(19),
+                                        border: Border.all(
+                                            color: focusedBorderColor),
+                                      ),
+                                    ),
+                                    errorPinTheme:
+                                        defaultPinTheme.copyBorderWith(
+                                      border:
+                                          Border.all(color: Colors.redAccent),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              buttons: []).show();
                         }
                       },
                       child: Text(

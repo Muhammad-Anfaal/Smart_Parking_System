@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: '/log_in',
+      initialRoute: '/',
       onGenerateRoute: (settings) {
         if (settings.name == '/log_in') {
           final args = settings.arguments as Map<String, String>? ?? {};
@@ -58,7 +58,5 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-// Navigator.of(context).pushNamedAndRemoveUntil('/login', (Route route) => false)
 
 // Navigator.of(context).pop(); Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => InterestsPage(userAccesstoken: accessToken,)))
