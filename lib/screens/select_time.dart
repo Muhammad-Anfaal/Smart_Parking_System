@@ -11,8 +11,8 @@ class SelectTime extends StatefulWidget {
 
 class _SelectTimeState extends State<SelectTime> {
   DateTime today = DateTime.now();
-  TimeOfDay? startTime; // Updated: Use TimeOfDay? to allow null values
-  TimeOfDay? endTime; // Updated: Use TimeOfDay? to allow null values
+  TimeOfDay? startTime;
+  TimeOfDay? endTime;
   double perHourRate = 50.0;
 
   void _onDaySelected(DateTime day, DateTime focusedDay) {
@@ -32,11 +32,37 @@ class _SelectTimeState extends State<SelectTime> {
     );
 
     if (picked != null) {
+      DateTime selectedDateTime = DateTime(
+        today.year,
+        today.month,
+        today.day,
+        picked.hour,
+        picked.minute,
+      );
+
+      if (selectedDateTime.isBefore(DateTime.now())) {
+        // Show error dialog for past time selection
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Error'),
+            content: Text('Cannot select a time before the current time.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        );
+        return; // Exit the method if the selected time is before the current time
+      }
+
       if (!isStartTime &&
           (picked.hour < (startTime?.hour ?? 0) ||
               (picked.hour == (startTime?.hour ?? 0) &&
                   picked.minute < (startTime?.minute ?? 0)))) {
-        // Show error dialog
+        // Show error dialog for end time before start time
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
@@ -160,7 +186,7 @@ class _SelectTimeState extends State<SelectTime> {
                       ElevatedButton(
                         onPressed: () => _selectTime(context, true),
                         child:
-                            Text('${startTime?.format(context) ?? "Select"}'),
+                        Text('${startTime?.format(context) ?? "Select"}'),
                       ),
                     ],
                   ),
@@ -199,7 +225,7 @@ class _SelectTimeState extends State<SelectTime> {
                   SizedBox(height: 8),
                   Text('Rs $perHourRate',
                       style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                      TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 ],
               ),
             ),
@@ -213,9 +239,9 @@ class _SelectTimeState extends State<SelectTime> {
           ElevatedButton(
             onPressed: isTimeSelected()
                 ? () {
-                    Navigator.pushNamed(context, '/payment_page');
-                    print('Proceed to Payment');
-                  }
+              Navigator.pushNamed(context, '/payment_page');
+              print('Proceed to Payment');
+            }
                 : null,
             child: Text('Proceed to Payment'),
           ),
