@@ -17,14 +17,11 @@ Future<bool> loginUser(String email, String pass) async {
     );
 
     if (response.statusCode == 200) {
-      print('json se pahly');
       List<Map<String, dynamic>> data =
           List<Map<String, dynamic>>.from(json.decode(response.body));
-      print('json k bad');
       for (Map<String, dynamic> user in data) {
         // Check if the current user matches the target email and password
         if (user['useremail'] == email && user['userpassword'] == pass) {
-          print('true');
           return true; // User found
         }
       }
@@ -33,7 +30,6 @@ Future<bool> loginUser(String email, String pass) async {
     // Handle any exceptions that occur during the request
     print('Error: $e');
   }
-  print("knaksfnak ksfalse");
   return false;
 }
 
@@ -216,7 +212,7 @@ class _LogInPageState extends State<LogInPage> {
                   child: TextButton(
                     onPressed: () {},
                     child: Text(
-                      'Forget Password?',
+                      '',
                       style: TextStyle(
                         fontSize: 14.0,
                         color: Colors.indigo[900],

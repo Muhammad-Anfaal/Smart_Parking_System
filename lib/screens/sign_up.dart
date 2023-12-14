@@ -317,16 +317,8 @@ class _SignUpPageState extends State<SignUpPage> {
                       ),
                       onPressed: () {
                         if (_signup() == true) {
-                          signUpUser(
-                              name.text,
-                              email.text,
-                              password.text,
-                              cnic.text,
-                              city.text,
-                              address.text,
-                              phone.text,
-                              widget.userType);
                           otp = Random().nextInt(1000000) + 100000;
+                          print('OTP is: ${otp}');
                           sendEmail(email.text, otp);
                           Alert(
                               context: context,
@@ -348,8 +340,8 @@ class _SignUpPageState extends State<SignUpPage> {
                                     hapticFeedbackType:
                                         HapticFeedbackType.lightImpact,
                                     onCompleted: (pin) {
-                                      if (int.parse(userOTP.toString()) ==
-                                          otp) {
+                                      if (userOTP.text == pin) {
+                                        print('acha');
                                         signUpUser(
                                             name.text,
                                             email.text,
@@ -359,12 +351,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                             address.text,
                                             phone.text,
                                             widget.userType);
-                                        Alert(
-                                          context: context,
-                                          title: '',
-                                          desc:
-                                              'Your account has been created :)',
-                                        ).show();
+                                        Navigator.pop(context);
                                         Navigator.pop(context);
                                       } else {
                                         Alert(

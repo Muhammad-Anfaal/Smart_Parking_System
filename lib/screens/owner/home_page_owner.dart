@@ -71,14 +71,12 @@ class _MyHomePageOwnerState extends State<MyHomePageOwner> {
                     crossAxisSpacing: 40,
                     mainAxisSpacing: 30,
                     children: [
-
-                      itemDashboard('Register Area', CupertinoIcons.map_fill,
-                          Colors.red, () {
+                      itemDashboard(
+                          'Register Area', CupertinoIcons.map_fill, Colors.red,
+                          () {
                         // Navigate to subscription page when item is clicked
                         Navigator.pushNamed(context, '/register_parking_area');
                       }),
-
-
                       SizedBox(height: 0.0),
                       SizedBox(height: 0.0),
                     ],
