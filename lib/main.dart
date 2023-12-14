@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:smart_parking_system/screens/owner/home_page_owner.dart';
 import '/screens/payment_page.dart';
 import 'screens/log_in.dart';
 import 'screens/sign_up.dart';
@@ -34,11 +33,19 @@ class MyApp extends StatelessWidget {
             },
           );
         }
+        if (settings.name == '/sign_up') {
+          final args = settings.arguments as Map<String, String>? ?? {};
+          return MaterialPageRoute(
+            builder: (context) {
+              final userType = args['userType'] ?? 'default';
+              return SignUpPage(userType: userType);
+            },
+          );
+        }
         return null;
       },
       routes: {
         '/': (context) => SplashScreen(),
-        '/sign_up': (context) => SignUpPage(),
         '/home_page_user': (context) => MyHomePageUser(),
         '/reservation_page': (context) => ReservationPage(),
         '/select_time': (context) => SelectTime(),
