@@ -71,32 +71,14 @@ class _MyHomePageOwnerState extends State<MyHomePageOwner> {
                     crossAxisSpacing: 40,
                     mainAxisSpacing: 30,
                     children: [
-                      itemDashboard('Reserve Slot', CupertinoIcons.calendar,
-                          Colors.deepOrange, () {
-                        // Navigate to ReservationPage when item is clicked
-                        Navigator.pushNamed(context, '/reservation_page');
-                      }),
+
                       itemDashboard('Register Area', CupertinoIcons.map_fill,
-                          Colors.green, () {
+                          Colors.red, () {
                         // Navigate to subscription page when item is clicked
-                        Navigator.pushNamed(context, '/subscription');
+                        Navigator.pushNamed(context, '/register_parking_area');
                       }),
-                      itemDashboard(
-                          'Feedback', CupertinoIcons.mail_solid, Colors.purple,
-                          () {
-                        // Navigate to subscription page when item is clicked
-                        Navigator.pushNamed(context, '/subscription');
-                      }),
-                      itemDashboard('Subscription', CupertinoIcons.person_2_alt,
-                          Colors.brown, () {
-                        // Navigate to subscription page when item is clicked
-                        Navigator.pushNamed(context, '/subscription');
-                      }),
-                      itemDashboard('Car Details', CupertinoIcons.car_detailed,
-                          Colors.indigo, () {
-                        // Navigate to subscription page when item is clicked
-                        Navigator.pushNamed(context, '/subscription');
-                      }),
+
+
                       SizedBox(height: 0.0),
                       SizedBox(height: 0.0),
                     ],
