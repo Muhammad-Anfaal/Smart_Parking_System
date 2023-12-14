@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+class MyHomePageUser extends StatefulWidget {
+  const MyHomePageUser({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<MyHomePageUser> createState() => _MyHomePageUserState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageUserState extends State<MyHomePageUser> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -1,21 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:email_otp/email_otp.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:pinput/pinput.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-Future<void> loginUser(String email) async {
-  final url = Uri.parse('http://localhost:3300/chota/');
-
-  final Map<String, String> data = {
-    'us': email,
-  };
+Future<void> loginUser() async {
+  final url = Uri.parse('http://localhost:3300/users');
 
   try {
-    final response = await http.post(
+    final response = await http.get(
       url,
-      body: jsonEncode(data),
       headers: {
         'Content-Type': 'application/json',
       },
@@ -23,8 +17,10 @@ Future<void> loginUser(String email) async {
 
     if (response.statusCode == 200) {
       // Request successful, handle the response as needed
+      Map<String, dynamic> data = json.decode(response.body);
       print('Login successful');
       print('Response: ${response.body}');
+      print(data['useremail']);
     } else {
       // Request failed, handle the error
       print('Failed to log in. Status code: ${response.statusCode}');
@@ -52,10 +48,9 @@ class _LogInPageState extends State<LogInPage> {
   TextEditingController emailTextField = TextEditingController();
   TextEditingController passwordTextField = TextEditingController();
   TextEditingController otp = TextEditingController();
-  EmailOTP auth = EmailOTP();
 
   List<List<String>> data = [
-    ['f200250@cfd.nu.edu.pk', '123'],
+    ['abd', '123'],
   ];
   // data.add([emailTextField.text, passwordTextField.text]);
 
@@ -181,81 +176,59 @@ class _LogInPageState extends State<LogInPage> {
                   // loginUser('exception');
                   if (data[0][0] == emailTextField.text &&
                       data[0][1] == passwordTextField.text) {
-                    auth.setConfig(
-                        appEmail: "f200250@cfd.nu.edu.pk",
-                        appName: "Smart Parking System OTP",
-                        userEmail: emailTextField.text,
-                        otpLength: 6,
-                        otpType: OTPType.digitsOnly);
-                    if (await auth.sendOTP() == true) {
-                      // ignore: use_build_context_synchronously
-                      Alert(
-                          context: context,
-                          title: "OTP VERIFICATION",
-                          content: Column(
-                            children: [
-                              const SizedBox(height: 10.0),
-                              Pinput(
-                                length: 6,
-                                controller: otp,
-                                focusNode: FocusNode(),
-                                androidSmsAutofillMethod:
-                                    AndroidSmsAutofillMethod.smsUserConsentApi,
-                                listenForMultipleSmsOnAndroid: true,
-                                defaultPinTheme: defaultPinTheme,
-                                separatorBuilder: (index) =>
-                                    const SizedBox(width: 8),
-                                hapticFeedbackType:
-                                    HapticFeedbackType.lightImpact,
-                                onCompleted: (pin) async {
-                                  if (await auth.verifyOTP(otp: otp.text) ==
-                                      true) {
-                                    // ignore: use_build_context_synchronously
-                                    Navigator.pushNamed(context, '/home_page');
-                                  } else {
-                                    // ignore: use_build_context_synchronously
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(const SnackBar(
-                                      content: Text("Invalid OTP"),
-                                    ));
-                                  }
-                                },
-                                cursor: Column(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Container(
-                                      margin: const EdgeInsets.only(bottom: 9),
-                                      width: 22,
-                                      height: 1,
-                                      color: focusedBorderColor,
-                                    ),
-                                  ],
-                                ),
-                                focusedPinTheme: defaultPinTheme.copyWith(
-                                  decoration:
-                                      defaultPinTheme.decoration!.copyWith(
-                                    borderRadius: BorderRadius.circular(8),
-                                    border:
-                                        Border.all(color: focusedBorderColor),
-                                  ),
-                                ),
-                                submittedPinTheme: defaultPinTheme.copyWith(
-                                  decoration:
-                                      defaultPinTheme.decoration!.copyWith(
-                                    color: fillColor,
-                                    borderRadius: BorderRadius.circular(19),
-                                    border:
-                                        Border.all(color: focusedBorderColor),
-                                  ),
-                                ),
-                                errorPinTheme: defaultPinTheme.copyBorderWith(
-                                  border: Border.all(color: Colors.redAccent),
-                                ),
-                              ),
-                            ],
-                          ),
-                          buttons: []).show();
-                    }
+                    loginUser();
+                    // Alert(
+                    //     context: context,
+                    //     title: "OTP VERIFICATION",
+                    //     content: Column(
+                    //       children: [
+                    //         const SizedBox(height: 10.0),
+                    //         Pinput(
+                    //           length: 6,
+                    //           controller: otp,
+                    //           focusNode: FocusNode(),
+                    //           androidSmsAutofillMethod:
+                    //               AndroidSmsAutofillMethod.smsUserConsentApi,
+                    //           listenForMultipleSmsOnAndroid: true,
+                    //           defaultPinTheme: defaultPinTheme,
+                    //           separatorBuilder: (index) =>
+                    //               const SizedBox(width: 8),
+                    //           hapticFeedbackType:
+                    //               HapticFeedbackType.lightImpact,
+                    //           onCompleted: (pin) {},
+                    //           cursor: Column(
+                    //             mainAxisAlignment: MainAxisAlignment.end,
+                    //             children: [
+                    //               Container(
+                    //                 margin: const EdgeInsets.only(bottom: 9),
+                    //                 width: 22,
+                    //                 height: 1,
+                    //                 color: focusedBorderColor,
+                    //               ),
+                    //             ],
+                    //           ),
+                    //           focusedPinTheme: defaultPinTheme.copyWith(
+                    //             decoration:
+                    //                 defaultPinTheme.decoration!.copyWith(
+                    //               borderRadius: BorderRadius.circular(8),
+                    //               border: Border.all(color: focusedBorderColor),
+                    //             ),
+                    //           ),
+                    //           submittedPinTheme: defaultPinTheme.copyWith(
+                    //             decoration:
+                    //                 defaultPinTheme.decoration!.copyWith(
+                    //               color: fillColor,
+                    //               borderRadius: BorderRadius.circular(19),
+                    //               border: Border.all(color: focusedBorderColor),
+                    //             ),
+                    //           ),
+                    //           errorPinTheme: defaultPinTheme.copyBorderWith(
+                    //             border: Border.all(color: Colors.redAccent),
+                    //           ),
+                    //         ),
+                    //       ],
+                    //     ),
+                    //     buttons: []).show();
                   } else {
                     Alert(
                       context: context,

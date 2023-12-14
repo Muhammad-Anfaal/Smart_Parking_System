@@ -204,11 +204,12 @@ class _SelectTimeState extends State<SelectTime> {
               ),
             ),
           ),
+          SizedBox(height: 10),
           Text(
             'Amount: Rs ${calculateAmount().toStringAsFixed(2)}',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 20),
+          SizedBox(height: 10),
           ElevatedButton(
             onPressed: isTimeSelected()
                 ? () {

@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:smart_parking_system/screens/owner/home_page_owner.dart';
 import '/screens/payment_page.dart';
 import 'screens/log_in.dart';
 import 'screens/sign_up.dart';
-import 'screens/home_page.dart';
+import 'screens/home_page_user.dart';
 import 'screens/reservation_page.dart';
 import 'screens/select_time.dart';
 import 'screens/subscription.dart';
 import 'screens/splash_screen.dart';
 import 'screens/select_module.dart';
+import 'screens/owner/register_parking_area.dart';
+import 'screens/owner/home_page_owner.dart';
 
 void main() {
   runApp(const MyApp());
@@ -20,7 +23,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: '/',
+      initialRoute: '/log_in',
       onGenerateRoute: (settings) {
         if (settings.name == '/log_in') {
           final args = settings.arguments as Map<String, String>? ?? {};
@@ -36,13 +39,14 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => SplashScreen(),
         '/sign_up': (context) => SignUpPage(),
-        '/home_page': (context) => MyHomePage(),
+        '/home_page_user': (context) => MyHomePageUser(),
         '/reservation_page': (context) => ReservationPage(),
         '/select_time': (context) => SelectTime(),
         '/subscription': (context) => Subscription(),
         '/payment_page': (context) => PaymentPage(),
         '/select_module': (context) => SelectModule(),
-        '/register_parking_area':(context)=>
+        '/register_parking_area': (context) => RegisterParkingArea(),
+        '/home_page_owner': (context) => MyHomePageOwner(),
       },
     );
   }
