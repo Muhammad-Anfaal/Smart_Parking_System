@@ -95,7 +95,7 @@ class _MyHomePageUserState extends State<MyHomePageUser> {
                       itemDashboard('Car Details', CupertinoIcons.car_detailed,
                           Colors.indigo, () {
                         // Navigate to subscription page when item is clicked
-                        Navigator.pushNamed(context, '/subscription');
+                        Navigator.pushNamed(context, '/car_registration');
                       }),
                       SizedBox(height: 0.0),
                       SizedBox(height: 0.0),
