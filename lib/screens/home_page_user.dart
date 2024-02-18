@@ -85,7 +85,7 @@ class _MyHomePageUserState extends State<MyHomePageUser> {
                           'Feedback', CupertinoIcons.mail_solid, Colors.purple,
                           () {
                         // Navigate to subscription page when item is clicked
-                        Navigator.pushNamed(context, '/subscription');
+                        Navigator.pushNamed(context, '/feedback_page');
                       }),
                       itemDashboard('Subscription', CupertinoIcons.person_2_alt,
                           Colors.brown, () {

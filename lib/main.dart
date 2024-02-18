@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smart_parking_system/screens/car_registration.dart';
+import 'package:smart_parking_system/screens/feedback_page.dart';
 import '/screens/payment_page.dart';
 import 'screens/log_in.dart';
 import 'screens/sign_up.dart';
@@ -56,6 +57,7 @@ class MyApp extends StatelessWidget {
         '/register_parking_area': (context) => RegisterParkingArea(),
         '/home_page_owner': (context) => MyHomePageOwner(),
         '/car_registration':(context)=>ParkingRegistration(),
+        '/feedback_page':(context)=>FeedbackPage(),
       },
     );
   }
