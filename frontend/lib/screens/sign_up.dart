@@ -141,17 +141,15 @@ class _SignUpPageState extends State<SignUpPage> {
 
   final addressValidator = ffv.MultiValidator([
     ffv.RequiredValidator(errorText: 'address is required'),
-    ffv.MaxLengthValidator(30,
-        errorText: 'address must be less than 30 characters'),
-    ffv.MinLengthValidator(3,
-        errorText: 'address must be greater than 3 characters'),
+    ffv.MinLengthValidator(20,
+        errorText: 'address must be greater than 20 characters'),
   ]);
 
   final passwordValidator = ffv.MultiValidator([
     ffv.RequiredValidator(errorText: 'password is required'),
     ffv.MinLengthValidator(8, errorText: 'password must have 8 characters'),
     ffv.PatternValidator(r'(?=.*?[#?!@$%^&*-])',
-        errorText: 'passwords must one special character'),
+        errorText: 'passwords must contain one special character'),
   ]);
 
   @override
