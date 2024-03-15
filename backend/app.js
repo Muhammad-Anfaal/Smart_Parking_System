@@ -7,8 +7,8 @@ const Sequelize = require('sequelize');
 const config = require('./config/database');
 
 const User = require('./models/User'); // Import your User model
+//const Admin = require('./models/Admin');
 // ... (import other models)
-
 
 const userController = require('./controllers/userController'); // Import your user controller
 // ... (import other controllers)
@@ -29,6 +29,8 @@ User.sync()
     process.exit(1); // Exit the application on failure
   }
 })();
+
+app.use('/usermanagement',router);
 
 app.get('/', (req, res) => {
   res.send('Hello from your Node.js + Sequelize backend!');

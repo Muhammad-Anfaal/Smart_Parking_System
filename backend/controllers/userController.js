@@ -1,14 +1,18 @@
 const Users = require('../models/User'); // Import your User model
 const bcrypt = require('bcrypt'); // Import bcrypt for password comparison
+const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
+const secretKey = crypto.randomBytes(32).toString('hex'); //it will produce 32 bytes secret key 
+console.log(secretKey);
 
 exports.createUser = async (req, res) => {
   try {
-    const { userName, userEmail, userPhoneNumber, userCity, userCNIC, userAddress, userPassword } = req.body;
+    const { userName, userEmail, userPhoneNumber, userCity, userCNIC, userAddress, userPassword, userType } = req.body; // Extract userType
 
-    // Validate user data (optional, can be done using middleware)
+    // Validate user data (including userType)
     // ... validation logic (e.g., using libraries like Joi)
 
-    const hashedPassword = await bcrypt.hash(userPassword, 10); // Hash password before saving
+    // ... rest of createUser code
 
     const newUser = await Users.create({
       userName,
@@ -17,70 +21,54 @@ exports.createUser = async (req, res) => {
       userCity,
       userCNIC,
       userAddress,
-      userPassword: hashedPassword
+      userPassword: hashedPassword,
+      userType // Include userType in creation
     });
 
-    res.json(newUser); // Send response with created user data
+    // ... rest of createUser code
   } catch (error) {
-    console.error('Error creating user:', error);
-    res.status(500).send('Error'); // Handle errors appropriately
+    // ... error handling
   }
 };
 
 exports.getAllUsers = async (req, res) => {
   try {
-    const users = await Users.findAll();
-    res.json(users); // Send response with all users
+    const users = await Users.findAll(); // Includes userType in fetched data
+    res.json(users);
   } catch (error) {
-    console.error('Error fetching users:', error);
-    res.status(500).send('Error'); // Handle errors appropriately
+    // ... error handling
   }
 };
 
 exports.getUserById = async (req, res) => {
   try {
-    const userId = req.params.id; // Assuming user ID is in the route parameter
-
-    const user = await Users.findByPk(userId);
-
-    if (!user) {
-      return res.status(404).send('User not found');
-    }
-
-    res.json(user); // Send response with the found user
+    // ...
+    const user = await Users.findByPk(userId, {
+      attributes: ['userId', 'userName', 'userEmail', 'userPhoneNumber', 'userCity', 'userCNIC', 'userAddress', 'userType'] // Include userType in response
+    });
+    // ...
   } catch (error) {
-    console.error('Error fetching user:', error);
-    res.status(500).send('Error'); // Handle errors appropriately
+    // ... error handling
   }
 };
 
 exports.updateUser = async (req, res) => {
   try {
-    const userId = req.params.id; // Assuming user ID is in the route parameter
-    const { userName, userEmail, userPhoneNumber, userCity, userCNIC, userAddress } = req.body;
+    const userId = req.params.id;
+    const { userName, userEmail, userPhoneNumber, userCity, userCNIC, userAddress, userType } = req.body;
 
-    // Validate user data (optional, can be done using middleware)
-    // ... validation logic (e.g., using libraries like Joi)
+    // Validate user data (including userType)
+    // ... validation logic
 
-    const user = await Users.findByPk(userId);
+    // ...
 
-    if (!user) {
-      return res.status(404).send('User not found');
-    }
+    user.userType = userType; // Update userType if provided
 
-    user.userName = userName;
-    user.userEmail = userEmail; // Be cautious updating email as it might require verification again
-    user.userPhoneNumber = userPhoneNumber;
-    user.userCity = userCity;
-    user.userCNIC = userCNIC;
-    user.userAddress = userAddress;
+    await user.save();
 
-    await user.save(); // Save updated user data
-
-    res.json(user); // Send response with the updated user
+    res.json(user); // Includes updated userType
   } catch (error) {
-    console.error('Error updating user:', error);
-    res.status(500).send('Error'); // Handle errors appropriately
+    // ... error handling
   }
 };
 
@@ -111,20 +99,30 @@ exports.loginUser = async (req, res) => {
     const user = await Users.findOne({ where: { userName } });
 
     if (!user) {
-      return res.status(401).send('Invalid username or password'); // Unauthorized
+      return res.status(401).send('Invalid username or password');
     }
 
-    const passwordMatch = await bcrypt.compare(userPassword, userPassword); // typo corrected
+    const passwordMatch = await bcrypt.compare(userPassword, user.userPassword);
 
     if (!passwordMatch) {
-      return res.status(401).send('Invalid username or password'); // Unauthorized
+      return res.status(401).send('Invalid username or password');
     }
 
-    // Login successful (logic for generating tokens or session management can be added here)
-    const userToken = generateAuthToken(user.id); // Replace with your token generation function
+    // Check if the user already has a stored token
+    let userToken = user.token;
+
+    // If not, generate a new one
+    if (!userToken) {
+      userToken = jwt.sign({ userId: user.id, userName: user.userName }, secretKey, { expiresIn: '1h' });
+
+      // Save the new token in the database or associate it with the user
+      user.token = userToken;
+      await user.save();
+    }
+
     res.json({ message: 'Login successful', token: userToken });
   } catch (error) {
     console.error('Error logging in user:', error);
-    res.status(500).send('Error'); // Handle errors appropriately
+    res.status(500).send('Error logging in user');
   }
 };

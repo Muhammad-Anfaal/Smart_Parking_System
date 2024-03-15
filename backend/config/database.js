@@ -1,7 +1,7 @@
 module.exports = {
   username: 'postgres',
   password: 'admin',
-  database: 'New_backend_FYP',
+  database: 'sps_database',
   host: 'localhost',
   dialect: 'postgres'
 };

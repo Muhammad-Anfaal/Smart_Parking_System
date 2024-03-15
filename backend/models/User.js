@@ -30,8 +30,15 @@ const Users = sequelize.define('Users', {
     }
   },
   userPhoneNumber: {
-    type: Sequelize.BIGINT, // Use BIGINT for 11 digits (consider validation for exact length)
-    allowNull: false
+    type: Sequelize.BIGINT,
+    allowNull: false,
+    validate: {
+      isNumeric: true, // Validate that the value is numeric
+      len: {
+        args: [11], // Assuming 11 digits for a typical phone number
+        msg: 'Phone number must be 11 digits long and contain only numeric values.'
+      }
+    }
   },
   userCity: {
     type: Sequelize.STRING,
@@ -45,7 +52,14 @@ const Users = sequelize.define('Users', {
   },
   userCNIC: {
     type: Sequelize.BIGINT, // Use BIGINT for 13 digits (consider validation for exact length)
-    allowNull: false
+    allowNull: false,
+    validate: {
+      isNumeric: true, // Validate that the value is numeric
+      len: {
+        args: [13], // Assuming 11 digits for a typical phone number
+        msg: 'CNIC must be 11 digits long and contain only numeric values.'
+      }
+    }
   },
   userAddress: {
     type: Sequelize.STRING,
@@ -57,9 +71,26 @@ const Users = sequelize.define('Users', {
       }
     }
   },
+  userType: {
+    type: Sequelize.ENUM('user', 'owner'), // Define the userType as an ENUM with two possible values
+    allowNull: false, // userType is mandatory
+    defaultValue: 'user' // Default to "user" if not specified
+  },
   userPassword: {
     type: Sequelize.STRING,
     allowNull: false,
+    validate: {
+      // Ensure it has one special character
+      hasSpecialChar(value) {
+        if (!/[!@#$%^&*(),.?":{}|<>]/.test(value)) {
+          throw new Error('Password must contain at least one special character.');
+        }
+      },
+      len: {
+        args: [8], // Minimum length of 8 characters
+        msg: 'Password must be at least 8 characters long.'
+      }
+    },
     set(value) {
       // Hash password before saving
       const salt = bcrypt.genSaltSync(10); // Adjust salt rounds as needed
