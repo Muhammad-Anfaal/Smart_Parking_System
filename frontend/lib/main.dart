@@ -52,7 +52,7 @@ class MyApp extends StatelessWidget {
         '/reservation_page': (context) => ReservationPage(),
         '/select_time': (context) => SelectTime(),
         '/subscription': (context) => Subscription(),
-        '/payment_page': (context) => PaymentPage(),
+        '/payment_page': (context) => JazzCash(),
         '/select_module': (context) => SelectModule(),
         '/register_parking_area': (context) => RegisterParkingArea(),
         '/home_page_owner': (context) => MyHomePageOwner(),
