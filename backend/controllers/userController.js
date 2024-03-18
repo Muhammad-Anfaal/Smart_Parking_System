@@ -1,3 +1,5 @@
+
+ // Import your database connection
 const Users = require('../models/User'); // Import your User model
 const bcrypt = require('bcrypt'); // Import bcrypt for password comparison
 const jwt = require('jsonwebtoken');
@@ -7,13 +9,17 @@ console.log(secretKey);
 
 exports.createUser = async (req, res) => {
   try {
-    const { userName, userEmail, userPhoneNumber, userCity, userCNIC, userAddress, userPassword, userType } = req.body; // Extract userType
+    
+    const { userName, userEmail, userPhoneNumber, userCity, userCNIC, userAddress, userPassword, userType } = req.body;
 
     // Validate user data (including userType)
-    // ... validation logic (e.g., using libraries like Joi)
+    // ... validation logic
 
-    // ... rest of createUser code
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(userPassword, 10);
+    
 
+    // Create the new user
     const newUser = await Users.create({
       userName,
       userEmail,
@@ -22,12 +28,13 @@ exports.createUser = async (req, res) => {
       userCNIC,
       userAddress,
       userPassword: hashedPassword,
-      userType // Include userType in creation
+      userType
     });
 
-    // ... rest of createUser code
+    res.json(newUser);
   } catch (error) {
-    // ... error handling
+    console.error('Error creating user:', error);
+    res.status(500).send('Error creating user');
   }
 };
 
