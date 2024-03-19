@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:smart_parking_system/screens/Admin/approve_area.dart';
+import 'package:smart_parking_system/screens/Admin/home_page_admin.dart';
 import 'package:smart_parking_system/screens/car_registration.dart';
 import 'package:smart_parking_system/screens/feedback_page.dart';
 import '/screens/payment_page.dart';
@@ -24,7 +26,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: '/',
+      initialRoute: '/home_page_admin',
       onGenerateRoute: (settings) {
         if (settings.name == '/log_in') {
           final args = settings.arguments as Map<String, String>? ?? {};
@@ -58,6 +60,8 @@ class MyApp extends StatelessWidget {
         '/home_page_owner': (context) => MyHomePageOwner(),
         '/car_registration':(context)=>ParkingRegistration(),
         '/feedback_page':(context)=>FeedbackPage(),
+        '/home_page_admin':(context)=>MyHomePageAdmin(),
+        '/approve_area':(context)=>ApproveArea(),
       },
     );
   }
