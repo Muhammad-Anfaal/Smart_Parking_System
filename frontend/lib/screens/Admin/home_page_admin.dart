@@ -83,10 +83,10 @@ class _MyHomePageAdminState extends State<MyHomePageAdmin> {
                             Navigator.pushNamed(context, '/register_parking_area');
                           }),
                       itemDashboard(
-                          'Cancel Subscriptions', CupertinoIcons.person_2_alt, Colors.blue,
+                          'Manage Subscriptions', CupertinoIcons.person_2_alt, Colors.blue,
                               () {
                             // Navigate to subscription page when item is clicked
-                            Navigator.pushNamed(context, '/register_parking_area');
+                            Navigator.pushNamed(context, '/manage_subscriptions');
                           }),
                       itemDashboard(
                           'Parking Areas', CupertinoIcons.map_fill, Colors.orange,

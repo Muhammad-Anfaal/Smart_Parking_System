@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smart_parking_system/screens/Admin/approve_area.dart';
 import 'package:smart_parking_system/screens/Admin/home_page_admin.dart';
+import 'package:smart_parking_system/screens/Admin/manage_subscriptions.dart';
 import 'package:smart_parking_system/screens/car_registration.dart';
 import 'package:smart_parking_system/screens/feedback_page.dart';
 import '/screens/payment_page.dart';
@@ -54,7 +55,12 @@ class MyApp extends StatelessWidget {
         '/reservation_page': (context) => ReservationPage(),
         '/select_time': (context) => SelectTime(),
         '/subscription': (context) => Subscription(),
-        '/payment_page': (context) => PaymentPage(),
+
+        '/payment_page': (context) {
+          final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+          final price = args['price'] as int;
+          return JazzCash(price: price);
+        },
         '/select_module': (context) => SelectModule(),
         '/register_parking_area': (context) => RegisterParkingArea(),
         '/home_page_owner': (context) => MyHomePageOwner(),
@@ -62,10 +68,8 @@ class MyApp extends StatelessWidget {
         '/feedback_page':(context)=>FeedbackPage(),
         '/home_page_admin':(context)=>MyHomePageAdmin(),
         '/approve_area':(context)=>ApproveArea(),
+        '/manage_subscriptions':(context)=>ManageSubscriptions(),
       },
     );
   }
 }
-
-// Navigator.of(context).pop(); Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => InterestsPage(userAccesstoken: accessToken,)))
-
