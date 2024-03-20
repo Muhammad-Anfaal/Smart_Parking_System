@@ -1,11 +1,12 @@
 
  // Import your database connection
 const Users = require('../models/User'); // Import your User model
+// const Subscription = require('../models/Subscription');
 const bcrypt = require('bcrypt'); // Import bcrypt for password comparison
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const secretKey = crypto.randomBytes(32).toString('hex'); //it will produce 32 bytes secret key 
-console.log(secretKey);
+// console.log(secretKey);
 
 exports.createUser = async (req, res) => {
   try {
@@ -133,3 +134,68 @@ exports.loginUser = async (req, res) => {
     res.status(500).send('Error logging in user');
   }
 };
+
+// ///___________________Subscription part_______________________///
+
+// // Controller function to get a user's subscription
+// exports.getUserSubscription = async (req, res) => {
+//   try {
+//     const userId = req.params.userId;
+
+//     // Find the user's subscription
+//     const subscription = await Subscription.findOne({ where: { userId } });
+
+//     if (!subscription) {
+//       return res.json({ hasSubscription: false });
+//     }
+
+//     res.json({ hasSubscription: true, subscription });
+//   } catch (error) {
+//     console.error('Error fetching user subscription:', error);
+//     res.status(500).send('Error fetching user subscription');
+//   }
+// };
+
+// // Controller function to create a subscription for a user
+// exports.createUserSubscription = async (req, res) => {
+//   try {
+//     const { userId, duration } = req.body;
+
+//     // Check if the user already has a subscription
+//     const existingSubscription = await Subscription.findOne({ where: { userId } });
+
+//     if (existingSubscription) {
+//       return res.status(400).send('User already has a subscription');
+//     }
+
+//     // Create a new subscription
+//     const subscription = await Subscription.create({ userId, duration, status: 'active' });
+
+//     res.status(201).json(subscription);
+//   } catch (error) {
+//     console.error('Error creating user subscription:', error);
+//     res.status(500).send('Error creating user subscription');
+//   }
+// };
+
+// // Controller function to cancel a user's subscription
+// exports.cancelUserSubscription = async (req, res) => {
+//   try {
+//     const userId = req.params.userId;
+
+//     // Find the user's subscription
+//     const subscription = await Subscription.findOne({ where: { userId } });
+
+//     if (!subscription) {
+//       return res.status(404).send('Subscription not found');
+//     }
+
+//     // Cancel the subscription
+//     await subscription.update({ status: 'inactive' });
+
+//     res.status(204).send();
+//   } catch (error) {
+//     console.error('Error canceling user subscription:', error);
+//     res.status(500).send('Error canceling user subscription');
+//   }
+// };

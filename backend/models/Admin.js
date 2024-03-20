@@ -1,32 +1,41 @@
-const Sequelize = require('sequelize');
-const bcrypt = require('bcrypt');
+// const Sequelize = require('sequelize');
+// const bcrypt = require('bcrypt');
 
-const Admin = sequelize.define('Admin', {
-  adminId: {
-    type: Sequelize.INTEGER,
-    autoIncrement: true,
-    primaryKey: true
-  },
-  adminName: {
-    type: Sequelize.STRING,
-    allowNull: false,
-    validate: {
-      len: {
-        args: [5],
-        msg: 'Admin name must be at least 5 characters long.'
-      }
-    }
-  },
-  adminPassword: {
-    type: Sequelize.STRING, // For simplicity, you can use STRING, but consider using the specific data type for storing encrypted passwords
-    allowNull: false,
-    set(value) {
-      // Hash password before saving
-      const salt = bcrypt.genSaltSync(10);
-      const hash = bcrypt.hashSync(value, salt);
-      this.setDataValue('adminPassword', hash);
-    }
-  }
-});
+// const adminCredentials = [
+//   { name: 'anfaal', password: 'anf123' },
+//   { name: 'awab', password: 'awa123' },
+//   { name: 'abdullah', password: 'abd123' }
+// ];
 
-module.exports = Admin;
+// const Admin = sequelize.define('Admin', {
+//   adminId: {
+//     type: Sequelize.INTEGER,
+//     autoIncrement: true,
+//     primaryKey: true
+//   },
+//   adminName: {
+//     type: Sequelize.STRING,
+//     allowNull: false,
+//     unique: true,
+//     validate: {
+//       isIn: adminCredentials.map(cred => cred.name)
+//     }
+//   },
+//   adminPassword: {
+//     type: Sequelize.STRING,
+//     allowNull: false,
+//     set(value) {
+//       // Hash password before saving
+//       const salt = bcrypt.genSaltSync(10);
+//       // Find the corresponding password for the adminName
+//       const credential = adminCredentials.find(cred => cred.name === this.getDataValue('adminName'));
+//       if (credential) {
+//         this.setDataValue('adminPassword', bcrypt.hashSync(credential.password, salt));
+//       } else {
+//         throw new Error('Invalid adminName');
+//       }
+//     }
+//   }
+// });
+
+// module.exports = Admin;
