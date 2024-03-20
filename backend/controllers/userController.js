@@ -1,9 +1,11 @@
 
  // Import your database connection
 const Users = require('../models/User'); // Import your User model
+const Car = require('../models/Car'); // Import your Car model
 // const Subscription = require('../models/Subscription');
 const bcrypt = require('bcrypt'); // Import bcrypt for password comparison
 const jwt = require('jsonwebtoken');
+
 const crypto = require('crypto');
 const secretKey = crypto.randomBytes(32).toString('hex'); //it will produce 32 bytes secret key 
 // console.log(secretKey);
@@ -82,7 +84,7 @@ exports.updateUser = async (req, res) => {
 
 exports.deleteUser = async (req, res) => {
   try {
-    const userId = req.params.id; // Assuming user ID is in the route parameter
+    const userId = req.params.id;
 
     const user = await Users.findByPk(userId);
 
@@ -90,12 +92,19 @@ exports.deleteUser = async (req, res) => {
       return res.status(404).send('User not found');
     }
 
+    // Find all cars belonging to the user
+    const userCars = await Car.findAll({ where: { userId } });
+
+    // Delete all cars belonging to the user
+    await Car.destroy({ where: { userId } });
+
+    // Delete the user
     await user.destroy();
 
-    res.status(204).send(); // No content to send, user deleted successfully
+    res.status(204).send(); // No content to send, user and related cars deleted successfully
   } catch (error) {
-    console.error('Error deleting user:', error);
-    res.status(500).send('Error'); // Handle errors appropriately
+    console.error('Error deleting user and related cars:', error);
+    res.status(500).send('Error deleting user and related cars');
   }
 };
 
