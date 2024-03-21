@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smart_parking_system/screens/Admin/approve_area.dart';
 import 'package:smart_parking_system/screens/Admin/home_page_admin.dart';
+import 'package:smart_parking_system/screens/Admin/manage_parking_area.dart';
 import 'package:smart_parking_system/screens/Admin/manage_subscriptions.dart';
 import 'package:smart_parking_system/screens/car_registration.dart';
 import 'package:smart_parking_system/screens/feedback_page.dart';
@@ -69,6 +70,7 @@ class MyApp extends StatelessWidget {
         '/home_page_admin':(context)=>MyHomePageAdmin(),
         '/approve_area':(context)=>ApproveArea(),
         '/manage_subscriptions':(context)=>ManageSubscriptions(),
+        '/manage_parking_area':(context)=>ManageParkingArea(),
       },
     );
   }

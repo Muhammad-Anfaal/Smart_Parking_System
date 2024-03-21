@@ -47,6 +47,7 @@ dependencies:
   form_field_validator: ^1.1.0
   provider: ^5.0.0
   fluttertoast: ^8.0.8
+  fl_chart: ^0.66.2
   #charts_flutter: ^0.11.0
 
 

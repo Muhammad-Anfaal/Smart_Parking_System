@@ -92,7 +92,7 @@ class _MyHomePageAdminState extends State<MyHomePageAdmin> {
                           'Parking Areas', CupertinoIcons.map_fill, Colors.orange,
                               () {
                             // Navigate to subscription page when item is clicked
-                            Navigator.pushNamed(context, '/register_parking_area');
+                            Navigator.pushNamed(context, '/manage_parking_area');
                           }),
                       SizedBox(height: 0.0),
                       SizedBox(height: 0.0),
