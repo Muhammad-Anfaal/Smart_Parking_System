@@ -1,19 +1,28 @@
+
+ // Import your database connection
 const Users = require('../models/User'); // Import your User model
+const Car = require('../models/Car'); // Import your Car model
+// const Subscription = require('../models/Subscription');
 const bcrypt = require('bcrypt'); // Import bcrypt for password comparison
 const jwt = require('jsonwebtoken');
+
 const crypto = require('crypto');
 const secretKey = crypto.randomBytes(32).toString('hex'); //it will produce 32 bytes secret key 
-console.log(secretKey);
+// console.log(secretKey);
 
 exports.createUser = async (req, res) => {
   try {
-    const { userName, userEmail, userPhoneNumber, userCity, userCNIC, userAddress, userPassword, userType } = req.body; // Extract userType
+    
+    const { userName, userEmail, userPhoneNumber, userCity, userCNIC, userAddress, userPassword, userType } = req.body;
 
     // Validate user data (including userType)
-    // ... validation logic (e.g., using libraries like Joi)
+    // ... validation logic
 
-    // ... rest of createUser code
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(userPassword, 10);
+    
 
+    // Create the new user
     const newUser = await Users.create({
       userName,
       userEmail,
@@ -22,12 +31,13 @@ exports.createUser = async (req, res) => {
       userCNIC,
       userAddress,
       userPassword: hashedPassword,
-      userType // Include userType in creation
+      userType
     });
 
-    // ... rest of createUser code
+    res.json(newUser);
   } catch (error) {
-    // ... error handling
+    console.error('Error creating user:', error);
+    res.status(500).send('Error creating user');
   }
 };
 
@@ -74,7 +84,7 @@ exports.updateUser = async (req, res) => {
 
 exports.deleteUser = async (req, res) => {
   try {
-    const userId = req.params.id; // Assuming user ID is in the route parameter
+    const userId = req.params.id;
 
     const user = await Users.findByPk(userId);
 
@@ -82,12 +92,19 @@ exports.deleteUser = async (req, res) => {
       return res.status(404).send('User not found');
     }
 
+    // Find all cars belonging to the user
+    const userCars = await Car.findAll({ where: { userId } });
+
+    // Delete all cars belonging to the user
+    await Car.destroy({ where: { userId } });
+
+    // Delete the user
     await user.destroy();
 
-    res.status(204).send(); // No content to send, user deleted successfully
+    res.status(204).send(); // No content to send, user and related cars deleted successfully
   } catch (error) {
-    console.error('Error deleting user:', error);
-    res.status(500).send('Error'); // Handle errors appropriately
+    console.error('Error deleting user and related cars:', error);
+    res.status(500).send('Error deleting user and related cars');
   }
 };
 
@@ -126,3 +143,68 @@ exports.loginUser = async (req, res) => {
     res.status(500).send('Error logging in user');
   }
 };
+
+// ///___________________Subscription part_______________________///
+
+// // Controller function to get a user's subscription
+// exports.getUserSubscription = async (req, res) => {
+//   try {
+//     const userId = req.params.userId;
+
+//     // Find the user's subscription
+//     const subscription = await Subscription.findOne({ where: { userId } });
+
+//     if (!subscription) {
+//       return res.json({ hasSubscription: false });
+//     }
+
+//     res.json({ hasSubscription: true, subscription });
+//   } catch (error) {
+//     console.error('Error fetching user subscription:', error);
+//     res.status(500).send('Error fetching user subscription');
+//   }
+// };
+
+// // Controller function to create a subscription for a user
+// exports.createUserSubscription = async (req, res) => {
+//   try {
+//     const { userId, duration } = req.body;
+
+//     // Check if the user already has a subscription
+//     const existingSubscription = await Subscription.findOne({ where: { userId } });
+
+//     if (existingSubscription) {
+//       return res.status(400).send('User already has a subscription');
+//     }
+
+//     // Create a new subscription
+//     const subscription = await Subscription.create({ userId, duration, status: 'active' });
+
+//     res.status(201).json(subscription);
+//   } catch (error) {
+//     console.error('Error creating user subscription:', error);
+//     res.status(500).send('Error creating user subscription');
+//   }
+// };
+
+// // Controller function to cancel a user's subscription
+// exports.cancelUserSubscription = async (req, res) => {
+//   try {
+//     const userId = req.params.userId;
+
+//     // Find the user's subscription
+//     const subscription = await Subscription.findOne({ where: { userId } });
+
+//     if (!subscription) {
+//       return res.status(404).send('Subscription not found');
+//     }
+
+//     // Cancel the subscription
+//     await subscription.update({ status: 'inactive' });
+
+//     res.status(204).send();
+//   } catch (error) {
+//     console.error('Error canceling user subscription:', error);
+//     res.status(500).send('Error canceling user subscription');
+//   }
+// };

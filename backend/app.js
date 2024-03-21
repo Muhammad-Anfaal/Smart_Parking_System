@@ -1,40 +1,46 @@
 const express = require('express');
+const bodyParser = require('body-parser'); 
 const app = express();
-const port = process.env.PORT || 3000; // Use environment variable or default to port 3000
+const port = process.env.PORT || 3000;
+app.use(bodyParser.json());
+const User_routes = require('./routes/User_routes');
+const Car_routes = require('./routes/Car_routes');
 
+const sequelize = require('./db');
 // Optional: Load database configuration from separate file
-const Sequelize = require('sequelize');
-const config = require('./config/database');
+
+// const Sequelize = require('sequelize');
+// const config = require('./config/database');
+app.use(bodyParser.urlencoded({ extended: true }));
 
 const User = require('./models/User'); // Import your User model
-//const Admin = require('./models/Admin');
+const Car = require('./models/Car'); // Import your Car model
 // ... (import other models)
 
 const userController = require('./controllers/userController'); // Import your user controller
+const carController = require('./controllers/carController');
 // ... (import other controllers)
 
-const router = require('./routes/routes'); // Import the routes file
+const user_routes = require('./routes/User_routes'); // Import the routes file
+const car_routes = require('./routes/Car_routes');
+// User.sync()
+//   .then(() => console.log('Users table created successfully!'))
+//   .catch(err => console.error('Error creating Users table:', err));
 
-User.sync()
-  .then(() => console.log('Users table created successfully!'))
-  .catch(err => console.error('Error creating Users table:', err));
+// (async () => {
+//   try {
+//     await sequelize.sync({ force: false }); // Preserve existing data
+//     console.log('Database tables synchronized successfully.');
+//   } catch (error) {
+//     console.error('Error synchronizing database tables:', error);
+//     // Handle the error appropriately, e.g., log details, send a notification, or exit the application
+//   }
+// })();
 
-(async () => {
-  try {
-    const sequelize = new Sequelize(config); // Use the imported config
-    await sequelize.authenticate();
-    console.log('Connection to database has been established successfully.');
-  } catch (error) {
-    console.error('Unable to connect to the database:', error);
-    process.exit(1); // Exit the application on failure
-  }
-})();
+app.use('/user',User_routes);
+app.use('/car',Car_routes);
+//app.use('/admin',Admin_routes);
 
-app.use('/usermanagement',router);
-
-app.get('/', (req, res) => {
-  res.send('Hello from your Node.js + Sequelize backend!');
-});
 
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);

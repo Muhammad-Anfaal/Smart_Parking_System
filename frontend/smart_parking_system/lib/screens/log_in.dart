@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
-import 'package:pinput/pinput.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:form_field_validator/form_field_validator.dart' as ffv;
