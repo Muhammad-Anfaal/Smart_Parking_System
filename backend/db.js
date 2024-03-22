@@ -2,6 +2,7 @@ const Sequelize = require('sequelize');
 const config = require('./config/database');
 const User = require('./models/User'); // Import your User model
 const Car = require('./models/Car'); // Import your Car model
+const Subscription =require('./models/Subscription'); // Import your Subscription model
 const sequelize = new Sequelize(config);
 
 (async () => {
@@ -12,6 +13,7 @@ const sequelize = new Sequelize(config);
 
     await User.sync({ alter: true });
     await Car.sync({ alter: true });
+    await Subscription.sync({ alter: true });
     await sequelize.authenticate();
 
     console.log('Connection to database has been established successfully.');
