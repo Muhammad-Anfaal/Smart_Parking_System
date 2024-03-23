@@ -8,8 +8,7 @@ const sequelize = new Sequelize(config);
 (async () => {
   try {
     // Define associations between models
-    User.hasMany(Car); // A user can have multiple cars
-    Car.belongsTo(User); // A car belongs to a user
+
 
     await User.sync({ alter: true });
     await Car.sync({ alter: true });
