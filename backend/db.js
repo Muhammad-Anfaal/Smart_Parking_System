@@ -8,7 +8,6 @@ const sequelize = new Sequelize(config);
 
 (async () => {
   try {
-    
     // Sync models with the database
     await User.sync({ alter: true });
     await Car.sync({ alter: true });
