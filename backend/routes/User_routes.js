@@ -11,7 +11,7 @@ router.put('/updateusers/:id', userController.updateUser);
 router.delete('/deleteusers/:id', userController.deleteUser);
 router.post('/users/login', userController.loginUser); // Assuming login route in userController
 
-// Routes for managing user subscriptions
+//Routes for managing user subscriptions
 // router.get('/users/:userId/subscription', userController.getUserSubscription);
 // router.post('/users/:userId/subscription', userController.createUserSubscription);
 // router.delete('/users/:userId/subscription', userController.cancelUserSubscription);
