@@ -1,11 +1,14 @@
 const express = require('express');
-const bodyParser = require('body-parser'); 
+const bodyParser = require('body-parser');
 const app = express();
 const port = process.env.PORT || 3000;
 app.use(bodyParser.json());
+
+// Import the routes file
 const User_routes = require('./routes/User_routes');
 const Car_routes = require('./routes/Car_routes');
 const Subscription_routes = require('./routes/Subscription_routes');
+const ParkingArea_routes = require('./routes/ParkingArea_routes');
 
 const sequelize = require('./db');
 // Optional: Load database configuration from separate file
@@ -14,19 +17,19 @@ const sequelize = require('./db');
 // const config = require('./config/database');
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const User = require('./models/User'); // Import your User model
-const Car = require('./models/Car'); // Import your Car model
-const Subscription = require('./models/Subscription'); // Import your Subscription model
+// const User = require('./models/User'); // Import your User model
+// const Car = require('./models/Car'); // Import your Car model
+// const Subscription = require('./models/Subscription'); // Import your Subscription model
+// const ParkingArea = require('./models/ParkingArea'); // Import your ParkingArea model
 // ... (import other models)
 
-const userController = require('./controllers/userController'); // Import your user controller
-const carController = require('./controllers/carController');
-const subscriptionController = require('./controllers/subscriptionController');
+// const userController = require('./controllers/userController'); // Import your user controller
+// const carController = require('./controllers/carController'); // Import your car controller
+// const subscriptionController = require('./controllers/subscriptionController'); // Import your subscription controller
+// const parkingAreaController = require('./controllers/parkingAreaController'); // Import your parking area controller
 // ... (import other controllers)
 
-const user_routes = require('./routes/User_routes'); // Import the routes file
-const car_routes = require('./routes/Car_routes');
-const subscription_routes = require('./routes/Subscription_routes');
+
 // User.sync()
 //   .then(() => console.log('Users table created successfully!'))
 //   .catch(err => console.error('Error creating Users table:', err));
@@ -41,9 +44,10 @@ const subscription_routes = require('./routes/Subscription_routes');
 //   }
 // })();
 
-app.use('/user',User_routes);
-app.use('/car',Car_routes);
-app.use('/subscription',Subscription_routes);
+app.use('/user', User_routes);
+app.use('/car', Car_routes);
+app.use('/subscription', Subscription_routes);
+app.use('/parkingArea', ParkingArea_routes);
 //app.use('/admin',Admin_routes);
 
 
