@@ -3,16 +3,16 @@ const config = require('./config/database');
 const User = require('./models/User'); // Import your User model
 const Car = require('./models/Car'); // Import your Car model
 const Subscription =require('./models/Subscription'); // Import your Subscription model
+const ParkingArea = require('./models/ParkingArea'); // Import your ParkingArea model
 const sequelize = new Sequelize(config);
 
 (async () => {
   try {
-    // Define associations between models
-
-
+    // Sync models with the database
     await User.sync({ alter: true });
     await Car.sync({ alter: true });
     await Subscription.sync({ alter: true });
+    await ParkingArea.sync({ alter: true });
     await sequelize.authenticate();
 
     console.log('Connection to database has been established successfully.');

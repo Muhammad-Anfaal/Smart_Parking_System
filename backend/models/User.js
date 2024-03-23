@@ -100,4 +100,4 @@ const Users = sequelize.define('Users', {
   }
 });
 
-module.exports = Users;
+module.exports = Users; // Export the Users model
