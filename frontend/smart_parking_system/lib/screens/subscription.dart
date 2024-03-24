@@ -135,7 +135,7 @@ class SubscriptionCard extends StatelessWidget {
 class PaymentCard extends StatelessWidget {
   final DateTime fromDate;
   final DateTime toDate;
-  final int price; // Add price here
+  final int price;
 
   PaymentCard({required this.fromDate, required this.toDate, required this.price}); // Update constructor
 
@@ -152,13 +152,13 @@ class PaymentCard extends StatelessWidget {
           ListTile(
             title: Text(
               'Subscription Details',
-              style: TextStyle(color: Colors.white), // Set text color to white
+              style: TextStyle(color: Colors.white),
             ),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'From: ${fromDate.toString().substring(0, 16)}', // Format the date string
+                  'From: ${fromDate.toString().substring(0, 16)}',
                   style: TextStyle(color: Colors.white), // Set text color to white
                 ),
                 Text(
@@ -186,7 +186,8 @@ class PaymentCard extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/payment_page', arguments: {'price': price}); // Pass price as an argument
+                Navigator.pushNamed(context, '/payment_page',
+                    arguments: {'price': price}); // Pass price as an argument
               },
               style: ElevatedButton.styleFrom(
                 primary: Colors.white,
