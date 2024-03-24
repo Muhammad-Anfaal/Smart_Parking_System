@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class ApproveArea extends StatefulWidget {
   const ApproveArea({Key? key}) : super(key: key);
@@ -122,15 +121,15 @@ class _ApproveAreaState extends State<ApproveArea> {
   }
 
   void showConfirmationMessage(String message) {
-    Fluttertoast.showToast(
-      msg: message,
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-      timeInSecForIosWeb: 1,
-      backgroundColor: Colors.grey[800]!,
-      textColor: Colors.white,
-      fontSize: 16.0,
-    );
+    // Fluttertoast.showToast(
+    //   msg: message,
+    //   toastLength: Toast.LENGTH_SHORT,
+    //   gravity: ToastGravity.BOTTOM,
+    //   timeInSecForIosWeb: 1,
+    //   backgroundColor: Colors.grey[800]!,
+    //   textColor: Colors.white,
+    //   fontSize: 16.0,
+    // );
   }
 }
 

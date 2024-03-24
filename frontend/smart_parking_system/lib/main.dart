@@ -5,6 +5,7 @@ import 'package:smart_parking_system/screens/Admin/manage_parking_area.dart';
 import 'package:smart_parking_system/screens/Admin/manage_subscriptions.dart';
 import 'package:smart_parking_system/screens/car_registration.dart';
 import 'package:smart_parking_system/screens/feedback_page.dart';
+import 'package:smart_parking_system/screens/pin_code.dart';
 import '/screens/payment_page.dart';
 import 'screens/log_in.dart';
 import 'screens/sign_up.dart';
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: '/home_page_admin',
+      initialRoute: '/',
       onGenerateRoute: (settings) {
         if (settings.name == '/log_in') {
           final args = settings.arguments as Map<String, String>? ?? {};
@@ -45,6 +46,16 @@ class MyApp extends StatelessWidget {
             builder: (context) {
               final userType = args['userType'] ?? 'default';
               return SignUpPage(userType: userType);
+            },
+          );
+        }
+        if (settings.name == '/pin_code') {
+          final args = settings.arguments as Map<String, String>? ?? {};
+          return MaterialPageRoute(
+            builder: (context) {
+              final userType = args['userType'] ?? 'default';
+              final otp = args['otp'] ?? 'default';
+              return PinCodeForm(userType: userType, otp: otp);
             },
           );
         }
