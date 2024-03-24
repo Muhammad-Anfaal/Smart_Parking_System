@@ -93,11 +93,11 @@ class _SelectTimeState extends State<SelectTime> {
     return startTime != null && endTime != null;
   }
 
-  double calculateAmount() {
+  int price() {
     int hours = (endTime?.hour ?? 0) - (startTime?.hour ?? 0);
     int minutes = (endTime?.minute ?? 0) - (startTime?.minute ?? 0);
     double totalHours = hours + minutes / 60.0;
-    return totalHours * perHourRate;
+    return (totalHours * perHourRate).toInt();
   }
 
   @override
@@ -232,15 +232,14 @@ class _SelectTimeState extends State<SelectTime> {
           ),
           SizedBox(height: 10),
           Text(
-            'Amount: Rs ${calculateAmount().toStringAsFixed(2)}',
+            'Amount: Rs ${price()}',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 10),
           ElevatedButton(
             onPressed: isTimeSelected()
                 ? () {
-              Navigator.pushNamed(context, '/payment_page');
-              print('Proceed to Payment');
+              Navigator.pushNamed(context, '/payment_page', arguments: {'price':price()});
             }
                 : null,
             child: Text('Proceed to Payment'),
