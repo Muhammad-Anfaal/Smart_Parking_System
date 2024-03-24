@@ -91,12 +91,6 @@ const Users = sequelize.define('Users', {
         msg: 'Password must be at least 8 characters long.'
       }
     },
-    set(value) {
-      // Hash password before saving
-      const salt = bcrypt.genSaltSync(10); // Adjust salt rounds as needed
-      const hash = bcrypt.hashSync(value, salt);
-      this.setDataValue('userPassword', hash);
-    }
   }
 });
 

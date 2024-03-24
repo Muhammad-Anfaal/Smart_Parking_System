@@ -5,7 +5,9 @@ import 'dart:convert';
 import 'package:form_field_validator/form_field_validator.dart' as ffv;
 
 Future<bool> loginUser(String email, String pass) async {
-  final url = Uri.parse('http://localhost:3300/users');
+  // String ipAddress = '10.0.2.2'; // for emulator
+  String ipAddress = '127.0.0.1'; // for browser
+  final url = Uri.parse('http://$ipAddress:3000/user/usersbyid/:id');
 
   try {
     final response = await http.get(

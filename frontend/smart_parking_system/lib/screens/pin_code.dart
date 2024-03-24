@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:smart_parking_system/screens/sign_up.dart';
 
 class PinCodeForm extends StatefulWidget {
   final String userType, otp;

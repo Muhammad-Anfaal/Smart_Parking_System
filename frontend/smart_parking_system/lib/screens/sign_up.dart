@@ -5,7 +5,6 @@ import 'package:form_field_validator/form_field_validator.dart' as ffv;
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 import 'package:http/http.dart' as http;
-import 'pin_code.dart';
 
 Future<void> signUpUser(String name, String email, String pass, String cnic,
     String city, String address, String phone, String userType) async {
