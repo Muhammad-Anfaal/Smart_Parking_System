@@ -7,28 +7,26 @@ import 'package:form_field_validator/form_field_validator.dart' as ffv;
 Future<bool> loginUser(String email, String pass) async {
   // String ipAddress = '10.0.2.2'; // for emulator
   String ipAddress = '127.0.0.1'; // for browser
-  final url = Uri.parse('http://$ipAddress:3000/user/usersbyid/:id');
+  final url = Uri.parse('http://$ipAddress:3000/user/validateuser');
 
   try {
-    final response = await http.get(
+    final Map<dynamic, dynamic> data = {
+      "email": email,
+      "password": pass
+    };
+    final response = await http.post(
       url,
+      body: jsonEncode(data),
       headers: {
         'Content-Type': 'application/json',
       },
     );
-
     if (response.statusCode == 200) {
-      List<Map<String, dynamic>> data =
-          List<Map<String, dynamic>>.from(json.decode(response.body));
-      for (Map<String, dynamic> user in data) {
-        // Check if the current user matches the target email and password
-        if (user['useremail'] == email && user['userpassword'] == pass) {
-          return true; // User found
-        }
-      }
+      print('success');
+      print(response.body);
+      return true;
     }
   } catch (e) {
-    // Handle any exceptions that occur during the request
     print('Error: $e');
   }
   return false;
@@ -185,7 +183,6 @@ class _LogInPageState extends State<LogInPage> {
                       if (await loginUser(
                               emailTextField.text, passwordTextField.text) ==
                           true) {
-                        // Navigator.of(context).pushNamedAndRemoveUntil('/login', (Route route) => false);
                         Navigator.pushNamed(
                             context, '/home_page_${widget.userType}',
                             arguments: {'userType': '${widget.userType}'});

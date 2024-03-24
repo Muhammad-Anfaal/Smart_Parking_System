@@ -118,10 +118,10 @@ exports.validateUser = async (req, res) => {
 
 exports.deleteUser = async (req, res) => {
   try {
-    const mail = req.body.mail;
+    const email = req.body.email;
 
     // Find the user by email
-    const user = await Users.findOne({ where: { userEmail: mail } });
+    const user = await Users.findOne({ where: { userEmail: email } });
 
     if (!user) {
       return res.status(404).send('User not found');
