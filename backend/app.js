@@ -18,6 +18,15 @@ const sequelize = require('./db');
 // const config = require('./config/database');
 app.use(bodyParser.urlencoded({ extended: true }));
 
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Max-Age', '1000');
+  res.setHeader('Access-Control-Allow-Headers', 'Origin, Content-Type, X-Auth-Token, Authorization');
+  next();
+});
+
 // const User = require('./models/User'); // Import your User model
 // const Car = require('./models/Car'); // Import your Car model
 // const Subscription = require('./models/Subscription'); // Import your Subscription model

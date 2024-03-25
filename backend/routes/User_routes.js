@@ -5,11 +5,10 @@ const userController = require('../controllers/userController'); // Import your 
 // ... (import other controllers as needed)
 
 router.get('/users', userController.getAllUsers);
-router.post('/createusers', userController.createUser);
-router.get('/usersbyid/:id', userController.getUserById);
-router.put('/updateusers/:id', userController.updateUser);
-router.delete('/deleteusers/:id', userController.deleteUser);
-router.post('/users/login', userController.loginUser); // Assuming login route in userController
+router.post('/createuser', userController.createUser);
+router.put('/updateuser', userController.updateUser);
+router.delete('/deleteuser', userController.deleteUser);
+router.post('/validateuser', userController.validateUser);
 
 //Routes for managing user subscriptions
 // router.get('/users/:userId/subscription', userController.getUserSubscription);
