@@ -10,7 +10,7 @@ class RegisterParkingArea extends StatelessWidget {
       theme: ThemeData(
         colorSchemeSeed: const Color(0xff483481),
         useMaterial3: true,
-        appBarTheme: AppBarTheme(
+        appBarTheme: const AppBarTheme(
           backgroundColor: Colors.black,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
@@ -27,8 +27,8 @@ class RegisterParkingArea extends StatelessWidget {
             style: TextStyle(color: Colors.white),
           ),
         ),
-        body: Padding(
-          padding: const EdgeInsets.only(top: 16.0),
+        body: const Padding(
+          padding: EdgeInsets.only(top: 16.0),
           child: ElevatedCardExample(),
         ),
       ),
@@ -65,24 +65,26 @@ class _ElevatedCardExampleState extends State<ElevatedCardExample> {
     if (pickedFile != null) {
       setState(() {
         imagePath = pickedFile.path;
+        print(imagePath);
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Align(
-        alignment: Alignment.topCenter,
-        child: Card(
-          color: Colors.lightBlue,
-          child: SizedBox(
-            width: 350,
-            height: imagePath.isNotEmpty ? 500 : 400,
+    return Align(
+      alignment: Alignment.topCenter,
+      child: Card(
+        color: Colors.lightBlue,
+        child: SizedBox(
+          width: 350,
+          height: MediaQuery.of(context).size.height * 0.8,
+          child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Align(
+                const SizedBox(height: 20),
+                const Align(
                   alignment: Alignment.centerLeft,
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20),
@@ -100,14 +102,14 @@ class _ElevatedCardExampleState extends State<ElevatedCardExample> {
                   ),
                   child: TextFormField(
                     controller: nameController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.all(10),
                     ),
                   ),
                 ),
-                SizedBox(height: 10),
-                Align(
+                const SizedBox(height: 20),
+                const Align(
                   alignment: Alignment.centerLeft,
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20),
@@ -125,14 +127,14 @@ class _ElevatedCardExampleState extends State<ElevatedCardExample> {
                   ),
                   child: TextFormField(
                     controller: capacityController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.all(10),
                     ),
                   ),
                 ),
-                SizedBox(height: 10),
-                Align(
+                const SizedBox(height: 20),
+                const Align(
                   alignment: Alignment.centerLeft,
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20),
@@ -150,26 +152,18 @@ class _ElevatedCardExampleState extends State<ElevatedCardExample> {
                   ),
                   child: TextFormField(
                     controller: locationController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.all(10),
                     ),
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _pickImage,
-                  child: Text('Choose Image'),
+                  child: const Text('Choose Image'),
                 ),
-                SizedBox(height: 10),
-                if (imagePath.isNotEmpty)
-                  Image.network(
-                    imagePath,
-                    width: 150,
-                    height: 120,
-                    fit: BoxFit.cover,
-                  ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () {
                     // Add your submit logic here
@@ -177,8 +171,14 @@ class _ElevatedCardExampleState extends State<ElevatedCardExample> {
                     // nameController.text, capacityController.text, locationController.text
                     // and imagePath for the selected image path.
                   },
-                  child: Text('Submit'),
+                  child: const Text('Submit'),
                 ),
+                const SizedBox(height: 20),
+                if (imagePath.isNotEmpty)
+                  Image.network(
+                    imagePath,
+                    fit: BoxFit.cover,
+                  ),
               ],
             ),
           ),

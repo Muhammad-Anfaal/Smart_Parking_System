@@ -3,7 +3,6 @@ const config = require('../config/database'); // Assuming your config file is th
 
 const sequelize = new Sequelize(config); // Create Sequelize instance
 
-const bcrypt = require('bcrypt'); // Import bcrypt
 
 const Users = sequelize.define('Users', {
   userId: {
@@ -91,6 +90,10 @@ const Users = sequelize.define('Users', {
         msg: 'Password must be at least 8 characters long.'
       }
     },
+  },
+  userImage: {
+    type: Sequelize.STRING,
+    allowNull: true
   }
 });
 

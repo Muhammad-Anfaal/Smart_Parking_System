@@ -20,9 +20,9 @@ class _MyHomePageAdminState extends State<MyHomePageAdmin> {
             padding: EdgeInsets.zero,
             children: [
               Container(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Colors.red,
-                  borderRadius: const BorderRadius.only(
+                  borderRadius: BorderRadius.only(
                     bottomRight: Radius.circular(50),
                   ),
                 ),
@@ -31,7 +31,7 @@ class _MyHomePageAdminState extends State<MyHomePageAdmin> {
                     const SizedBox(height: 50),
                     ListTile(
                       contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 30),
+                          const EdgeInsets.symmetric(horizontal: 30),
                       title: Text(
                         'Hello Admin!',
                         style: Theme.of(context)
@@ -62,7 +62,7 @@ class _MyHomePageAdminState extends State<MyHomePageAdmin> {
                   decoration: const BoxDecoration(
                       color: Colors.white,
                       borderRadius:
-                      BorderRadius.only(topLeft: Radius.circular(200))),
+                          BorderRadius.only(topLeft: Radius.circular(200))),
                   child: GridView.count(
                     padding: EdgeInsets.zero,
                     shrinkWrap: true,
@@ -71,31 +71,27 @@ class _MyHomePageAdminState extends State<MyHomePageAdmin> {
                     crossAxisSpacing: 40,
                     mainAxisSpacing: 30,
                     children: [
-                      itemDashboard(
-                          'Approve Area', CupertinoIcons.map_pin_ellipse, Colors.blueGrey,
-                              () {
-                            Navigator.pushNamed(context, '/approve_area');
-                          }),
-                      itemDashboard(
-                          'Statistics', CupertinoIcons.chart_bar_square, Colors.green,
-                              () {
-                            // Navigate to subscription page when item is clicked
-                            Navigator.pushNamed(context, '/register_parking_area');
-                          }),
-                      itemDashboard(
-                          'Manage Subscriptions', CupertinoIcons.person_2_alt, Colors.blue,
-                              () {
-                            // Navigate to subscription page when item is clicked
-                            Navigator.pushNamed(context, '/manage_subscriptions');
-                          }),
-                      itemDashboard(
-                          'Parking Areas', CupertinoIcons.map_fill, Colors.orange,
-                              () {
-                            // Navigate to subscription page when item is clicked
-                            Navigator.pushNamed(context, '/manage_parking_area');
-                          }),
-                      SizedBox(height: 0.0),
-                      SizedBox(height: 0.0),
+                      itemDashboard('Approve Area',
+                          CupertinoIcons.map_pin_ellipse, Colors.blueGrey, () {
+                        Navigator.pushNamed(context, '/approve_area');
+                      }),
+                      itemDashboard('Statistics',
+                          CupertinoIcons.chart_bar_square, Colors.green, () {
+                        // Navigate to subscription page when item is clicked
+                        Navigator.pushNamed(context, '/register_parking_area');
+                      }),
+                      itemDashboard('Manage Subscriptions',
+                          CupertinoIcons.person_2_alt, Colors.blue, () {
+                        // Navigate to subscription page when item is clicked
+                        Navigator.pushNamed(context, '/manage_subscriptions');
+                      }),
+                      itemDashboard('Parking Areas', CupertinoIcons.map_fill,
+                          Colors.orange, () {
+                        // Navigate to subscription page when item is clicked
+                        Navigator.pushNamed(context, '/manage_parking_area');
+                      }),
+                      const SizedBox(height: 0.0),
+                      const SizedBox(height: 0.0),
                     ],
                   ),
                 ),
@@ -107,7 +103,8 @@ class _MyHomePageAdminState extends State<MyHomePageAdmin> {
     );
   }
 
-  Widget itemDashboard(String title, IconData iconData, Color background, VoidCallback onTap) {
+  Widget itemDashboard(
+      String title, IconData iconData, Color background, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -147,5 +144,4 @@ class _MyHomePageAdminState extends State<MyHomePageAdmin> {
       ),
     );
   }
-
 }

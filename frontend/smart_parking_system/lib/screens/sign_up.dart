@@ -14,14 +14,14 @@ Future<void> signUpUser(String name, String email, String pass, String cnic,
 
   try {
     final Map<dynamic, dynamic> data = {
-      "userName":name,
-      "userEmail":email,
-      "userPhoneNumber":phone,
-      "userCity":city,
-      "userCNIC":cnic,
-      "userAddress":address,
-      "userPassword":pass,
-      "userType":userType
+      "userName": name,
+      "userEmail": email,
+      "userPhoneNumber": phone,
+      "userCity": city,
+      "userCNIC": cnic,
+      "userAddress": address,
+      "userPassword": pass,
+      "userType": userType
     };
     final response = await http.post(
       url,
@@ -97,6 +97,7 @@ class _SignUpPageState extends State<SignUpPage> {
   TextEditingController address = TextEditingController();
   TextEditingController password = TextEditingController();
   TextEditingController confirmPassword = TextEditingController();
+  TextEditingController image = TextEditingController();
 
   final nameValidator = ffv.MultiValidator([
     ffv.RequiredValidator(errorText: 'name is required'),
@@ -297,13 +298,27 @@ class _SignUpPageState extends State<SignUpPage> {
                       onPressed: () {
                         if (_signup() == true) {
                           otp = Random().nextInt(1000000) + 100000;
-                          print('*******************************************************************OTP is: $otp*******************************************************************');
-                          print('*******************************************************************UserType is: ${widget.userType}*******************************************************************');
+                          print(
+                              '*******************************************************************OTP is: $otp*******************************************************************');
+                          print(
+                              '*******************************************************************UserType is: ${widget.userType}*******************************************************************');
                           sendEmail(email.text, otp);
-                          final result = Navigator.pushNamed(context, '/pin_code', arguments: {'userType': widget.userType, 'otp': otp.toString()});
+                          final result = Navigator.pushNamed(
+                              context, '/pin_code', arguments: {
+                            'userType': widget.userType,
+                            'otp': otp.toString()
+                          });
                           result.then((value) {
                             if (value == 'success') {
-                              signUpUser(name.text, email.text, password.text, cnic.text, city.text, address.text, phone.text, widget.userType);
+                              signUpUser(
+                                  name.text,
+                                  email.text,
+                                  password.text,
+                                  cnic.text,
+                                  city.text,
+                                  address.text,
+                                  phone.text,
+                                  widget.userType);
                               Navigator.pop(context);
                             }
                           });

@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: '/',
+      initialRoute: '/home_page_owner',
       onGenerateRoute: (settings) {
         if (settings.name == '/log_in') {
           final args = settings.arguments as Map<String, String>? ?? {};
@@ -67,21 +67,21 @@ class MyApp extends StatelessWidget {
         '/reservation_page': (context) => ReservationPage(),
         '/select_time': (context) => SelectTime(),
         '/subscription': (context) => Subscription(),
-
         '/payment_page': (context) {
-          final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+          final args = ModalRoute.of(context)!.settings.arguments
+              as Map<String, dynamic>;
           final price = args['price'] as int;
           return JazzCash(price: price);
         },
         '/select_module': (context) => SelectModule(),
         '/register_parking_area': (context) => RegisterParkingArea(),
         '/home_page_owner': (context) => MyHomePageOwner(),
-        '/car_registration':(context)=>ParkingRegistration(),
-        '/feedback_page':(context)=>FeedbackPage(),
-        '/home_page_admin':(context)=>MyHomePageAdmin(),
-        '/approve_area':(context)=>ApproveArea(),
-        '/manage_subscriptions':(context)=>ManageSubscriptions(),
-        '/manage_parking_area':(context)=>ManageParkingArea(),
+        '/car_registration': (context) => ParkingRegistration(),
+        '/feedback_page': (context) => FeedbackPage(),
+        '/home_page_admin': (context) => MyHomePageAdmin(),
+        '/approve_area': (context) => ApproveArea(),
+        '/manage_subscriptions': (context) => ManageSubscriptions(),
+        '/manage_parking_area': (context) => ManageParkingArea(),
       },
     );
   }

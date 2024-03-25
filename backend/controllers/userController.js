@@ -14,7 +14,7 @@ const bcrypt = require('bcrypt'); // Import bcrypt for password comparison
 exports.createUser = async (req, res) => {
   try {
 
-    const { userName, userEmail, userPhoneNumber, userCity, userCNIC, userAddress, userPassword, userType } = req.body;
+    const { userName, userEmail, userPhoneNumber, userCity, userCNIC, userAddress, userPassword, userType, userImage } = req.body;
 
     // Check if the user already exists
     const existingUser = await Users.findOne({ where: { userEmail } });
@@ -37,7 +37,8 @@ exports.createUser = async (req, res) => {
       userCNIC,
       userAddress,
       userPassword: hashedPassword,
-      userType
+      userType,
+      userImage
     });
 
     res.json(newUser);
@@ -60,7 +61,7 @@ exports.getAllUsers = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
   try {
-    const { userName, userEmail, userPhoneNumber, userCity, userCNIC, userAddress, userPassword, userType } = req.body;
+    const { userName, userEmail, userPhoneNumber, userCity, userCNIC, userAddress, userPassword, userType, userImage } = req.body;
 
     // Find the user by email
     const user = await Users.findOne({ where: { userEmail } });
@@ -81,7 +82,8 @@ exports.updateUser = async (req, res) => {
       userCNIC,
       userAddress,
       userPassword: hashedPassword,
-      userType
+      userType,
+      userImage
     });
     
     res.json(user);

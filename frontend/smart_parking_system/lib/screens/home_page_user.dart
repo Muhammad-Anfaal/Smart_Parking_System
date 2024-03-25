@@ -97,8 +97,8 @@ class _MyHomePageUserState extends State<MyHomePageUser> {
                         // Navigate to subscription page when item is clicked
                         Navigator.pushNamed(context, '/car_registration');
                       }),
-                      SizedBox(height: 0.0),
-                      SizedBox(height: 0.0),
+                      const SizedBox(height: 0.0),
+                      const SizedBox(height: 0.0),
                     ],
                   ),
                 ),
