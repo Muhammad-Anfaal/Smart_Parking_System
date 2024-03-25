@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
-import 'subscription.dart';
 
 class JazzCash extends StatefulWidget {
   final int price;
@@ -17,16 +16,53 @@ class JazzCash extends StatefulWidget {
 class _JazzCashState extends State<JazzCash> {
   var responsePrice;
   bool isLoading = false;
+  String? selectedScheme;
+  TextEditingController cardNumberController = TextEditingController();
+  TextEditingController cvcController = TextEditingController();
 
   void payment() async {
     setState(() {
       isLoading = true;
     });
 
+    // Show confirmation dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Confirm Payment"),
+          content: Text("Are you sure you want to proceed with the payment?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                // Start payment processing
+                startPayment();
+              },
+              child: Text("Yes"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                // Cancel payment
+                setState(() {
+                  isLoading = false;
+                });
+              },
+              child: Text("No"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void startPayment() async {
+    // Payment processing logic
     var digest;
     String dateandtime = DateFormat("yyyyMMddHHmmss").format(DateTime.now());
-    String dexpiredate =
-    DateFormat("yyyyMMddHHmmss").format(DateTime.now().add(const Duration(days: 1)));
+    String dexpiredate = DateFormat("yyyyMMddHHmmss")
+        .format(DateTime.now().add(const Duration(days: 1)));
     String tre = "T" + dateandtime;
     String pp_Amount = widget.price.toString(); // Use the price here
     String pp_BillReference = "billRef";
@@ -80,7 +116,8 @@ class _JazzCashState extends State<JazzCash> {
     var bytes = utf8.encode(superdata);
     var hmacSha256 = Hmac(sha256, key);
     Digest sha256Result = hmacSha256.convert(bytes);
-    String url = 'https://sandbox.jazzcash.com.pk/ApplicationAPI/API/Payment/DoTransaction';
+    String url =
+        'https://sandbox.jazzcash.com.pk/ApplicationAPI/API/Payment/DoTransaction';
 
     var response = await http.post(Uri.parse(url), body: {
       "pp_Version": pp_ver,
@@ -100,45 +137,95 @@ class _JazzCashState extends State<JazzCash> {
       "ppmpf_1": "4456733833993"
     });
 
-    print("response=>");
-    print(response.body);
-    var res = await response.body;
-
 
     // Show toast message for successful payment
     if (response.statusCode == 200) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Payment successful: PKR $pp_Amount'),
-          backgroundColor: Colors.green,
-        ),
-      );
+      // Fluttertoast.showToast(
+      //   msg: 'Payment successful: PKR $pp_Amount',
+      //   toastLength: Toast.LENGTH_SHORT,
+      //   gravity: ToastGravity.CENTER,
+      //   backgroundColor: Colors.green,
+      //   textColor: Colors.white,
+      // );
 
-      // Navigate to main screen after successful payment
-      Navigator.pushReplacementNamed(context, '/main');
+      // Navigate to main screen after successful payment after 3 seconds
+      await Future.delayed(Duration(seconds: 3));
+      Navigator.pushReplacementNamed(context, '/home_page_user');
     }
+
+    setState(() {
+      isLoading = true;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Payment Screen',
+          'Payment',
           style: TextStyle(fontSize: 24, color: Colors.white),
         ),
         centerTitle: true,
-      ),
-      body
-          : Container(
-        child: Center(
-          child: MaterialButton(
-            onPressed: () {
-              payment();
-            },
-            child: Text('Complete Payment'),
+        backgroundColor: Colors.black, // Setting navbar color to black
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(20), // Setting rounded corners
           ),
+        ),
+      ),
+      body: Container(
+        padding: EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            DropdownButtonFormField<String>(
+              value: selectedScheme,
+              onChanged: (value) {
+                setState(() {
+                  selectedScheme = value;
+                });
+              },
+              decoration: InputDecoration(
+                labelText: 'Select Scheme',
+                border: OutlineInputBorder(),
+              ),
+              items: ['Master Card', 'Visa'].map((scheme) {
+                return DropdownMenuItem<String>(
+                  value: scheme,
+                  child: Text(scheme),
+                );
+              }).toList(),
+            ),
+            SizedBox(height: 20),
+            TextFormField(
+              controller: cardNumberController,
+              decoration: InputDecoration(
+                labelText: 'Card Number',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            SizedBox(height: 20),
+            TextFormField(
+              controller: cvcController,
+              decoration: InputDecoration(
+                labelText: 'CVC',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                payment();
+              },
+              child: Text('Complete Payment'),
+            ),
+            SizedBox(height: 20),
+            if (isLoading)
+              Center(
+                child: CircularProgressIndicator(),
+              ),
+          ],
         ),
       ),
     );

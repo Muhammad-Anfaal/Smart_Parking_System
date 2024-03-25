@@ -76,26 +76,21 @@ class _MyHomePageUserState extends State<MyHomePageUser> {
                         // Navigate to ReservationPage when item is clicked
                         Navigator.pushNamed(context, '/reservation_page');
                       }),
-                      itemDashboard('Register Area', CupertinoIcons.map_fill,
-                          Colors.green, () {
-                        // Navigate to subscription page when item is clicked
-                        Navigator.pushNamed(context, '/subscription');
-                      }),
+                      itemDashboard('Subscription', CupertinoIcons.person_2_alt,
+                          Colors.brown, () {
+                            // Navigate to subscription page when item is clicked
+                            Navigator.pushNamed(context, '/subscription');
+                          }),
+                      itemDashboard('Car Details', CupertinoIcons.car_detailed,
+                          Colors.indigo, () {
+                            // Navigate to subscription page when item is clicked
+                            Navigator.pushNamed(context, '/car_registration');
+                          }),
                       itemDashboard(
                           'Feedback', CupertinoIcons.mail_solid, Colors.purple,
                           () {
                         // Navigate to subscription page when item is clicked
                         Navigator.pushNamed(context, '/feedback_page');
-                      }),
-                      itemDashboard('Subscription', CupertinoIcons.person_2_alt,
-                          Colors.brown, () {
-                        // Navigate to subscription page when item is clicked
-                        Navigator.pushNamed(context, '/subscription');
-                      }),
-                      itemDashboard('Car Details', CupertinoIcons.car_detailed,
-                          Colors.indigo, () {
-                        // Navigate to subscription page when item is clicked
-                        Navigator.pushNamed(context, '/car_registration');
                       }),
                       const SizedBox(height: 0.0),
                       const SizedBox(height: 0.0),

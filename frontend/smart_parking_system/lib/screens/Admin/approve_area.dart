@@ -18,7 +18,7 @@ class _ApproveAreaState extends State<ApproveArea> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(60), // specify the desired height of the AppBar
+        preferredSize: Size.fromHeight(60),
         child: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -28,9 +28,12 @@ class _ApproveAreaState extends State<ApproveArea> {
             ),
           ),
           child: AppBar(
-            backgroundColor: Colors.transparent, // Making AppBar background transparent
-            elevation: 0, // Removing AppBar elevation
-            title: Text('Approve Parking Areas', style: TextStyle(fontSize: 20,color: Colors.white, fontStyle: FontStyle.italic)), // You can adjust the font size as needed
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            title: Text(
+              'Approve Parking Areas',
+              style: TextStyle(fontSize: 20, color: Colors.white, fontStyle: FontStyle.italic),
+            ),
           ),
         ),
       ),
@@ -83,14 +86,14 @@ class _ApproveAreaState extends State<ApproveArea> {
                         icon: Icon(Icons.check),
                         color: Colors.green,
                         onPressed: () {
-                          approveRequest(index);
+                          approveRequest(context, index);
                         },
                       ),
                       IconButton(
                         icon: Icon(Icons.close),
                         color: Colors.red,
                         onPressed: () {
-                          rejectRequest(index);
+                          rejectRequest(context, index);
                         },
                       ),
                     ],
@@ -104,32 +107,26 @@ class _ApproveAreaState extends State<ApproveArea> {
     );
   }
 
-  void approveRequest(int index) {
-    setState(() {
-      String name = pendingRequests[index].name;
-      pendingRequests.removeAt(index);
-      showConfirmationMessage('Approved: $name');
-    });
+  void approveRequest(BuildContext context, int index) {
+    String name = pendingRequests[index].name;
+    pendingRequests.removeAt(index);
+    showConfirmationSnackbar(context, 'Approved: $name');
   }
 
-  void rejectRequest(int index) {
-    setState(() {
-      String name = pendingRequests[index].name;
-      pendingRequests.removeAt(index);
-      showConfirmationMessage('Rejected: $name');
-    });
+  void rejectRequest(BuildContext context, int index) {
+    String name = pendingRequests[index].name;
+    pendingRequests.removeAt(index);
+    showConfirmationSnackbar(context, 'Rejected: $name');
   }
 
-  void showConfirmationMessage(String message) {
-    // Fluttertoast.showToast(
-    //   msg: message,
-    //   toastLength: Toast.LENGTH_SHORT,
-    //   gravity: ToastGravity.BOTTOM,
-    //   timeInSecForIosWeb: 1,
-    //   backgroundColor: Colors.grey[800]!,
-    //   textColor: Colors.white,
-    //   fontSize: 16.0,
-    // );
+  void showConfirmationSnackbar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.grey[800],
+        duration: Duration(seconds: 2),
+      ),
+    );
   }
 }
 
