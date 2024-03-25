@@ -11,27 +11,35 @@ class Subscription extends StatefulWidget {
 class _SubscriptionState extends State<Subscription> {
   DateTime? fromDate;
   DateTime? toDate;
+  Color? selectedColor;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        elevation: 0, // Remove app bar elevation
-        title: Text(''), // Remove app bar title
+        elevation: 0,
+        backgroundColor: Colors.black,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(20), // Rounded corners
+          ),
+        ),
+        title: Text(
+          'Subscription',
+          style: TextStyle(color: Colors.white), // White text color
+        ),
+        iconTheme: IconThemeData(color: Colors.white), // Change back arrow color
       ),
       body: Center(
         child: SingleChildScrollView(
           child: Container(
-            width: MediaQuery.of(context).size.width * 0.8, // Set width of the main container
+            width: MediaQuery.of(context).size.width * 0.8,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20.0),
-                  child: Text(
-                    'Subscription',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+
                 ),
                 SubscriptionGroupCard(
                   subscriptions: [
@@ -39,25 +47,28 @@ class _SubscriptionState extends State<Subscription> {
                       setState(() {
                         fromDate = DateTime.now();
                         toDate = DateTime.now().add(Duration(days: 30));
+                        selectedColor = Colors.green;
                       });
                     }),
                     SubscriptionCard(duration: '2 Months', price: 2000, color: Colors.orange, onTap: () {
                       setState(() {
                         fromDate = DateTime.now();
                         toDate = DateTime.now().add(Duration(days: 60));
+                        selectedColor = Colors.orange;
                       });
                     }),
                     SubscriptionCard(duration: '3 Months', price: 3000, color: Colors.red, onTap: () {
                       setState(() {
                         fromDate = DateTime.now();
                         toDate = DateTime.now().add(Duration(days: 90));
+                        selectedColor = Colors.red;
                       });
                     }),
                   ],
                 ),
                 SizedBox(height: 20),
                 if (fromDate != null && toDate != null)
-                  PaymentCard(fromDate: fromDate!, toDate: toDate!, price: 1000), // Pass the price here
+                  PaymentCard(fromDate: fromDate!, toDate: toDate!, price: 1000, color: selectedColor),
               ],
             ),
           ),
@@ -109,7 +120,7 @@ class SubscriptionCard extends StatelessWidget {
     return Card(
       color: color,
       child: SizedBox(
-        height: 80, // Set the height of the ListTile
+        height: 80,
         child: ListTile(
           title: Text('$duration Subscription', style: TextStyle(color: Colors.white)),
           subtitle: Row(
@@ -136,16 +147,16 @@ class PaymentCard extends StatelessWidget {
   final DateTime fromDate;
   final DateTime toDate;
   final int price;
+  final Color? color;
 
-  PaymentCard({required this.fromDate, required this.toDate, required this.price}); // Update constructor
+  PaymentCard({required this.fromDate, required this.toDate, required this.price, this.color});
 
   @override
   Widget build(BuildContext context) {
-    // Calculate duration in months
     int durationInMonths = toDate.month - fromDate.month + 12 * (toDate.year - fromDate.year);
 
     return Card(
-      color: Colors.blue, // Set card color
+      color: color,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -159,11 +170,11 @@ class PaymentCard extends StatelessWidget {
               children: [
                 Text(
                   'From: ${fromDate.toString().substring(0, 16)}',
-                  style: TextStyle(color: Colors.white), // Set text color to white
+                  style: TextStyle(color: Colors.white),
                 ),
                 Text(
-                  'To: ${toDate.toString().substring(0, 16)}', // Format the date string
-                  style: TextStyle(color: Colors.white), // Set text color to white
+                  'To: ${toDate.toString().substring(0, 16)}',
+                  style: TextStyle(color: Colors.white),
                 ),
                 SizedBox(height: 10),
                 Row(
@@ -171,11 +182,11 @@ class PaymentCard extends StatelessWidget {
                   children: [
                     Text(
                       'Duration:',
-                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white), // Set text color to white
+                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
                     ),
                     Text(
-                      '$durationInMonths months', // Display duration in months
-                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white), // Set text color to white
+                      '$durationInMonths months',
+                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
                     ),
                   ],
                 ),
@@ -186,8 +197,16 @@ class PaymentCard extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/payment_page',
-                    arguments: {'price': price}); // Pass price as an argument
+                Navigator.pushNamed(
+                  context,
+                  '/payment_page',
+                  arguments: {
+                    'price': price,
+                    'fromDate': fromDate,
+                    'toDate': toDate,
+                    'durationInMonths': durationInMonths,
+                  },
+                );
               },
               style: ElevatedButton.styleFrom(
                 primary: Colors.white,

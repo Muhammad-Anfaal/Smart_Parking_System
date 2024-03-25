@@ -166,6 +166,7 @@ class _JazzCashState extends State<JazzCash> {
           'Payment',
           style: TextStyle(fontSize: 24, color: Colors.white),
         ),
+        iconTheme: IconThemeData(color: Colors.white),
         centerTitle: true,
         backgroundColor: Colors.black, // Setting navbar color to black
         shape: RoundedRectangleBorder(

@@ -31,7 +31,7 @@ class _MyHomePageUserState extends State<MyHomePageUser> {
                     const SizedBox(height: 50),
                     ListTile(
                       contentPadding:
-                          const EdgeInsets.symmetric(horizontal: 30),
+                      const EdgeInsets.symmetric(horizontal: 30),
                       title: Text(
                         'Hello Awab!',
                         style: Theme.of(context)
@@ -46,9 +46,24 @@ class _MyHomePageUserState extends State<MyHomePageUser> {
                             .titleMedium
                             ?.copyWith(color: Colors.white54),
                       ),
-                      trailing: const CircleAvatar(
-                        radius: 30,
-                        backgroundImage: AssetImage('assets/images/awab5.jpg'),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.notifications),
+                            color: Colors.white,
+                            onPressed: () {
+                              // Navigate to notification screen
+                              Navigator.pushNamed(
+                                  context, '/notification');
+                            },
+                          ),
+                          CircleAvatar(
+                            radius: 30,
+                            backgroundImage:
+                            AssetImage('assets/images/awab5.jpg'),
+                          ),
+                        ],
                       ),
                     ),
                     const SizedBox(height: 30)
@@ -62,7 +77,7 @@ class _MyHomePageUserState extends State<MyHomePageUser> {
                   decoration: const BoxDecoration(
                       color: Colors.white,
                       borderRadius:
-                          BorderRadius.only(topLeft: Radius.circular(200))),
+                      BorderRadius.only(topLeft: Radius.circular(200))),
                   child: GridView.count(
                     padding: EdgeInsets.zero,
                     shrinkWrap: true,
@@ -73,9 +88,9 @@ class _MyHomePageUserState extends State<MyHomePageUser> {
                     children: [
                       itemDashboard('Reserve Slot', CupertinoIcons.calendar,
                           Colors.deepOrange, () {
-                        // Navigate to ReservationPage when item is clicked
-                        Navigator.pushNamed(context, '/reservation_page');
-                      }),
+                            // Navigate to ReservationPage when item is clicked
+                            Navigator.pushNamed(context, '/reservation_page');
+                          }),
                       itemDashboard('Subscription', CupertinoIcons.person_2_alt,
                           Colors.brown, () {
                             // Navigate to subscription page when item is clicked
@@ -84,7 +99,8 @@ class _MyHomePageUserState extends State<MyHomePageUser> {
                       itemDashboard('Car Details', CupertinoIcons.car_detailed,
                           Colors.indigo, () {
                             // Navigate to subscription page when item is clicked
-                            Navigator.pushNamed(context, '/car_registration');
+                            Navigator.pushNamed(
+                                context, '/car_registration');
                           }),
                       itemDashboard(
                           'Feedback', CupertinoIcons.mail_solid, Colors.purple,
@@ -106,7 +122,7 @@ class _MyHomePageUserState extends State<MyHomePageUser> {
   }
 
   itemDashboard(String title, IconData iconData, Color background,
-          VoidCallback onTap) =>
+      VoidCallback onTap) =>
       GestureDetector(
         onTap: onTap,
         child: Container(
