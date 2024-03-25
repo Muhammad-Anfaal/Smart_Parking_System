@@ -45,10 +45,15 @@ class ElevatedCardExample extends StatefulWidget {
 }
 
 class _ElevatedCardExampleState extends State<ElevatedCardExample> {
+  final _formKey = GlobalKey<FormState>();
+
   late TextEditingController nameController;
   late TextEditingController capacityController;
   late TextEditingController locationController;
   late String imagePath;
+  String? nameError;
+  String? capacityError;
+  String? locationError;
 
   @override
   void initState() {
@@ -64,21 +69,55 @@ class _ElevatedCardExampleState extends State<ElevatedCardExample> {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
-      final byte = pickedFile.readAsBytes;
-      print(byte);
+      final imageBytes = await pickedFile.readAsBytes();
+      print(imageBytes);
 
       setState(() {
         imagePath = pickedFile.path;
         print(pickedFile.path);
       });
     }
+  }
 
-    // if (pickedFile != null) {
-    //   // Use the imageBytes as needed
-    //   setState(() {
-    //     imagePath = pickedFile.path;
-    //   });
-    // }
+  void _validateAndSubmit() {
+    setState(() {
+      nameError = _nameValidator(nameController.text);
+      capacityError = _capacityValidator(capacityController.text);
+      locationError = _locationValidator(locationController.text);
+    });
+
+    if (nameError == null && capacityError == null && locationError == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Wait for approval'),
+        ),
+      );
+    }
+  }
+
+  String? _nameValidator(String value) {
+    if (value.isEmpty) {
+      return 'Parking Area Name is required';
+    }
+    return null;
+  }
+
+  String? _capacityValidator(String value) {
+    if (value.isEmpty) {
+      return 'Capacity is required';
+    }
+    final capacity = int.tryParse(value);
+    if (capacity == null) {
+      return 'Invalid capacity';
+    }
+    return null;
+  }
+
+  String? _locationValidator(String value) {
+    if (value.isEmpty) {
+      return 'Location is required';
+    }
+    return null;
   }
 
   @override
@@ -119,6 +158,14 @@ class _ElevatedCardExampleState extends State<ElevatedCardExample> {
                     ),
                   ),
                 ),
+                if (nameError != null)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Text(
+                      nameError!,
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ),
                 const SizedBox(height: 20),
                 const Align(
                   alignment: Alignment.centerLeft,
@@ -138,12 +185,21 @@ class _ElevatedCardExampleState extends State<ElevatedCardExample> {
                   ),
                   child: TextFormField(
                     controller: capacityController,
+                    keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.all(10),
                     ),
                   ),
                 ),
+                if (capacityError != null)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Text(
+                      capacityError!,
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ),
                 const SizedBox(height: 20),
                 const Align(
                   alignment: Alignment.centerLeft,
@@ -169,6 +225,14 @@ class _ElevatedCardExampleState extends State<ElevatedCardExample> {
                     ),
                   ),
                 ),
+                if (locationError != null)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Text(
+                      locationError!,
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ),
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _pickImage,
@@ -176,18 +240,13 @@ class _ElevatedCardExampleState extends State<ElevatedCardExample> {
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: () {
-                    // Add your submit logic here
-                    // You can access the entered values using:
-                    // nameController.text, capacityController.text, locationController.text
-                    // and imagePath for the selected image path.
-                  },
+                  onPressed: _validateAndSubmit,
                   child: const Text('Submit'),
                 ),
                 const SizedBox(height: 40),
                 if (imagePath.isNotEmpty)
-                  Image.network(
-                    imagePath,
+                  Image.file(
+                    File(imagePath),
                     width: MediaQuery.of(context).size.width * 0.75,
                     fit: BoxFit.cover,
                   ),
@@ -198,4 +257,8 @@ class _ElevatedCardExampleState extends State<ElevatedCardExample> {
       ),
     );
   }
+}
+
+void main() {
+  runApp(RegisterParkingArea());
 }
