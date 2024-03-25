@@ -131,21 +131,19 @@ class SubscriptionCard extends StatelessWidget {
     );
   }
 }
-
 class PaymentCard extends StatelessWidget {
   final DateTime fromDate;
   final DateTime toDate;
   final int price;
 
-  PaymentCard({required this.fromDate, required this.toDate, required this.price}); // Update constructor
+  PaymentCard({required this.fromDate, required this.toDate, required this.price});
 
   @override
   Widget build(BuildContext context) {
-    // Calculate duration in months
     int durationInMonths = toDate.month - fromDate.month + 12 * (toDate.year - fromDate.year);
 
     return Card(
-      color: Colors.blue, // Set card color
+      color: Colors.blue,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -159,11 +157,11 @@ class PaymentCard extends StatelessWidget {
               children: [
                 Text(
                   'From: ${fromDate.toString().substring(0, 16)}',
-                  style: TextStyle(color: Colors.white), // Set text color to white
+                  style: TextStyle(color: Colors.white),
                 ),
                 Text(
-                  'To: ${toDate.toString().substring(0, 16)}', // Format the date string
-                  style: TextStyle(color: Colors.white), // Set text color to white
+                  'To: ${toDate.toString().substring(0, 16)}',
+                  style: TextStyle(color: Colors.white),
                 ),
                 SizedBox(height: 10),
                 Row(
@@ -171,11 +169,11 @@ class PaymentCard extends StatelessWidget {
                   children: [
                     Text(
                       'Duration:',
-                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white), // Set text color to white
+                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
                     ),
                     Text(
-                      '$durationInMonths months', // Display duration in months
-                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white), // Set text color to white
+                      '$durationInMonths months',
+                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
                     ),
                   ],
                 ),
@@ -186,8 +184,17 @@ class PaymentCard extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/payment_page',
-                    arguments: {'price': price}); // Pass price as an argument
+                // Navigate to the payment page and pass subscription details as arguments
+                Navigator.pushNamed(
+                  context,
+                  '/payment_page',
+                  arguments: {
+                    'price': price,
+                    'fromDate': fromDate,
+                    'toDate': toDate,
+                    'durationInMonths': durationInMonths,
+                  },
+                );
               },
               style: ElevatedButton.styleFrom(
                 primary: Colors.white,
