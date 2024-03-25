@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 class RegisterParkingArea extends StatelessWidget {
   const RegisterParkingArea({Key? key}) : super(key: key);
@@ -63,11 +64,21 @@ class _ElevatedCardExampleState extends State<ElevatedCardExample> {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
+      final byte = pickedFile.readAsBytes;
+      print(byte);
+
       setState(() {
         imagePath = pickedFile.path;
-        print(imagePath);
+        print(pickedFile.path);
       });
     }
+
+    // if (pickedFile != null) {
+    //   // Use the imageBytes as needed
+    //   setState(() {
+    //     imagePath = pickedFile.path;
+    //   });
+    // }
   }
 
   @override
@@ -77,8 +88,8 @@ class _ElevatedCardExampleState extends State<ElevatedCardExample> {
       child: Card(
         color: Colors.lightBlue,
         child: SizedBox(
-          width: 350,
-          height: MediaQuery.of(context).size.height * 0.8,
+          width: MediaQuery.of(context).size.width * 0.8,
+          height: MediaQuery.of(context).size.height * 0.87,
           child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -95,7 +106,7 @@ class _ElevatedCardExampleState extends State<ElevatedCardExample> {
                   ),
                 ),
                 Container(
-                  width: 300,
+                  width: MediaQuery.of(context).size.width * 0.73,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8.0),
                     color: Colors.white,
@@ -120,7 +131,7 @@ class _ElevatedCardExampleState extends State<ElevatedCardExample> {
                   ),
                 ),
                 Container(
-                  width: 300,
+                  width: MediaQuery.of(context).size.width * 0.73,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8.0),
                     color: Colors.white,
@@ -145,7 +156,7 @@ class _ElevatedCardExampleState extends State<ElevatedCardExample> {
                   ),
                 ),
                 Container(
-                  width: 300,
+                  width: MediaQuery.of(context).size.width * 0.73,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8.0),
                     color: Colors.white,
@@ -173,10 +184,11 @@ class _ElevatedCardExampleState extends State<ElevatedCardExample> {
                   },
                   child: const Text('Submit'),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 40),
                 if (imagePath.isNotEmpty)
                   Image.network(
                     imagePath,
+                    width: MediaQuery.of(context).size.width * 0.75,
                     fit: BoxFit.cover,
                   ),
               ],
