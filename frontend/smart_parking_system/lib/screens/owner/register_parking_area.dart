@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 class RegisterParkingArea extends StatelessWidget {
   const RegisterParkingArea({Key? key}) : super(key: key);
@@ -63,11 +64,21 @@ class _ElevatedCardExampleState extends State<ElevatedCardExample> {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
+      final byte = pickedFile.readAsBytes;
+      print(byte);
+
       setState(() {
         imagePath = pickedFile.path;
-        print(imagePath);
+        print(pickedFile.path);
       });
     }
+
+    // if (pickedFile != null) {
+    //   // Use the imageBytes as needed
+    //   setState(() {
+    //     imagePath = pickedFile.path;
+    //   });
+    // }
   }
 
   @override
