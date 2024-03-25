@@ -3,11 +3,11 @@ const router = express.Router();
 const carController = require('../controllers/carController');
 
 // Register a new car
-router.post('/cars/:userId', carController.registerCar);
+router.post('/registercar', carController.registerCar);
 
 // Remove a car
-router.delete('/users/:userId/cars/:carId', carController.removeCar);
+router.delete('/deletecar', carController.removeCar);
 
 // Fetch all cars of a user
-router.get('/users/:userId/cars', carController.getUserCars);
+router.get('/allcars', carController.getUserCars);
 module.exports = router;
