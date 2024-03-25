@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+String ipAddress = '127.0.0.1'; // for browser
+final url = Uri.parse('http://$ipAddress:3000/user/');
+
 class ParkingArea {
   final String imageName;
   final String parkingAreaName;
