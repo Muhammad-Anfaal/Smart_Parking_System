@@ -77,8 +77,8 @@ class _ElevatedCardExampleState extends State<ElevatedCardExample> {
       child: Card(
         color: Colors.lightBlue,
         child: SizedBox(
-          width: 350,
-          height: MediaQuery.of(context).size.height * 0.8,
+          width: MediaQuery.of(context).size.width * 0.8,
+          height: MediaQuery.of(context).size.height * 0.87,
           child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -95,7 +95,7 @@ class _ElevatedCardExampleState extends State<ElevatedCardExample> {
                   ),
                 ),
                 Container(
-                  width: 300,
+                  width: MediaQuery.of(context).size.width * 0.73,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8.0),
                     color: Colors.white,
@@ -120,7 +120,7 @@ class _ElevatedCardExampleState extends State<ElevatedCardExample> {
                   ),
                 ),
                 Container(
-                  width: 300,
+                  width: MediaQuery.of(context).size.width * 0.73,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8.0),
                     color: Colors.white,
@@ -145,7 +145,7 @@ class _ElevatedCardExampleState extends State<ElevatedCardExample> {
                   ),
                 ),
                 Container(
-                  width: 300,
+                  width: MediaQuery.of(context).size.width * 0.73,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8.0),
                     color: Colors.white,
@@ -173,10 +173,11 @@ class _ElevatedCardExampleState extends State<ElevatedCardExample> {
                   },
                   child: const Text('Submit'),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 40),
                 if (imagePath.isNotEmpty)
                   Image.network(
                     imagePath,
+                    width: MediaQuery.of(context).size.width * 0.75,
                     fit: BoxFit.cover,
                   ),
               ],
