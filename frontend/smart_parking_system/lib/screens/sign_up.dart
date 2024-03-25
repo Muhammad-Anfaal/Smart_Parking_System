@@ -5,34 +5,24 @@ import 'package:form_field_validator/form_field_validator.dart' as ffv;
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 import 'package:http/http.dart' as http;
-import 'package:rflutter_alert/rflutter_alert.dart';
 
 Future<void> signUpUser(String name, String email, String pass, String cnic,
     String city, String address, String phone, String userType) async {
-  // final url = Uri.parse('http://10.0.2.2:3000/user/createusers'); // for emulator
-  final url = Uri.parse('http://127.0.0.1:3000/user/createusers');
-  final url2 = Uri.parse('http://127.0.0.1:3000/user/users');
+  // String ipAddress = '10.0.2.2'; // for emulator
+  String ipAddress = '127.0.0.1'; // for browser
+  final url = Uri.parse('http://$ipAddress:3000/user/createusers');
 
   try {
     final Map<dynamic, dynamic> data = {
-      // 'userName': name,
-      // 'userEmail': email,
-      // 'userPhoneNumber': phone,
-      // 'userCity': city,
-      // 'userCNIC': cnic,
-      // 'userAddress': address,
-      // 'userType': userType,
-      // 'userPassword': pass,
-      "userName":"Abdullah Tahir",
-      "userEmail":"abd@gmail.com",
-      "userPhoneNumber":"11111111111",
-      "userCity":"faisalabad",
-      "userCNIC":"1111111111111",
-      "userAddress":"saeed colony No.2, new garden block",
-      "userType":"user",
-      "userPassword":"abcd@12345"
+      "userName": name,
+      "userEmail": email,
+      "userPhoneNumber": phone,
+      "userCity": city,
+      "userCNIC": cnic,
+      "userAddress": address,
+      "userPassword": pass,
+      "userType": userType
     };
-    print('int');
     final response = await http.post(
       url,
       body: jsonEncode(data),
@@ -107,7 +97,7 @@ class _SignUpPageState extends State<SignUpPage> {
   TextEditingController address = TextEditingController();
   TextEditingController password = TextEditingController();
   TextEditingController confirmPassword = TextEditingController();
-  TextEditingController userOTP = TextEditingController();
+  TextEditingController image = TextEditingController();
 
   final nameValidator = ffv.MultiValidator([
     ffv.RequiredValidator(errorText: 'name is required'),
@@ -163,23 +153,6 @@ class _SignUpPageState extends State<SignUpPage> {
 
   @override
   Widget build(BuildContext context) {
-    const focusedBorderColor = Color.fromRGBO(23, 171, 144, 1);
-    const fillColor = Color.fromRGBO(243, 246, 249, 0);
-    const borderColor = Color.fromRGBO(23, 171, 144, 0.4);
-
-    // final defaultPinTheme = PinTheme(
-    //   width: 56,
-    //   height: 56,
-    //   textStyle: const TextStyle(
-    //     fontSize: 22,
-    //     color: Color.fromRGBO(30, 60, 87, 1),
-    //   ),
-    //   decoration: BoxDecoration(
-    //     borderRadius: BorderRadius.circular(19),
-    //     border: Border.all(color: borderColor),
-    //   ),
-    // );
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blue[600],
@@ -323,99 +296,33 @@ class _SignUpPageState extends State<SignUpPage> {
                         ),
                       ),
                       onPressed: () {
-                        signUpUser(
-                            name.text,
-                            email.text,
-                            password.text,
-                            cnic.text,
-                            city.text,
-                            address.text,
-                            phone.text,
-                            widget.userType);
-                        // if (_signup() == true) {
-                        //   otp = Random().nextInt(1000000) + 100000;
-                        //   print('OTP is: ${otp}');
-                        //   sendEmail(email.text, otp);
-                        //   Alert(
-                        //       context: context,
-                        //       title: "OTP VERIFICATION",
-                        //       content: Column(
-                        //         children: [
-                        //           const SizedBox(height: 10.0),
-                        //           Pinput(
-                        //             length: 6,
-                        //             controller: userOTP,
-                        //             focusNode: FocusNode(),
-                        //             androidSmsAutofillMethod:
-                        //                 AndroidSmsAutofillMethod
-                        //                     .smsUserConsentApi,
-                        //             listenForMultipleSmsOnAndroid: true,
-                        //             defaultPinTheme: defaultPinTheme,
-                        //             separatorBuilder: (index) =>
-                        //                 const SizedBox(width: 8),
-                        //             hapticFeedbackType:
-                        //                 HapticFeedbackType.lightImpact,
-                        //             onCompleted: (pin) {
-                        //               if (userOTP.text == pin) {
-                        //                 print('acha');
-                        //                 signUpUser(
-                        //                     name.text,
-                        //                     email.text,
-                        //                     password.text,
-                        //                     cnic.text,
-                        //                     city.text,
-                        //                     address.text,
-                        //                     phone.text,
-                        //                     widget.userType);
-                        //                 Navigator.pop(context);
-                        //                 Navigator.pop(context);
-                        //               } else {
-                        //                 Alert(
-                        //                   context: context,
-                        //                   title: '',
-                        //                   desc: 'Invalid OTP.',
-                        //                 ).show();
-                        //               }
-                        //             },
-                        //             cursor: Column(
-                        //               mainAxisAlignment: MainAxisAlignment.end,
-                        //               children: [
-                        //                 Container(
-                        //                   margin:
-                        //                       const EdgeInsets.only(bottom: 9),
-                        //                   width: 22,
-                        //                   height: 1,
-                        //                   color: focusedBorderColor,
-                        //                 ),
-                        //               ],
-                        //             ),
-                        //             focusedPinTheme: defaultPinTheme.copyWith(
-                        //               decoration:
-                        //                   defaultPinTheme.decoration!.copyWith(
-                        //                 borderRadius: BorderRadius.circular(8),
-                        //                 border: Border.all(
-                        //                     color: focusedBorderColor),
-                        //               ),
-                        //             ),
-                        //             submittedPinTheme: defaultPinTheme.copyWith(
-                        //               decoration:
-                        //                   defaultPinTheme.decoration!.copyWith(
-                        //                 color: fillColor,
-                        //                 borderRadius: BorderRadius.circular(19),
-                        //                 border: Border.all(
-                        //                     color: focusedBorderColor),
-                        //               ),
-                        //             ),
-                        //             errorPinTheme:
-                        //                 defaultPinTheme.copyBorderWith(
-                        //               border:
-                        //                   Border.all(color: Colors.redAccent),
-                        //             ),
-                        //           ),
-                        //         ],
-                        //       ),
-                        //       buttons: []).show();
-                        // }
+                        if (_signup() == true) {
+                          otp = Random().nextInt(1000000) + 100000;
+                          print(
+                              '*******************************************************************OTP is: $otp*******************************************************************');
+                          print(
+                              '*******************************************************************UserType is: ${widget.userType}*******************************************************************');
+                          sendEmail(email.text, otp);
+                          final result = Navigator.pushNamed(
+                              context, '/pin_code', arguments: {
+                            'userType': widget.userType,
+                            'otp': otp.toString()
+                          });
+                          result.then((value) {
+                            if (value == 'success') {
+                              signUpUser(
+                                  name.text,
+                                  email.text,
+                                  password.text,
+                                  cnic.text,
+                                  city.text,
+                                  address.text,
+                                  phone.text,
+                                  widget.userType);
+                              Navigator.pop(context);
+                            }
+                          });
+                        }
                       },
                       child: Text(
                         'Sign up',

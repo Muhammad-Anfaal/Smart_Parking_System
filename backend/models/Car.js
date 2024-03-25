@@ -16,8 +16,8 @@ const Car = sequelize.define('Car', {
     unique: true,
     validate: {
       isCarNumberFormat(value) {
-        // Regular expression to validate car number format: ABC123
-        const regex = /^[A-Za-z]{3}\d{3}$/;
+        // Regular expression to validate car number format: ABC1234
+        const regex = /^[A-Z]{3}\d{4}$/;
         if (!regex.test(value)) {
           throw new Error('Car number must be in the format ABC123.');
         }

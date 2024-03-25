@@ -104,10 +104,12 @@ class _MyHomePageUserState extends State<MyHomePageUser> {
                           }),
                       itemDashboard(
                           'Feedback', CupertinoIcons.mail_solid, Colors.purple,
-                              () {
-                            // Navigate to subscription page when item is clicked
-                            Navigator.pushNamed(context, '/feedback_page');
-                          }),
+                          () {
+                        // Navigate to subscription page when item is clicked
+                        Navigator.pushNamed(context, '/feedback_page');
+                      }),
+                      const SizedBox(height: 0.0),
+                      const SizedBox(height: 0.0),
                     ],
                   ),
                 ),

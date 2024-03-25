@@ -1,26 +1,32 @@
 
- // Import your database connection
+// Import your database connection
 const Users = require('../models/User'); // Import your User model
 const Car = require('../models/Car'); // Import your Car model
 // const Subscription = require('../models/Subscription');
 const bcrypt = require('bcrypt'); // Import bcrypt for password comparison
-const jwt = require('jsonwebtoken');
 
-const crypto = require('crypto');
-const secretKey = crypto.randomBytes(32).toString('hex'); //it will produce 32 bytes secret key 
+// const jwt = require('jsonwebtoken');
+
+// const crypto = require('crypto');
+// const secretKey = crypto.randomBytes(32).toString('hex'); //it will produce 32 bytes secret key 
 // console.log(secretKey);
 
 exports.createUser = async (req, res) => {
   try {
-    
-    const { userName, userEmail, userPhoneNumber, userCity, userCNIC, userAddress, userPassword, userType } = req.body;
 
-    // Validate user data (including userType)
-    // ... validation logic
+    const { userName, userEmail, userPhoneNumber, userCity, userCNIC, userAddress, userPassword, userType, userImage } = req.body;
+
+    // Check if the user already exists
+    const existingUser = await Users.findOne({ where: { userEmail } });
+
+    if (existingUser) {
+      return res.status(400).send('User already exists');
+    }
 
     // Hash the password
-    const hashedPassword = await bcrypt.hash(userPassword, 10);
-    
+    console.log('userPassword', userPassword);
+    hashedPassword = await bcrypt.hash(userPassword, 10);
+
 
     // Create the new user
     const newUser = await Users.create({
@@ -31,7 +37,8 @@ exports.createUser = async (req, res) => {
       userCNIC,
       userAddress,
       userPassword: hashedPassword,
-      userType
+      userType,
+      userImage
     });
 
     res.json(newUser);
@@ -46,57 +53,87 @@ exports.getAllUsers = async (req, res) => {
     const users = await Users.findAll(); // Includes userType in fetched data
     res.json(users);
   } catch (error) {
-    // ... error handling
+    console.error('Error fetching users:', error);
+    res.status(500).send('Error fetching users');
   }
 };
 
-exports.getUserById = async (req, res) => {
-  try {
-    // ...
-    const user = await Users.findByPk(userId, {
-      attributes: ['userId', 'userName', 'userEmail', 'userPhoneNumber', 'userCity', 'userCNIC', 'userAddress', 'userType'] // Include userType in response
-    });
-    // ...
-  } catch (error) {
-    // ... error handling
-  }
-};
 
 exports.updateUser = async (req, res) => {
   try {
-    const userId = req.params.id;
-    const { userName, userEmail, userPhoneNumber, userCity, userCNIC, userAddress, userType } = req.body;
+    const { userName, userEmail, userPhoneNumber, userCity, userCNIC, userAddress, userPassword, userType, userImage } = req.body;
 
-    // Validate user data (including userType)
-    // ... validation logic
+    // Find the user by email
+    const user = await Users.findOne({ where: { userEmail } });
 
-    // ...
+    if (!user) {
+      return res.status(404).send('User not found');
+    }
 
-    user.userType = userType; // Update userType if provided
-
-    await user.save();
-
-    res.json(user); // Includes updated userType
+    // Hash the password
+    hashedPassword = await bcrypt.hash(userPassword, 10);
+    
+    // Update the user
+    await user.update({
+      userName,
+      userEmail,
+      userPhoneNumber,
+      userCity,
+      userCNIC,
+      userAddress,
+      userPassword: hashedPassword,
+      userType,
+      userImage
+    });
+    
+    res.json(user);
   } catch (error) {
-    // ... error handling
+    console.error('Error updating user:', error);
+    res.status(500).send('Error updating user');
   }
 };
 
+exports.validateUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const user = await Users.findOne({ where: { userEmail: email } });
+
+    if (!user) {
+      return res.status(404).send('User not found');
+    }
+
+    passwordMatch = await bcrypt.compare(password, user.userPassword);
+
+    if (!passwordMatch) {
+      return res.status(401).send('Invalid username or password');
+    }
+
+    res.json({ message: 'User is valid' });
+  } catch (error) {
+    console.error('Error validating user:', error);
+    res.status(500).send('Error validating user');
+  }
+};
+
+
+
 exports.deleteUser = async (req, res) => {
   try {
-    const userId = req.params.id;
+    const email = req.body.email;
 
-    const user = await Users.findByPk(userId);
+    // Find the user by email
+    const user = await Users.findOne({ where: { userEmail: email } });
 
     if (!user) {
       return res.status(404).send('User not found');
     }
 
     // Find all cars belonging to the user
-    const userCars = await Car.findAll({ where: { userId } });
+    const userCars = await Car.findAll({ where: { userId: user.userId } });
 
     // Delete all cars belonging to the user
-    await Car.destroy({ where: { userId } });
+    await Car.destroy({ where: { userId: user.userId } });
 
     // Delete the user
     await user.destroy();
@@ -108,41 +145,41 @@ exports.deleteUser = async (req, res) => {
   }
 };
 
-// Function to login a user (assuming username and password are provided in request body)
-exports.loginUser = async (req, res) => {
-  try {
-    const { userName, userPassword } = req.body;
+// // Function to login a user (assuming username and password are provided in request body)
+// exports.loginUser = async (req, res) => {
+//   try {
+//     const { email, password } = req.params;
 
-    const user = await Users.findOne({ where: { userName } });
+//     const user = await Users.findOne({ where: { userEmail: email } });
 
-    if (!user) {
-      return res.status(401).send('Invalid username or password');
-    }
+//     if (!user) {
+//       return res.status(401).send('Invalid username or password');
+//     }
 
-    const passwordMatch = await bcrypt.compare(userPassword, user.userPassword);
+//     const passwordMatch = await bcrypt.compare(password, user.userPassword);
 
-    if (!passwordMatch) {
-      return res.status(401).send('Invalid username or password');
-    }
+//     if (!passwordMatch) {
+//       return res.status(401).send('Invalid username or password');
+//     }
 
-    // Check if the user already has a stored token
-    let userToken = user.token;
+//     // Check if the user already has a stored token
+//     let userToken = user.token;
 
-    // If not, generate a new one
-    if (!userToken) {
-      userToken = jwt.sign({ userId: user.id, userName: user.userName }, secretKey, { expiresIn: '1h' });
+//     // If not, generate a new one
+//     if (!userToken) {
+//       userToken = jwt.sign({ userId: user.id, userName: user.userName }, secretKey, { expiresIn: '1h' });
 
-      // Save the new token in the database or associate it with the user
-      user.token = userToken;
-      await user.save();
-    }
+//       // Save the new token in the database or associate it with the user
+//       user.token = userToken;
+//       await user.save();
+//     }
 
-    res.json({ message: 'Login successful', token: userToken });
-  } catch (error) {
-    console.error('Error logging in user:', error);
-    res.status(500).send('Error logging in user');
-  }
-};
+//     res.json({ message: 'Login successful', token: userToken });
+//   } catch (error) {
+//     console.error('Error logging in user:', error);
+//     res.status(500).send('Error logging in user');
+//   }
+// };
 
 // ///___________________Subscription part_______________________///
 
