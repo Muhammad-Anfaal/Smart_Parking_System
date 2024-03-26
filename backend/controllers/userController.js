@@ -74,7 +74,7 @@ exports.updateUser = async (req, res) => {
 
     // Hash the password
     hashedPassword = await bcrypt.hash(userPassword, 10);
-    
+
     // Update the user
     await user.update({
       userName,
@@ -87,7 +87,7 @@ exports.updateUser = async (req, res) => {
       userType,
       userImage
     });
-    
+
     res.json(user);
   } catch (error) {
     console.error('Error updating user:', error);
@@ -97,21 +97,24 @@ exports.updateUser = async (req, res) => {
 
 exports.validateUser = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, utype } = req.body;
 
-    const user = await Users.findOne({ where: { userEmail: email } });
+    const user = await Users.findOne({ where: { userEmail: email, userType: utype } });
 
     if (!user) {
+      console.log('User not found');
       return res.status(404).send('User not found');
     }
 
     passwordMatch = await bcrypt.compare(password, user.userPassword);
 
     if (!passwordMatch) {
+      console.log('Invalid username or password');
       return res.status(401).send('Invalid username or password');
     }
 
     res.json({ message: 'User is valid' });
+    console.log('User logged in successfully');
   } catch (error) {
     console.error('Error validating user:', error);
     res.status(500).send('Error validating user');

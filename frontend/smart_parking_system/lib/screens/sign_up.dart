@@ -9,7 +9,8 @@ import 'package:http/http.dart' as http;
 Future<void> signUpUser(String name, String email, String pass, String cnic,
     String city, String address, String phone, String userType) async {
   // String ipAddress = '10.0.2.2'; // for emulator
-  String ipAddress = '127.0.0.1'; // for browser
+  // String ipAddress = '127.0.0.1'; // for browser
+  String ipAddress = '10.20.16.37'; // laptop address HAHAHAHAHAHAHAHAHAHAHAHAHA
   final url = Uri.parse('http://$ipAddress:3000/user/createusers');
 
   try {
@@ -21,7 +22,8 @@ Future<void> signUpUser(String name, String email, String pass, String cnic,
       "userCNIC": cnic,
       "userAddress": address,
       "userPassword": pass,
-      "userType": userType
+      "userType": userType,
+      "userImage": imagePath
     };
     final response = await http.post(
       url,
@@ -47,21 +49,21 @@ void sendEmail(String email, int otp) async {
   final message = Message()
     ..from = Address(username, 'SpS')
     ..recipients.add(email)
-    ..subject = 'Your OTP'
-    ..html = "<h1>OTP</h1>\n<p>${otp}</p>";
-
+    ..subject = 'OTP Smart Parking System'
+    ..html =
+        "<div style='font-family: Arial, sans-serif;'><h1 style='color: #333; font-size: 24px;'>Your One-Time Password (OTP)</h1><p style='font-size: 18px; color: #666;'>For authentication:</p><div style='background-color: #E0E0E0; padding: 10px 20px; border-radius: 5px; font-size: 24px; font-weight: bold; text-align: center; margin-bottom: 20px;'>$otp</div><p style='font-size: 16px; color: #555;'>Please use this OTP to proceed with your action.</p></div>";
   try {
-    send(message, smtpServer);
+    var connection = PersistentConnection(smtpServer);
+    await connection.send(message);
+    await connection.close();
+    print(
+        "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
   } on MailerException catch (e) {
     print('Message not sent.');
     for (var p in e.problems) {
       print('Problem: ${p.code}: ${p.msg}');
     }
   }
-
-  var connection = PersistentConnection(smtpServer);
-  await connection.send(message);
-  await connection.close();
 }
 
 class SignUpPage extends StatefulWidget {
@@ -219,23 +221,65 @@ class _SignUpPageState extends State<SignUpPage> {
                         color: Colors.blue[100],
                         borderRadius: BorderRadius.circular(50.0),
                       ),
-                      child: TextFormField(
-                        validator: passwordValidator,
-                        controller: password,
-                        keyboardType: TextInputType.text,
-                        obscureText: hidePassword,
-                        style: const TextStyle(color: Colors.black),
-                        decoration: InputDecoration(
-                          suffixIcon: IconButton(
-                            onPressed: () {
-                              setState(() {
-                                hidePassword = !hidePassword;
-                              });
-                            },
-                            icon: Icon(
-                              hidePassword
-                                  ? Icons.visibility_off
-                                  : Icons.visibility,
+                      InputField(
+                        text: 'Email address',
+                        icon: Icons.mail,
+                        textType: TextInputType.emailAddress,
+                        controller: email,
+                        validator: emailValidator,
+                      ),
+                      InputField(
+                        text: 'Mobile No.',
+                        icon: Icons.phone,
+                        textType: TextInputType.phone,
+                        controller: phone,
+                        validator: phoneValidator,
+                      ),
+                      InputField(
+                        text: 'City',
+                        icon: Icons.location_city,
+                        textType: TextInputType.text,
+                        controller: city,
+                        validator: cityValidator,
+                      ),
+                      InputField(
+                        text: 'CNIC',
+                        icon: Icons.remember_me,
+                        textType: TextInputType.number,
+                        controller: cnic,
+                        validator: cnicValidator,
+                      ),
+                      InputField(
+                        text: 'Address',
+                        icon: Icons.home,
+                        textType: TextInputType.text,
+                        controller: address,
+                        validator: addressValidator,
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          _pickImage(); // Call image picker when tapped
+                        },
+                        child: Column(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.blue[100],
+                                borderRadius: BorderRadius.circular(50.0),
+                              ),
+                              padding: const EdgeInsets.all(20.0),
+                              child: _imageFile == null
+                                  ? Icon(Icons.add_a_photo)
+                                  : Image.file(File(_imageFile!.path)),
+                            ),
+                            SizedBox(height: 8),
+                            // Add spacing between text and image container
+                            Text(
+                              'Insert your profile image',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                           labelText: 'Password',
@@ -295,22 +339,33 @@ class _SignUpPageState extends State<SignUpPage> {
                           borderRadius: BorderRadius.circular(50.0),
                         ),
                       ),
-                      onPressed: () {
-                        if (_signup() == true) {
-                          otp = Random().nextInt(1000000) + 100000;
-                          print(
-                              '*******************************************************************OTP is: $otp*******************************************************************');
-                          print(
-                              '*******************************************************************UserType is: ${widget.userType}*******************************************************************');
-                          sendEmail(email.text, otp);
-                          final result = Navigator.pushNamed(
-                              context, '/pin_code', arguments: {
-                            'userType': widget.userType,
-                            'otp': otp.toString()
-                          });
-                          result.then((value) {
-                            if (value == 'success') {
-                              signUpUser(
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 6.0,
+                            horizontal: 20.0,
+                          ),
+                          backgroundColor: Colors.blue[100],
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50.0),
+                          ),
+                        ),
+                        onPressed: () {
+                          if (_signup() == true) {
+                            otp = Random().nextInt(999999) + 100000;
+                            print(
+                                '*******************************************************************OTP is: $otp*******************************************************************');
+                            print(
+                                '*******************************************************************UserType is: ${widget.userType}*******************************************************************');
+                            sendEmail(email.text, otp);
+                            final result = Navigator.pushNamed(
+                                context, '/pin_code', arguments: {
+                              'userType': widget.userType,
+                              'otp': otp.toString()
+                            });
+                            result.then((value) {
+                              if (value == 'success') {
+                                signUpUser(
                                   name.text,
                                   email.text,
                                   password.text,
@@ -341,6 +396,21 @@ class _SignUpPageState extends State<SignUpPage> {
         ),
       ),
     );
+  }
+
+  // Function to handle image picking
+  Future<void> _pickImage() async {
+    final ImagePicker _picker = ImagePicker();
+    final XFile? pickedImage = await _picker.pickImage(
+      source: ImageSource.gallery,
+    );
+    if (pickedImage != null) {
+      setState(() {
+        _imageFile = pickedImage;
+        final bytes = _imageFile!.readAsBytes();
+        print(_imageFile!);
+      });
+    }
   }
 }
 
