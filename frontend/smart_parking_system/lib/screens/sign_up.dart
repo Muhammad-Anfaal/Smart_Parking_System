@@ -59,7 +59,7 @@ void sendEmail(String email, int otp) async {
     ..from = Address(username, 'SpS')
     ..recipients.add(email)
     ..subject = 'Your OTP'
-    ..html = "<h1>OTP</h1>\n<p>${otp}</p>";
+    ..html = "<h1>OTP</h1>\n<p>$otp</p>";
 
   try {
     send(message, smtpServer);
@@ -78,7 +78,7 @@ void sendEmail(String email, int otp) async {
 class SignUpPage extends StatefulWidget {
   final String userType;
 
-  const SignUpPage({Key? key, required this.userType}) : super(key: key);
+  const SignUpPage({super.key, required this.userType});
 
   @override
   State<SignUpPage> createState() => _SignUpPageState();
@@ -241,9 +241,8 @@ class _SignUpPageState extends State<SignUpPage> {
                                   ? Icon(Icons.add_a_photo)
                                   : Image.file(File(_imageFile!.path)),
                             ),
-                            SizedBox(
-                                height:
-                                    8), // Add spacing between text and image container
+                            SizedBox(height: 8),
+                            // Add spacing between text and image container
                             Text(
                               'Insert your profile image',
                               style: TextStyle(
@@ -397,6 +396,8 @@ class _SignUpPageState extends State<SignUpPage> {
     if (pickedImage != null) {
       setState(() {
         _imageFile = pickedImage;
+        final bytes = _imageFile!.readAsBytes();
+        print(_imageFile!);
       });
     }
   }
