@@ -1,5 +1,6 @@
 const Subscription = require('../models/Subscription');
 const ParkingArea = require('../models/ParkingArea');
+const User = require('../models/User');
 // Function to view subscriptions of all users
 exports.viewAllSubscriptions = async (req, res) => {
   try {
@@ -16,12 +17,16 @@ exports.viewAllSubscriptions = async (req, res) => {
 // Function to cancel a user's subscription
 exports.cancelUserSubscription = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const { email } = req.body;
 
-    // Check if the user has an active subscription
-    const existingSubscription = await Subscription.findOne({ where: { userId } });
+    const user = await User.findOne({ where: { userEmail: email } });
+    if (!user) {
+      return res.status(404).send('User not found');
+    }
+    // Check if the user has any subscription
+    const existingSubscription = await Subscription.findOne({ where: { userId:user.userId } });
     if (!existingSubscription) {
-      return res.status(404).send('User does not have an active subscription');
+      return res.status(404).send('User does not have any subscription');
     }
 
     // Cancel the subscription
@@ -35,16 +40,15 @@ exports.cancelUserSubscription = async (req, res) => {
 };
 
 // Function to change the status of a parking area from Inactive to Active
-exports.changeParkingAreaStatus = async (req, res) => {
+exports.activeParkingAreaStatus = async (req, res) => {
   try {
-    const { parkingAreaId } = req.params;
+    const { parkingAreaName } = req.body;
 
-    // Check if the parking area exists
-    const parkingArea = await ParkingArea.findByPk(parkingAreaId);
+    // Check if the parking area exists    
+    const parkingArea = await ParkingArea.findOne({ where: { parkingAreaName : parkingAreaName } });
     if (!parkingArea) {
-      return res.status(404).send('Parking Area not found');
+      return res.status(404).send('parking not found');
     }
-
     // Update the parking area status to Active
     await parkingArea.update({ parkingAreaStatus: 'Active' });
 
@@ -58,12 +62,12 @@ exports.changeParkingAreaStatus = async (req, res) => {
 // Function to extend the capacity of a parking area
 exports.extendParkingAreaCapacity = async (req, res) => {
   try {
-    const { parkingAreaId, count } = req.params;
+    const { parkingAreaName, count } = req.body;
 
     // Check if the parking area exists
-    const parkingArea = await ParkingArea.findByPk(parkingAreaId);
+    const parkingArea = await ParkingArea.findOne({ where: { parkingAreaName : parkingAreaName } });
     if (!parkingArea) {
-      return res.status(404).send('Parking Area not found');
+      return res.status(404).send('parking not found');
     }
 
     // Update the parking area capacity
