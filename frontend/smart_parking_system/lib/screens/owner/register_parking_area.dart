@@ -258,7 +258,3 @@ class _ElevatedCardExampleState extends State<ElevatedCardExample> {
     );
   }
 }
-
-void main() {
-  runApp(RegisterParkingArea());
-}
