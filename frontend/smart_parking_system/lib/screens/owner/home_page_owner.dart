@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MyHomePageOwner extends StatefulWidget {
-  const MyHomePageOwner({super.key});
+  const MyHomePageOwner({Key? key});
 
   @override
   State<MyHomePageOwner> createState() => _MyHomePageOwnerState();
@@ -69,9 +70,13 @@ class _MyHomePageOwnerState extends State<MyHomePageOwner> {
                             .titleMedium
                             ?.copyWith(color: Colors.white54),
                       ),
-                      trailing: const CircleAvatar(
-                        radius: 30,
-                        backgroundImage: AssetImage('assets/images/awab5.jpg'),
+                      trailing: IconButton(
+                        icon: Icon(Icons.exit_to_app), // Log-out icon
+                        color: Colors.white,
+                        onPressed: () {
+                          // Log out functionality
+                          _logOut();
+                        },
                       ),
                     ),
                     const SizedBox(height: 30)
@@ -154,4 +159,12 @@ class _MyHomePageOwnerState extends State<MyHomePageOwner> {
           ),
         ),
       );
+
+  // Log-out functionality
+  void _logOut() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear(); // Clear all stored data
+    // Navigate to the login page or any other initial page
+    Navigator.pushNamedAndRemoveUntil(context, '/log_in', (route) => false);
+  }
 }
