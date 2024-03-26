@@ -6,7 +6,8 @@ import 'package:form_field_validator/form_field_validator.dart' as ffv;
 
 Future<bool> loginUser(String email, String pass) async {
   // String ipAddress = '10.0.2.2'; // for emulator
-  String ipAddress = '127.0.0.1'; // for browser
+  // String ipAddress = '127.0.0.1'; // for browser
+  String ipAddress = '10.20.16.37'; // laptop address HAHAHAHAHAHAHAHAHAHAHAHAHA
   final url = Uri.parse('http://$ipAddress:3000/user/validateuser');
 
   try {

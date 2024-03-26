@@ -127,8 +127,14 @@ class _ElevatedCardExampleState extends State<ElevatedCardExample> {
       child: Card(
         color: Colors.lightBlue,
         child: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.8,
-          height: MediaQuery.of(context).size.height * 0.87,
+          width: MediaQuery
+              .of(context)
+              .size
+              .width * 0.9,
+          height: MediaQuery
+              .of(context)
+              .size
+              .height * 0.85,
           child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -145,7 +151,10 @@ class _ElevatedCardExampleState extends State<ElevatedCardExample> {
                   ),
                 ),
                 Container(
-                  width: MediaQuery.of(context).size.width * 0.73,
+                  width: MediaQuery
+                      .of(context)
+                      .size
+                      .width * 0.83,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8.0),
                     color: Colors.white,
@@ -178,7 +187,10 @@ class _ElevatedCardExampleState extends State<ElevatedCardExample> {
                   ),
                 ),
                 Container(
-                  width: MediaQuery.of(context).size.width * 0.73,
+                  width: MediaQuery
+                      .of(context)
+                      .size
+                      .width * 0.83,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8.0),
                     color: Colors.white,
@@ -212,7 +224,10 @@ class _ElevatedCardExampleState extends State<ElevatedCardExample> {
                   ),
                 ),
                 Container(
-                  width: MediaQuery.of(context).size.width * 0.73,
+                  width: MediaQuery
+                      .of(context)
+                      .size
+                      .width * 0.83,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8.0),
                     color: Colors.white,
@@ -243,13 +258,18 @@ class _ElevatedCardExampleState extends State<ElevatedCardExample> {
                   onPressed: _validateAndSubmit,
                   child: const Text('Submit'),
                 ),
-                const SizedBox(height: 40),
+                const SizedBox(height: 20),
                 if (imagePath.isNotEmpty)
                   Image.file(
                     File(imagePath),
-                    width: MediaQuery.of(context).size.width * 0.75,
+                    width: MediaQuery
+                        .of(context)
+                        .size
+                        .width * 0.75,
                     fit: BoxFit.cover,
+
                   ),
+                const SizedBox(height: 20),
               ],
             ),
           ),

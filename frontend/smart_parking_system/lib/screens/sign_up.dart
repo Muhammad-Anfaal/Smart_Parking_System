@@ -19,7 +19,8 @@ Future<void> signUpUser(
     String userType,
     String? imagePath) async {
   // String ipAddress = '10.0.2.2'; // for emulator
-  String ipAddress = '127.0.0.1'; // for browser
+  // String ipAddress = '127.0.0.1'; // for browser
+  String ipAddress = '10.20.16.37'; // laptop address HAHAHAHAHAHAHAHAHAHAHAHAHA
   final url = Uri.parse('http://$ipAddress:3000/user/createusers');
 
   try {
@@ -32,7 +33,7 @@ Future<void> signUpUser(
       "userAddress": address,
       "userPassword": pass,
       "userType": userType,
-      "userImage": imagePath ?? ""
+      "userImage": imagePath
     };
     final response = await http.post(
       url,
@@ -58,21 +59,21 @@ void sendEmail(String email, int otp) async {
   final message = Message()
     ..from = Address(username, 'SpS')
     ..recipients.add(email)
-    ..subject = 'Your OTP'
-    ..html = "<h1>OTP</h1>\n<p>$otp</p>";
-
+    ..subject = 'OTP Smart Parking System'
+    ..html =
+        "<div style='font-family: Arial, sans-serif;'><h1 style='color: #333; font-size: 24px;'>Your One-Time Password (OTP)</h1><p style='font-size: 18px; color: #666;'>For authentication:</p><div style='background-color: #E0E0E0; padding: 10px 20px; border-radius: 5px; font-size: 24px; font-weight: bold; text-align: center; margin-bottom: 20px;'>$otp</div><p style='font-size: 16px; color: #555;'>Please use this OTP to proceed with your action.</p></div>";
   try {
-    send(message, smtpServer);
+    var connection = PersistentConnection(smtpServer);
+    await connection.send(message);
+    await connection.close();
+    print(
+        "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
   } on MailerException catch (e) {
     print('Message not sent.');
     for (var p in e.problems) {
       print('Problem: ${p.code}: ${p.msg}');
     }
   }
-
-  var connection = PersistentConnection(smtpServer);
-  await connection.send(message);
-  await connection.close();
 }
 
 class SignUpPage extends StatefulWidget {
@@ -338,7 +339,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         ),
                         onPressed: () {
                           if (_signup() == true) {
-                            otp = Random().nextInt(1000000) + 100000;
+                            otp = Random().nextInt(999999) + 100000;
                             print(
                                 '*******************************************************************OTP is: $otp*******************************************************************');
                             print(
