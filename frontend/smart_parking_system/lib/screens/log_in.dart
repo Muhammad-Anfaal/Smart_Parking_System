@@ -3,6 +3,8 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:form_field_validator/form_field_validator.dart' as ffv;
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 Future<bool> loginUser(String email, String pass, String utype) async {
   // String ipAddress = '10.0.2.2'; // for emulator
@@ -11,6 +13,7 @@ Future<bool> loginUser(String email, String pass, String utype) async {
   // laptop address HAHAHAHAHAHAHAHAHAHAHAHAHA
   String ipAddress = '192.168.137.1'; // lan adapter ip address
   // String ipAddress = '192.168.18.14'; // wifi ip address
+
   final url = Uri.parse('http://$ipAddress:3000/user/validateuser');
 
   try {
@@ -27,8 +30,9 @@ Future<bool> loginUser(String email, String pass, String utype) async {
       },
     );
     if (response.statusCode == 200) {
-      print('success');
-      print(response.body);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setBool('isLoggedIn', true);
+      prefs.setString('email', email);
       return true;
     }
   } catch (e) {
@@ -40,7 +44,7 @@ Future<bool> loginUser(String email, String pass, String utype) async {
 class LogInPage extends StatefulWidget {
   final String userType;
 
-  LogInPage({super.key, required this.userType});
+  LogInPage({Key? key, required this.userType}) : super(key: key);
 
   @override
   State<LogInPage> createState() => _LogInPageState();
@@ -48,17 +52,7 @@ class LogInPage extends StatefulWidget {
 
 class _LogInPageState extends State<LogInPage> {
   bool hidePassword = true;
-  bool otpCorrect = true;
   final _formKey = GlobalKey<FormState>();
-
-  bool _login() {
-    final checkValid = _formKey.currentState?.validate();
-    if (checkValid == false) {
-      return false;
-    }
-    _formKey.currentState?.save();
-    return true;
-  }
 
   TextEditingController emailTextField = TextEditingController();
   TextEditingController passwordTextField = TextEditingController();
@@ -72,13 +66,12 @@ class _LogInPageState extends State<LogInPage> {
     ffv.RequiredValidator(errorText: 'password is required'),
     ffv.MinLengthValidator(8, errorText: 'password must have 8 characters'),
     ffv.PatternValidator(r'(?=.*?[#?!@$%^&*-])',
-        errorText: 'passwords must one special character'),
+        errorText: 'passwords must contain at least one special character'),
   ]);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: Colors.blue[600],
         title: const Text('Smart Parking System'),
@@ -93,7 +86,6 @@ class _LogInPageState extends State<LogInPage> {
             key: _formKey,
             child: Column(
               children: [
-                // Image.asset('assets/images/logo.png'),
                 const SizedBox(
                   height: 75.0,
                 ),
@@ -195,6 +187,7 @@ class _LogInPageState extends State<LogInPage> {
                       if (await loginUser(emailTextField.text,
                               passwordTextField.text, widget.userType) ==
                           true) {
+
                         Navigator.pushNamed(
                             context, '/home_page_${widget.userType}',
                             arguments: {'userType': widget.userType});
@@ -217,20 +210,6 @@ class _LogInPageState extends State<LogInPage> {
                   ),
                 ),
                 Container(
-                  margin: const EdgeInsets.only(top: 10.0),
-                  // alignment: Alignment.centerLeft,
-                  child: TextButton(
-                    onPressed: () {},
-                    child: Text(
-                      '',
-                      style: TextStyle(
-                        fontSize: 14.0,
-                        color: Colors.indigo[900],
-                      ),
-                    ),
-                  ),
-                ),
-                Container(
                   margin: const EdgeInsets.only(top: 60.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -239,7 +218,6 @@ class _LogInPageState extends State<LogInPage> {
                         'Don\'t have an account?',
                         style: TextStyle(
                           fontSize: 14.0,
-                          // fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
                       ),
@@ -266,5 +244,29 @@ class _LogInPageState extends State<LogInPage> {
         ),
       ),
     );
+  }
+
+  bool _login() {
+    final checkValid = _formKey.currentState?.validate();
+    if (checkValid == false) {
+      return false;
+    }
+    _formKey.currentState?.save();
+    return true;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    checkLoginStatus();
+  }
+
+  void checkLoginStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+    if (isLoggedIn) {
+      Navigator.pushNamed(context, '/home_page_${widget.userType}',
+          arguments: {'userType': widget.userType});
+    }
   }
 }

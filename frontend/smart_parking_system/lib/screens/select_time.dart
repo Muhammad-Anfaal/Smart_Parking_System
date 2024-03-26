@@ -79,6 +79,35 @@ class _SelectTimeState extends State<SelectTime> {
         return; // Exit the method if end time is before start time
       }
 
+      // Check if difference between start time and end time is greater than 1 hour
+      if (!isStartTime) {
+        DateTime startDateTime = DateTime(
+          today.year,
+          today.month,
+          today.day,
+          startTime!.hour,
+          startTime!.minute,
+        );
+
+        if (selectedDateTime.difference(startDateTime).inHours < 1) {
+          // Show error dialog for difference less than 1 hour
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text('Error'),
+              content: Text('Difference between start time and end time must be greater than 1 hour.'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('OK'),
+                ),
+              ],
+            ),
+          );
+          return; // Exit the method if difference is less than 1 hour
+        }
+      }
+
       setState(() {
         if (isStartTime) {
           startTime = picked;
@@ -88,6 +117,7 @@ class _SelectTimeState extends State<SelectTime> {
       });
     }
   }
+
 
   bool isTimeSelected() {
     return startTime != null && endTime != null;
