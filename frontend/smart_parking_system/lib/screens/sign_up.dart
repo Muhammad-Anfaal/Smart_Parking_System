@@ -1,16 +1,28 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart' as ffv;
+import 'package:image_picker/image_picker.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 import 'package:http/http.dart' as http;
 
-Future<void> signUpUser(String name, String email, String pass, String cnic,
-    String city, String address, String phone, String userType) async {
+Future<void> signUpUser(
+    String name,
+    String email,
+    String pass,
+    String cnic,
+    String city,
+    String address,
+    String phone,
+    String userType,
+    String? imagePath) async {
   // String ipAddress = '10.0.2.2'; // for emulator
   // String ipAddress = '127.0.0.1'; // for browser
-  String ipAddress = '10.20.16.37'; // laptop address HAHAHAHAHAHAHAHAHAHAHAHAHA
+  // String ipAddress = '10.20.16.37'; // laptop address HAHAHAHAHAHAHAHAHAHAHAHAHA
+  // laptop address HAHAHAHAHAHAHAHAHAHAHAHAHA
+  String ipAddress = '10.10.16.1';
   final url = Uri.parse('http://$ipAddress:3000/user/createusers');
 
   try {
@@ -79,6 +91,7 @@ class _SignUpPageState extends State<SignUpPage> {
   bool hidePassword = true;
   bool hideConfirmPassword = true;
   int otp = 0;
+  XFile? _imageFile; // Variable to store the selected image file
 
   final _formKey = GlobalKey<FormState>();
 
@@ -99,7 +112,6 @@ class _SignUpPageState extends State<SignUpPage> {
   TextEditingController address = TextEditingController();
   TextEditingController password = TextEditingController();
   TextEditingController confirmPassword = TextEditingController();
-  TextEditingController image = TextEditingController();
 
   final nameValidator = ffv.MultiValidator([
     ffv.RequiredValidator(errorText: 'name is required'),
@@ -163,63 +175,23 @@ class _SignUpPageState extends State<SignUpPage> {
       ),
       backgroundColor: Colors.blue[700],
       body: SafeArea(
-        child: Center(
-          child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: SingleChildScrollView(
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    InputField(
-                      text: 'Name',
-                      icon: Icons.account_circle,
-                      textType: TextInputType.name,
-                      controller: name,
-                      validator: nameValidator,
-                    ),
-                    InputField(
-                      text: 'Email address',
-                      icon: Icons.mail,
-                      textType: TextInputType.emailAddress,
-                      controller: email,
-                      validator: emailValidator,
-                    ),
-                    InputField(
-                      text: 'Mobile No.',
-                      icon: Icons.phone,
-                      textType: TextInputType.phone,
-                      controller: phone,
-                      validator: phoneValidator,
-                    ),
-                    InputField(
-                      text: 'City',
-                      icon: Icons.location_city,
-                      textType: TextInputType.text,
-                      controller: city,
-                      validator: cityValidator,
-                    ),
-                    InputField(
-                      text: 'CNIC',
-                      icon: Icons.remember_me,
-                      textType: TextInputType.number,
-                      controller: cnic,
-                      validator: cnicValidator,
-                    ),
-                    InputField(
-                      text: 'Address',
-                      icon: Icons.home,
-                      textType: TextInputType.text,
-                      controller: address,
-                      validator: addressValidator,
-                    ),
-                    Container(
-                      margin: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 10.0),
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                      decoration: BoxDecoration(
-                        color: Colors.blue[100],
-                        borderRadius: BorderRadius.circular(50.0),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20.0),
+          child: Center(
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: SingleChildScrollView(
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      InputField(
+                        text: 'Name',
+                        icon: Icons.account_circle,
+                        textType: TextInputType.name,
+                        controller: name,
+                        validator: nameValidator,
                       ),
                       InputField(
                         text: 'Email address',
@@ -281,62 +253,79 @@ class _SignUpPageState extends State<SignUpPage> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                          ),
-                          labelText: 'Password',
-                          labelStyle: TextStyle(color: Colors.lightBlue[900]),
-                          icon: const Icon(Icons.lock_open),
-                          iconColor: Colors.lightBlue[900],
-                          suffixIconColor: Colors.lightBlue[900],
-                          border: InputBorder.none,
+                          ],
                         ),
                       ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 30.0),
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                      decoration: BoxDecoration(
-                        color: Colors.blue[100],
-                        borderRadius: BorderRadius.circular(50.0),
-                      ),
-                      child: TextFormField(
-                        validator: (val) => ffv.MatchValidator(
-                                errorText: 'password does not match')
-                            .validateMatch(val!, password.text),
-                        controller: confirmPassword,
-                        keyboardType: TextInputType.text,
-                        obscureText: hideConfirmPassword,
-                        style: const TextStyle(color: Colors.black),
-                        decoration: InputDecoration(
-                          suffixIcon: IconButton(
-                            onPressed: () {
-                              setState(() {
-                                hideConfirmPassword = !hideConfirmPassword;
-                              });
-                            },
-                            icon: Icon(
-                              hideConfirmPassword
-                                  ? Icons.visibility_off
-                                  : Icons.visibility,
-                            ),
-                          ),
-                          labelText: 'Confirm Password',
-                          labelStyle: TextStyle(color: Colors.lightBlue[900]),
-                          icon: const Icon(Icons.lock_open),
-                          iconColor: Colors.lightBlue[900],
-                          suffixIconColor: Colors.lightBlue[900],
-                          border: InputBorder.none,
-                        ),
-                      ),
-                    ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 6.0,
-                          horizontal: 20.0,
-                        ),
-                        backgroundColor: Colors.blue[100],
-                        shape: RoundedRectangleBorder(
+                      Container(
+                        margin: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 10.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                        decoration: BoxDecoration(
+                          color: Colors.blue[100],
                           borderRadius: BorderRadius.circular(50.0),
+                        ),
+                        child: TextFormField(
+                          validator: passwordValidator,
+                          controller: password,
+                          keyboardType: TextInputType.text,
+                          obscureText: hidePassword,
+                          style: const TextStyle(color: Colors.black),
+                          decoration: InputDecoration(
+                            suffixIcon: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  hidePassword = !hidePassword;
+                                });
+                              },
+                              icon: Icon(
+                                hidePassword
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
+                              ),
+                            ),
+                            labelText: 'Password',
+                            labelStyle: TextStyle(color: Colors.lightBlue[900]),
+                            icon: const Icon(Icons.lock_open),
+                            iconColor: Colors.lightBlue[900],
+                            suffixIconColor: Colors.lightBlue[900],
+                            border: InputBorder.none,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 30.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                        decoration: BoxDecoration(
+                          color: Colors.blue[100],
+                          borderRadius: BorderRadius.circular(50.0),
+                        ),
+                        child: TextFormField(
+                          validator: (val) => ffv.MatchValidator(
+                                  errorText: 'password does not match')
+                              .validateMatch(val!, password.text),
+                          controller: confirmPassword,
+                          keyboardType: TextInputType.text,
+                          obscureText: hideConfirmPassword,
+                          style: const TextStyle(color: Colors.black),
+                          decoration: InputDecoration(
+                            suffixIcon: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  hideConfirmPassword = !hideConfirmPassword;
+                                });
+                              },
+                              icon: Icon(
+                                hideConfirmPassword
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
+                              ),
+                            ),
+                            labelText: 'Confirm Password',
+                            labelStyle: TextStyle(color: Colors.lightBlue[900]),
+                            icon: const Icon(Icons.lock_open),
+                            iconColor: Colors.lightBlue[900],
+                            suffixIconColor: Colors.lightBlue[900],
+                            border: InputBorder.none,
+                          ),
                         ),
                       ),
                       ElevatedButton(
@@ -373,22 +362,25 @@ class _SignUpPageState extends State<SignUpPage> {
                                   city.text,
                                   address.text,
                                   phone.text,
-                                  widget.userType);
-                              Navigator.pop(context);
-                            }
-                          });
-                        }
-                      },
-                      child: Text(
-                        'Sign up',
-                        style: TextStyle(
-                          fontSize: 25.0,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.lightBlue[900],
+                                  widget.userType,
+                                  _imageFile?.path, // Pass image path
+                                );
+                                Navigator.pop(context);
+                              }
+                            });
+                          }
+                        },
+                        child: Text(
+                          'Sign up',
+                          style: TextStyle(
+                            fontSize: 25.0,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.lightBlue[900],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -407,8 +399,8 @@ class _SignUpPageState extends State<SignUpPage> {
     if (pickedImage != null) {
       setState(() {
         _imageFile = pickedImage;
-        final bytes = _imageFile!.readAsBytes();
-        print(_imageFile!);
+        final bytes = File(_imageFile!.path).readAsBytesSync();
+        print(bytes);
       });
     }
   }
@@ -422,7 +414,6 @@ class InputField extends StatelessWidget {
   final ffv.MultiValidator validator;
 
   const InputField({
-    super.key,
     required this.text,
     required this.icon,
     required this.textType,
