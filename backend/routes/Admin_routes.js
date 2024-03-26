@@ -6,12 +6,12 @@ const adminController = require('../controllers/adminController');
 router.get('/subscriptions', adminController.viewAllSubscriptions);
 
 // Cancel a user's subscription
-router.delete('/subscriptions/:userId', adminController.cancelUserSubscription);
+router.delete('/deletesubscription', adminController.cancelUserSubscription);
 
 // Change the status of a parking area from Inactive to Active
-router.put('/parking-areas/:parkingAreaId/activate', adminController.changeParkingAreaStatus);
+router.put('/activeparkingareastatus', adminController.activeParkingAreaStatus);
 
 // Extend the capacity of a parking area
-router.put('/parking-areas/:parkingAreaId/extend-capacity/:count', adminController.extendParkingAreaCapacity);
+router.put('/extendparkingarea', adminController.extendParkingAreaCapacity);
 
 module.exports = router;

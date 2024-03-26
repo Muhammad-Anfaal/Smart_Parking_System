@@ -2,6 +2,8 @@
 // Import your database connection
 const Users = require('../models/User'); // Import your User model
 const Car = require('../models/Car'); // Import your Car model
+const Feedback = require('../models/Feedback'); // Import your Feedback model
+const { Op } = require('sequelize');
 // const Subscription = require('../models/Subscription');
 const bcrypt = require('bcrypt'); // Import bcrypt for password comparison
 
@@ -72,7 +74,7 @@ exports.updateUser = async (req, res) => {
 
     // Hash the password
     hashedPassword = await bcrypt.hash(userPassword, 10);
-    
+
     // Update the user
     await user.update({
       userName,
@@ -85,7 +87,7 @@ exports.updateUser = async (req, res) => {
       userType,
       userImage
     });
-    
+
     res.json(user);
   } catch (error) {
     console.error('Error updating user:', error);
@@ -95,21 +97,24 @@ exports.updateUser = async (req, res) => {
 
 exports.validateUser = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, utype } = req.body;
 
-    const user = await Users.findOne({ where: { userEmail: email } });
+    const user = await Users.findOne({ where: { userEmail: email, userType: utype } });
 
     if (!user) {
+      console.log('User not found');
       return res.status(404).send('User not found');
     }
 
     passwordMatch = await bcrypt.compare(password, user.userPassword);
 
     if (!passwordMatch) {
+      console.log('Invalid username or password');
       return res.status(401).send('Invalid username or password');
     }
 
     res.json({ message: 'User is valid' });
+    console.log('User logged in successfully');
   } catch (error) {
     console.error('Error validating user:', error);
     res.status(500).send('Error validating user');
@@ -142,6 +147,46 @@ exports.deleteUser = async (req, res) => {
   } catch (error) {
     console.error('Error deleting user and related cars:', error);
     res.status(500).send('Error deleting user and related cars');
+  }
+};
+
+//_____________________Feedback part_______________________//
+exports.giveFeedback = async (req, res) => {
+  try {
+    const { email, rateOption, description } = req.body;
+
+    // Check if the user exists
+    const user = await Users.findOne({ where: { userEmail: email } });
+    if (!user) {
+      return res.status(404).send('User not found');
+    }
+
+    // Check if the user has already given feedback today
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const existingFeedback = await Feedback.findOne({
+      where: {
+        userId:user.userId,
+        createdAt: {
+          [Op.gte]: today // Find feedbacks created today or later
+        }
+      }
+    });
+    if (existingFeedback) {
+      return res.status(400).send('User has already given feedback today');
+    }
+
+    // Create the feedback
+    const newFeedback = await Feedback.create({
+      userId:user.userId,
+      rateOption,
+      description
+    });
+
+    res.status(201).json(newFeedback);
+  } catch (error) {
+    console.error('Error giving feedback:', error);
+    res.status(500).send('Error giving feedback');
   }
 };
 

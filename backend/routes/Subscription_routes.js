@@ -6,6 +6,6 @@ const subscriptionController = require('../controllers/subscriptionController');
 router.post('/create', subscriptionController.createSubscription);
 
 // Route to get a user's subscription
-router.get('/:userId', subscriptionController.getUserSubscription);
+router.get('/viewsubscription', subscriptionController.getUserSubscription);
 
 module.exports = router;

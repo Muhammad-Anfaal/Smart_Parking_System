@@ -3,15 +3,17 @@ const router = express.Router();
 const parkingAreaController = require('../controllers/parkingAreaController');
 
 // Register a new parking area
-router.post('/users/:userId/parkingAreas', parkingAreaController.registerParkingArea);
+router.post('/registerparkingarea', parkingAreaController.registerParkingArea);
 
 // Update an existing parking area
-router.put('/users/:userId/parkingAreas/:parkingAreaId', parkingAreaController.updateParkingArea);
+router.put('/updateparkingarea', parkingAreaController.updateParkingArea);
 
 // Remove a parking area
-router.delete('/users/:userId/parkingAreas/:parkingAreaId', parkingAreaController.removeParkingArea);
+router.delete('/removeparkingarea', parkingAreaController.removeParkingArea);
 
 // Fetch all parking areas of a user
-router.get('/users/:userId/parkingAreas', parkingAreaController.getUserParkingAreas);
+router.get('/userparkingareas', parkingAreaController.getUserParkingAreas);
 
+// Fetch all parking areas
+router.get('/allparkingareas', parkingAreaController.getAllParkingAreas);
 module.exports = router;

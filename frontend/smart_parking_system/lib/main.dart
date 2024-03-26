@@ -31,6 +31,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       initialRoute: '/home_page_owner',
+    
       onGenerateRoute: (settings) {
         if (settings.name == '/log_in') {
           final args = settings.arguments as Map<String, String>? ?? {};
