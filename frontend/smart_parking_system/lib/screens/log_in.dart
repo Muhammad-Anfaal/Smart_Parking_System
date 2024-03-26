@@ -4,14 +4,21 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:form_field_validator/form_field_validator.dart' as ffv;
 
-Future<bool> loginUser(String email, String pass) async {
+Future<bool> loginUser(String email, String pass, String utype) async {
   // String ipAddress = '10.0.2.2'; // for emulator
   // String ipAddress = '127.0.0.1'; // for browser
-  String ipAddress = '10.20.16.37'; // laptop address HAHAHAHAHAHAHAHAHAHAHAHAHA
+  // String ipAddress = '10.20.16.37'; // laptop address HAHAHAHAHAHAHAHAHAHAHAHAHA
+  // laptop address HAHAHAHAHAHAHAHAHAHAHAHAHA
+  String ipAddress = '192.168.137.1'; // lan adapter ip address
+  // String ipAddress = '192.168.18.14'; // wifi ip address
   final url = Uri.parse('http://$ipAddress:3000/user/validateuser');
 
   try {
-    final Map<dynamic, dynamic> data = {"email": email, "password": pass};
+    final Map<dynamic, dynamic> data = {
+      "email": email,
+      "password": pass,
+      "utype": utype
+    };
     final response = await http.post(
       url,
       body: jsonEncode(data),
@@ -185,8 +192,8 @@ class _LogInPageState extends State<LogInPage> {
                           arguments: {'userType': widget.userType});
                     }
                     if (_login() == true) {
-                      if (await loginUser(
-                              emailTextField.text, passwordTextField.text) ==
+                      if (await loginUser(emailTextField.text,
+                              passwordTextField.text, widget.userType) ==
                           true) {
                         Navigator.pushNamed(
                             context, '/home_page_${widget.userType}',
