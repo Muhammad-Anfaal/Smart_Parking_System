@@ -30,4 +30,4 @@ const Feedback = sequelize.define('Feedback', {
 module.exports = Feedback;
 
 // Define the association between User and Feedback
-Feedback.belongsTo(User, { foreignKey: 'userId' });
+// Feedback.belongsTo(User, { foreignKey: 'userId' });

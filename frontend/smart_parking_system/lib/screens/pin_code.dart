@@ -6,7 +6,6 @@ class PinCodeForm extends StatefulWidget {
 
   const PinCodeForm({super.key, required this.userType, required this.otp});
 
-
   @override
   State<PinCodeForm> createState() => _PinCodeFormState();
 }
@@ -61,12 +60,16 @@ class _PinCodeFormState extends State<PinCodeForm> {
       return;
     }
     if (pin == widget.otp) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('User Registered Successfully.'),
+        ),
+      );
       Navigator.pop(context, 'success');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text(
-              'Incorrect OTP. Please try again.'),
+          content: Text('Incorrect OTP. Please try again.'),
         ),
       );
     }

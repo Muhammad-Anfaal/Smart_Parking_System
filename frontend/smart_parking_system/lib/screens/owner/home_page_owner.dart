@@ -77,8 +77,13 @@ class _MyHomePageOwnerState extends State<MyHomePageOwner> {
                         // Navigate to subscription page when item is clicked
                         Navigator.pushNamed(context, '/register_parking_area');
                       }),
-                      SizedBox(height: 0.0),
-                      SizedBox(height: 0.0),
+                      const SizedBox(height: 0.0),
+                      const SizedBox(height: 0.0),
+                      const SizedBox(height: 0.0),
+                      const SizedBox(height: 0.0),
+                      const SizedBox(height: 0.0),
+                      const SizedBox(height: 0.0),
+                      const SizedBox(height: 0.0),
                     ],
                   ),
                 ),

@@ -1,12 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart' as ffv;
 import 'package:image_picker/image_picker.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 import 'package:http/http.dart' as http;
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 
 Future<void> signUpUser(
     String name,
@@ -17,13 +20,14 @@ Future<void> signUpUser(
     String address,
     String phone,
     String userType,
-    String? imagePath) async {
+    String imageBytes) async {
   // String ipAddress = '10.0.2.2'; // for emulator
   // String ipAddress = '127.0.0.1'; // for browser
   // String ipAddress = '10.20.16.37'; // laptop address HAHAHAHAHAHAHAHAHAHAHAHAHA
   // laptop address HAHAHAHAHAHAHAHAHAHAHAHAHA
-  String ipAddress = '10.10.16.1';
-  final url = Uri.parse('http://$ipAddress:3000/user/createusers');
+  String ipAddress = '192.168.137.1'; // lan adapter ip address
+  // String ipAddress = '192.168.18.14'; // wifi ip address
+  final url = Uri.parse('http://$ipAddress:3000/user/createuser');
 
   try {
     final Map<dynamic, dynamic> data = {
@@ -35,7 +39,7 @@ Future<void> signUpUser(
       "userAddress": address,
       "userPassword": pass,
       "userType": userType,
-      "userImage": imagePath
+      "userImage": imageBytes
     };
     final response = await http.post(
       url,
@@ -112,6 +116,7 @@ class _SignUpPageState extends State<SignUpPage> {
   TextEditingController address = TextEditingController();
   TextEditingController password = TextEditingController();
   TextEditingController confirmPassword = TextEditingController();
+  String imageBytes = '';
 
   final nameValidator = ffv.MultiValidator([
     ffv.RequiredValidator(errorText: 'name is required'),
@@ -241,12 +246,12 @@ class _SignUpPageState extends State<SignUpPage> {
                               ),
                               padding: const EdgeInsets.all(20.0),
                               child: _imageFile == null
-                                  ? Icon(Icons.add_a_photo)
+                                  ? const Icon(Icons.add_a_photo)
                                   : Image.file(File(_imageFile!.path)),
                             ),
-                            SizedBox(height: 8),
+                            const SizedBox(height: 8),
                             // Add spacing between text and image container
-                            Text(
+                            const Text(
                               'Insert your profile image',
                               style: TextStyle(
                                 color: Colors.white,
@@ -341,7 +346,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         ),
                         onPressed: () {
                           if (_signup() == true) {
-                            otp = Random().nextInt(999999) + 100000;
+                            otp = Random().nextInt(900000) + 100000;
                             print(
                                 '*******************************************************************OTP is: $otp*******************************************************************');
                             print(
@@ -354,6 +359,8 @@ class _SignUpPageState extends State<SignUpPage> {
                             });
                             result.then((value) {
                               if (value == 'success') {
+                                print(
+                                    "registered**************************************");
                                 signUpUser(
                                   name.text,
                                   email.text,
@@ -363,7 +370,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                   address.text,
                                   phone.text,
                                   widget.userType,
-                                  _imageFile?.path, // Pass image path
+                                  imageBytes, // Pass image path
                                 );
                                 Navigator.pop(context);
                               }
@@ -397,10 +404,23 @@ class _SignUpPageState extends State<SignUpPage> {
       source: ImageSource.gallery,
     );
     if (pickedImage != null) {
+      print(
+          '###########################################################################################################################');
+
+      try {
+        Directory documentDirectory = await getApplicationDocumentsDirectory();
+        const fileName = 'picked_image.jpg';
+        final savedImage = await File(_imageFile!.path)
+            .copy('${documentDirectory.path}/$fileName');
+        print('Image saved to: ${savedImage.path}');
+        imageBytes = base64Encode(await savedImage.readAsBytes());
+        print(
+            '&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&Image bytes: $imageBytes');
+      } catch (e) {
+        print('Error: $e');
+      }
       setState(() {
         _imageFile = pickedImage;
-        final bytes = File(_imageFile!.path).readAsBytesSync();
-        print(bytes);
       });
     }
   }
