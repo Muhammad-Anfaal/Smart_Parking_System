@@ -3,16 +3,17 @@ const User = require('../models/User');
 
 exports.registerParkingArea = async (req, res) => {
   try {
-    const { userId } = req.params;
-    const { parkingAreaName, parkingAreaLocation, parkingAreaCapacity, parkingAreaImage, parkingAreaStatus } = req.body;
+    const { parkingAreaName, parkingAreaLocation, parkingAreaCapacity, parkingAreaImage, parkingAreaStatus, email } = req.body;
     
     // Check if the user exists
-    const user = await User.findByPk(userId);
+
+    // Register a new parking area
+    const user = await User.findOne({ where: { userEmail: email } });
     if (!user) {
       return res.status(404).send('User not found');
     }
+    const userId = user.userId;
 
-    // Register a new parking area
     const newParkingArea = await ParkingArea.create({
       userId,
       parkingAreaName,
@@ -32,10 +33,15 @@ exports.registerParkingArea = async (req, res) => {
 
 exports.getUserParkingAreas = async (req, res) => {
   try {
-    const userId = req.params.userId;
+    const email = req.body.email;
+
+    const user = await User.findOne({ where: { userEmail: email } });
+    if (!user) {
+      return res.status(404).send('User not found');
+    }
 
     // Fetch all parking areas belonging to the user
-    const userParkingAreas = await ParkingArea.findAll({ where: { userId } });
+    const userParkingAreas = await ParkingArea.findAll({ where: { userId : userId } });
 
     res.json(userParkingAreas);
   } catch (error) {
@@ -44,27 +50,43 @@ exports.getUserParkingAreas = async (req, res) => {
   }
 };
 
+exports.getAllParkingAreas = async (req, res) => {
+  try {
+    const parkingAreas = await ParkingArea.findAll({ where: { parkingAreaStatus: 'Active' } });
+    res.json(parkingAreas);
+  } catch (error) {
+    console.error('Error fetching parking areas:', error);
+    res.status(500).send('Error fetching parking areas');
+  }
+};
 
 exports.updateParkingArea = async (req, res) => {
   try {
-    const { userId, parkingAreaId } = req.params;
+    const { email, parkingAreaName, newParkingAreaName, parkingAreaCapacity, parkingAreaImage, parkingAreaStatus } = req.body;
 
     // Check if the user exists
-    const user = await User.findByPk(userId);
+    const user = await User.findOne({ where: { userEmail: email } });
     if (!user) {
       return res.status(404).send('User not found');
     }
 
     // Check if the Parking Area exists and belongs to the user
-    const parkingArea = await ParkingArea.findOne({ where: { parkingAreaId, userId } });
-    if (!parkingArea) {
+    const existingParkingArea = await ParkingArea.findOne({ where: { parkingAreaName: parkingAreaName, userId: user.userId } });
+    if (!existingParkingArea) {
       return res.status(404).send('Parking Area not found');
     }
 
-    const { parkingAreaName, parkingAreaCapacity, parkingAreaImage, parkingAreaStatus } = req.body;
-    await parkingArea.update({ parkingAreaName, parkingAreaCapacity, parkingAreaImage, parkingAreaStatus });
+    
+    // Check if the new parking area name already exists
+    const checkExistingParkingArea = await ParkingArea.findOne({ where: { parkingAreaName: newParkingAreaName } });
+    if (checkExistingParkingArea) {
+      return res.status(400).send('Parking Area name already exists');
+    }
+    
+    const updatedParkingArea =  await existingParkingArea.update({ parkingAreaName: newParkingAreaName, parkingAreaCapacity, parkingAreaImage, parkingAreaStatus });
 
-    res.json(parkingArea);
+
+    res.json(updatedParkingArea);
   } catch (error) {
     console.error('Error updating user Parking Area:', error);
     res.status(500).send('Error updating Parking Area');
@@ -74,16 +96,16 @@ exports.updateParkingArea = async (req, res) => {
 
 exports.removeParkingArea = async (req, res) => {
   try {
-    const { userId, parkingAreaId } = req.params;
+    const { email, parkingAreaName } = req.body;
 
     // Check if the user exists
-    const user = await User.findByPk(userId);
+    const user = await User.findOne({ where: { userEmail: email } });
     if (!user) {
       return res.status(404).send('User not found');
     }
 
     // Check if the parking area exists and belongs to the user
-    const parkingArea = await ParkingArea.findOne({ where: { parkingAreaId, userId } });
+    const parkingArea = await ParkingArea.findOne({ where: { parkingAreaName:parkingAreaName, userId: user.userId } });
     if (!parkingArea) {
       return res.status(404).send('Parking Area not found');
     }
