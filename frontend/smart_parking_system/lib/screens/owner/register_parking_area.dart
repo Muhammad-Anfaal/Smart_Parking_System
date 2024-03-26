@@ -88,7 +88,7 @@ class _ElevatedCardExampleState extends State<ElevatedCardExample> {
 
     if (nameError == null && capacityError == null && locationError == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text('Wait for approval'),
         ),
       );
@@ -127,8 +127,8 @@ class _ElevatedCardExampleState extends State<ElevatedCardExample> {
       child: Card(
         color: Colors.lightBlue,
         child: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.9,
-          height: MediaQuery.of(context).size.height * 0.85,
+          width: MediaQuery.of(context).size.width * 0.8,
+          height: MediaQuery.of(context).size.height * 0.87,
           child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -243,14 +243,13 @@ class _ElevatedCardExampleState extends State<ElevatedCardExample> {
                   onPressed: _validateAndSubmit,
                   child: const Text('Submit'),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 40),
                 if (imagePath.isNotEmpty)
                   Image.file(
                     File(imagePath),
                     width: MediaQuery.of(context).size.width * 0.75,
                     fit: BoxFit.cover,
                   ),
-                const SizedBox(height: 20),
               ],
             ),
           ),
