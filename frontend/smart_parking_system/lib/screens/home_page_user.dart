@@ -1,7 +1,42 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
+import 'package:image/image.dart' as ImageLib;
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+String img = '';
+
+Future getImage() async {
+  img = await loadProfile('h@gmail.com');
+  print(
+      "????????????????????????????????????????????????????????????????????????????????????");
+  print(img);
+}
+
+Future<String> loadProfile(String email) async {
+  String ipAddress = '192.168.137.1'; // lan adapter ip address
+  final url = Uri.parse('http://$ipAddress:3000/user/users/$email');
+
+  final response = await http.get(url);
+  if (response.statusCode == 200) {
+    Map<dynamic, dynamic> data = jsonDecode(response.body);
+    print(data);
+    String bs4str = data['userImage'];
+    // String base64String = bs4str.substring(2, bs4str.length - 1);
+    Uint8List bytes = base64Decode(bs4str);
+    String dir = (await getApplicationDocumentsDirectory()).path;
+    File file = File('$dir/profile.jpg');
+    File decodedimgfile = await file.writeAsBytes(bytes);
+    return decodedimgfile.path;
+  } else {
+    throw Exception('Failed to load profile');
+  }
+}
 
 class MyHomePageUser extends StatefulWidget {
   const MyHomePageUser({Key? key});
@@ -36,6 +71,7 @@ class _MyHomePageUserState extends State<MyHomePageUser> {
 
   @override
   Widget build(BuildContext context) {
+    getImage();
     return Scaffold(
       backgroundColor: Colors.blue[600],
       body: SafeArea(
@@ -56,7 +92,7 @@ class _MyHomePageUserState extends State<MyHomePageUser> {
                     const SizedBox(height: 50),
                     ListTile(
                       contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 30),
+                          const EdgeInsets.symmetric(horizontal: 30),
                       title: Text(
                         'Hello Awab!',
                         style: Theme.of(context)
@@ -84,8 +120,11 @@ class _MyHomePageUserState extends State<MyHomePageUser> {
                           ),
                           CircleAvatar(
                             radius: 30,
-                            backgroundImage:
-                            AssetImage('assets/images/awab5.jpg'),
+                            backgroundImage: File(img).existsSync()
+                                ? FileImage(File(img))
+                                : const AssetImage('assets/images/profile.png')
+                                    as ImageProvider<Object>,
+                            // MemoryImage(ImageLib.encodeJpg(img!)),
                           ),
                         ],
                       ),
@@ -101,7 +140,7 @@ class _MyHomePageUserState extends State<MyHomePageUser> {
                   decoration: const BoxDecoration(
                       color: Colors.white,
                       borderRadius:
-                      BorderRadius.only(topLeft: Radius.circular(200))),
+                          BorderRadius.only(topLeft: Radius.circular(200))),
                   child: GridView.count(
                     padding: EdgeInsets.zero,
                     shrinkWrap: true,
@@ -112,25 +151,27 @@ class _MyHomePageUserState extends State<MyHomePageUser> {
                     children: [
                       itemDashboard('Reserve Slot', CupertinoIcons.calendar,
                           Colors.deepOrange, () {
-                            // Navigate to ReservationPage when item is clicked
-                            Navigator.pushNamed(context, '/reservation_page');
-                          }),
+                        // Navigate to ReservationPage when item is clicked
+                        Navigator.pushNamed(context, '/reservation_page');
+                      }),
                       itemDashboard('Subscription', CupertinoIcons.person_2_alt,
                           Colors.brown, () {
-                            // Navigate to subscription page when item is clicked
-                            Navigator.pushNamed(context, '/subscription');
-                          }),
+                        // Navigate to subscription page when item is clicked
+                        Navigator.pushNamed(context, '/subscription');
+                      }),
                       itemDashboard('Car Details', CupertinoIcons.car_detailed,
                           Colors.indigo, () {
-                            // Navigate to subscription page when item is clicked
-                            Navigator.pushNamed(context, '/car_registration');
-                          }),
+                        // Navigate to subscription page when item is clicked
+                        Navigator.pushNamed(context, '/car_registration');
+                      }),
                       itemDashboard(
                           'Feedback', CupertinoIcons.mail_solid, Colors.purple,
                               () {
                             // Navigate to subscription page when item is clicked
                             Navigator.pushNamed(context, '/feedback_page');
                           }),
+                      const SizedBox(height: 0.0),
+                      const SizedBox(height: 0.0),
                       const SizedBox(height: 0.0),
                       const SizedBox(height: 0.0),
                     ],
@@ -144,8 +185,8 @@ class _MyHomePageUserState extends State<MyHomePageUser> {
     );
   }
 
-  Widget itemDashboard(String title, IconData iconData, Color background,
-      VoidCallback onTap) =>
+  itemDashboard(String title, IconData iconData, Color background,
+          VoidCallback onTap) =>
       GestureDetector(
         onTap: onTap,
         child: Container(

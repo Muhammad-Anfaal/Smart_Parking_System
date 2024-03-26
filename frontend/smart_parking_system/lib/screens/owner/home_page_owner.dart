@@ -101,18 +101,23 @@ class _MyHomePageOwnerState extends State<MyHomePageOwner> {
                     children: [
                       itemDashboard(
                           'Register Area', CupertinoIcons.map_fill, Colors.red,
-                              () {
-                            // Navigate to subscription page when item is clicked
-                            Navigator.pushNamed(context, '/register_parking_area');
-                          }),
+                          () {
+                        // Navigate to subscription page when item is clicked
+                        Navigator.pushNamed(context, '/register_parking_area');
+                      }),
                       itemDashboard(
                           'Extend Area', CupertinoIcons.arrow_up, Colors.orange,
                               () {
                             // Navigate to subscription page when item is clicked
                             Navigator.pushNamed(context, '/extend_area');
                           }),
-                      SizedBox(height: 0.0),
-                      SizedBox(height: 0.0),
+                      const SizedBox(height: 0.0),
+                      const SizedBox(height: 0.0),
+                      const SizedBox(height: 0.0),
+                      const SizedBox(height: 0.0),
+                      const SizedBox(height: 0.0),
+                      const SizedBox(height: 0.0),
+                      const SizedBox(height: 0.0),
                     ],
                   ),
                 ),

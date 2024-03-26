@@ -5,6 +5,7 @@ const userController = require('../controllers/userController'); // Import your 
 // ... (import other controllers as needed)
 
 router.get('/users', userController.getAllUsers);
+router.get('/users/:email', userController.getUser);
 router.post('/createuser', userController.createUser);
 router.put('/updateuser', userController.updateUser);
 router.delete('/deleteuser', userController.deleteUser);

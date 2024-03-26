@@ -60,6 +60,23 @@ exports.getAllUsers = async (req, res) => {
   }
 };
 
+exports.getUser = async (req, res) => {
+  try {
+    const email = req.params.email;
+    const user = await Users.findOne({ where: { userEmail: email } });
+
+    if (!user) {
+      return res.status(404).send('User not found');
+    }
+
+    res.json(user);
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    res.status(500).send('Error fetching user');
+  }
+};
+
+
 
 exports.updateUser = async (req, res) => {
   try {

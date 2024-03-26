@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class ParkingArea {
   final String imageName;
@@ -11,6 +14,33 @@ class ParkingArea {
       required this.capacity});
 }
 
+Future<List<ParkingArea>> loadData() async {
+  String ipAddress = '192.168.137.1'; // lan adapter ip address
+  final url = Uri.parse('http://$ipAddress:3000/parkingArea/allparkingareas');
+  List<ParkingArea> parkingAreas = [];
+  ParkingArea parkingArea;
+
+  try {
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      print('success');
+      print(response.body);
+      Map<String, dynamic> data = jsonDecode(response.body);
+      for (var i = 0; i < data.length; i++) {
+        parkingArea = ParkingArea(
+            imageName: data[i]['parkingAreaImage'],
+            parkingAreaName: data[i]['parkingAreaName'],
+            capacity: data[i]['parkingAreaCapacity']);
+        parkingAreas.add(parkingArea);
+      }
+    }
+    return parkingAreas;
+  } catch (e) {
+    print('Error: $e');
+    return [];
+  }
+}
+
 class ReservationPage extends StatefulWidget {
   const ReservationPage({Key? key}) : super(key: key);
 
@@ -19,23 +49,7 @@ class ReservationPage extends StatefulWidget {
 }
 
 class _ReservationPageState extends State<ReservationPage> {
-  List<ParkingArea> parkingAreas = [
-    ParkingArea(
-      imageName: 'assets/images/paris.jpg',
-      parkingAreaName: 'Parking Area 1',
-      capacity: 'Capacity: 50',
-    ),
-    ParkingArea(
-      imageName: 'assets/images/iqbal.jpeg',
-      parkingAreaName: 'Parking Area 2',
-      capacity: 'Capacity: 75',
-    ),
-    ParkingArea(
-      imageName: 'assets/images/gumti.jpeg',
-      parkingAreaName: 'Parking Area 3',
-      capacity: 'Capacity: 60',
-    ),
-  ];
+  List<ParkingArea> parkingAreas = loadData() as List<ParkingArea>;
 
   @override
   Widget build(BuildContext context) {
@@ -44,9 +58,9 @@ class _ReservationPageState extends State<ReservationPage> {
         child: Column(
           children: <Widget>[
             Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Colors.black,
-                borderRadius: const BorderRadius.only(
+                borderRadius: BorderRadius.only(
                   bottomRight: Radius.circular(50),
                   bottomLeft: Radius.circular(50),
                 ),
@@ -57,12 +71,12 @@ class _ReservationPageState extends State<ReservationPage> {
                 backgroundColor: Colors.transparent,
                 elevation: 0,
                 leading: IconButton(
-                  icon: Icon(Icons.arrow_back, color: Colors.white),
+                  icon: const Icon(Icons.arrow_back, color: Colors.white),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
                 ),
-                title: Text(
+                title: const Text(
                   'Select Parking Area',
                   style: TextStyle(
                     color: Colors.white,
