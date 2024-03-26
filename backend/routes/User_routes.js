@@ -9,6 +9,7 @@ router.post('/createuser', userController.createUser);
 router.put('/updateuser', userController.updateUser);
 router.delete('/deleteuser', userController.deleteUser);
 router.post('/validateuser', userController.validateUser);
+router.post('/feedback', userController.giveFeedback);
 
 //Routes for managing user subscriptions
 // router.get('/users/:userId/subscription', userController.getUserSubscription);

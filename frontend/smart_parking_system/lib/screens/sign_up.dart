@@ -221,23 +221,56 @@ class _SignUpPageState extends State<SignUpPage> {
                         color: Colors.blue[100],
                         borderRadius: BorderRadius.circular(50.0),
                       ),
-                      child: TextFormField(
-                        validator: passwordValidator,
-                        controller: password,
-                        keyboardType: TextInputType.text,
-                        obscureText: hidePassword,
-                        style: const TextStyle(color: Colors.black),
-                        decoration: InputDecoration(
-                          suffixIcon: IconButton(
-                            onPressed: () {
-                              setState(() {
-                                hidePassword = !hidePassword;
-                              });
-                            },
-                            icon: Icon(
-                              hidePassword
-                                  ? Icons.visibility_off
-                                  : Icons.visibility,
+                      InputField(
+                        text: 'Email address',
+                        icon: Icons.mail,
+                        textType: TextInputType.emailAddress,
+                        controller: email,
+                        validator: emailValidator,
+                      ),
+                      InputField(
+                        text: 'Mobile No.',
+                        icon: Icons.phone,
+                        textType: TextInputType.phone,
+                        controller: phone,
+                        validator: phoneValidator,
+                      ),
+                      InputField(
+                        text: 'City',
+                        icon: Icons.location_city,
+                        textType: TextInputType.text,
+                        controller: city,
+                        validator: cityValidator,
+                      ),
+                      InputField(
+                        text: 'CNIC',
+                        icon: Icons.remember_me,
+                        textType: TextInputType.number,
+                        controller: cnic,
+                        validator: cnicValidator,
+                      ),
+                      InputField(
+                        text: 'Address',
+                        icon: Icons.home,
+                        textType: TextInputType.text,
+                        controller: address,
+                        validator: addressValidator,
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          _pickImage(); // Call image picker when tapped
+                        },
+                        child: Column(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.blue[100],
+                                borderRadius: BorderRadius.circular(50.0),
+                              ),
+                              padding: const EdgeInsets.all(20.0),
+                              child: _imageFile == null
+                                  ? Icon(Icons.add_a_photo)
+                                  : Image.file(File(_imageFile!.path)),
                             ),
                             SizedBox(height: 8),
                             // Add spacing between text and image container
@@ -248,7 +281,13 @@ class _SignUpPageState extends State<SignUpPage> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                          ],
+                          ),
+                          labelText: 'Password',
+                          labelStyle: TextStyle(color: Colors.lightBlue[900]),
+                          icon: const Icon(Icons.lock_open),
+                          iconColor: Colors.lightBlue[900],
+                          suffixIconColor: Colors.lightBlue[900],
+                          border: InputBorder.none,
                         ),
                       ),
                     ),
@@ -298,43 +337,6 @@ class _SignUpPageState extends State<SignUpPage> {
                         backgroundColor: Colors.blue[100],
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(50.0),
-                        ),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 30.0),
-                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                        decoration: BoxDecoration(
-                          color: Colors.blue[100],
-                          borderRadius: BorderRadius.circular(50.0),
-                        ),
-                        child: TextFormField(
-                          validator: (val) => ffv.MatchValidator(
-                                  errorText: 'password does not match')
-                              .validateMatch(val!, password.text),
-                          controller: confirmPassword,
-                          keyboardType: TextInputType.text,
-                          obscureText: hideConfirmPassword,
-                          style: const TextStyle(color: Colors.black),
-                          decoration: InputDecoration(
-                            suffixIcon: IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  hideConfirmPassword = !hideConfirmPassword;
-                                });
-                              },
-                              icon: Icon(
-                                hideConfirmPassword
-                                    ? Icons.visibility_off
-                                    : Icons.visibility,
-                              ),
-                            ),
-                            labelText: 'Confirm Password',
-                            labelStyle: TextStyle(color: Colors.lightBlue[900]),
-                            icon: const Icon(Icons.lock_open),
-                            iconColor: Colors.lightBlue[900],
-                            suffixIconColor: Colors.lightBlue[900],
-                            border: InputBorder.none,
-                          ),
                         ),
                       ),
                       ElevatedButton(

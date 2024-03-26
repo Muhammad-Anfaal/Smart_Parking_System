@@ -3,22 +3,22 @@ const User = require('../models/User');
 
 exports.registerCar = async (req, res) => {
   try {
-    const { userId, carNumber, carYear, carColor, carState } = req.body;
+    const { email, carNumber, carYear, carColor, carState } = req.body;
 
     // Check if the user exists
-    const user = await User.findByPk(userId);
+    const user = await User.findOne({ where: { userEmail: email } });
     if (!user) {
       return res.status(404).send('User not found');
     }
 
     // Check if the user has already registered 3 cars
-    const carCount = await Car.count({ where: { userId } });
-    if (carCount >= 3) {
+    const carCount = await Car.count({ where: { userId : user.userId } });
+    if (carCount > 3) {
       return res.status(400).send('User has already registered the maximum number of cars');
     }
 
     // Check if the car number format is valid and unique
-    const existingCar = await Car.findOne({ where: { carNumber } });
+    const existingCar = await Car.findOne({ where: { carNumber : carNumber } });
     if (existingCar) {
       return res.status(400).send('Car number already exists');
     }
@@ -35,12 +35,13 @@ exports.registerCar = async (req, res) => {
       return res.status(400).send('Invalid car make (year)');
     }
 
+    const userId = user.userId;
     const newCar = await Car.create({
-      userId,
       carNumber,
       carYear,
       carColor,
-      carState
+      carState,
+      userId
     });
 
     res.status(201).json(newCar);
@@ -53,10 +54,15 @@ exports.registerCar = async (req, res) => {
 
 exports.getUserCars = async (req, res) => {
   try {
-    const userId = req.params.userId;
+    const email = req.body.email;
+
+    const user = await User.findOne({ where: { userEmail: email } });
+    if (!user) {
+      return res.status(404).send('User not found');
+    }
 
     // Fetch all cars belonging to the user
-    const userCars = await Car.findAll({ where: { userId } });
+    const userCars = await Car.findAll({ where: { userId : user.userId } });
 
     res.json(userCars);
   } catch (error) {
@@ -68,16 +74,16 @@ exports.getUserCars = async (req, res) => {
 
 exports.removeCar = async (req, res) => {
   try {
-    const { userId, carId } = req.params;
+    const { email, carnumber } = req.body;
 
     // Check if the user exists
-    const user = await User.findByPk(userId);
+    const user = await User.findOne({ where: { userEmail: email } });
     if (!user) {
       return res.status(404).send('User not found');
     }
 
     // Check if the car exists and belongs to the user
-    const car = await Car.findOne({ where: { carId:carId, userId } });
+    const car = await Car.findOne({ where: { carNumber : carnumber, userId : user.userId } });
     if (!car) {
       return res.status(404).send('Car not found');
     }

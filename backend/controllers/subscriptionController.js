@@ -4,16 +4,17 @@ const User = require('../models/User');
 // Function to create a subscription for a user
 exports.createSubscription = async (req, res) => {
   try {
-    const { userId, subscriptionType } = req.body;
+    const { email, subscriptionType} = req.body;
 
     // Check if the user exists
-    const user = await User.findByPk(userId);
+    
+    const user = await User.findOne({ where: { userEmail: email } });
     if (!user) {
       return res.status(404).send('User not found');
     }
 
     // Check if the user already has a subscription
-    const existingSubscription = await Subscription.findOne({ where: { userId } });
+    const existingSubscription = await Subscription.findOne({ where: { userId:user.userId } });
     if (existingSubscription) {
       return res.status(400).send('User already has an active subscription');
     }
@@ -33,7 +34,7 @@ exports.createSubscription = async (req, res) => {
 
     // Create the subscription
     const newSubscription = await Subscription.create({
-      userId,
+      userId: user.userId,
       subscriptionType,
       subscriptionStartDate,
       subscriptionEndDate
@@ -49,16 +50,16 @@ exports.createSubscription = async (req, res) => {
 // Function to get a user's subscription
 exports.getUserSubscription = async (req, res) => {
   try {
-    const userId = req.params.userId;
+    const email = req.body.email;
 
     // Check if the user exists
-    const user = await User.findByPk(userId);
+    const user = await User.findOne({ where: { userEmail: email } });
     if (!user) {
       return res.status(404).send('User not found');
     }
 
     // Find the user's subscription
-    const subscription = await Subscription.findOne({ where: { userId } });
+    const subscription = await Subscription.findOne({ where: { userId:user.userId } });
     if (!subscription) {
       return res.status(404).send('User does not have an active subscription');
     }

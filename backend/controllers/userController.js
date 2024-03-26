@@ -2,6 +2,8 @@
 // Import your database connection
 const Users = require('../models/User'); // Import your User model
 const Car = require('../models/Car'); // Import your Car model
+const Feedback = require('../models/Feedback'); // Import your Feedback model
+const { Op } = require('sequelize');
 // const Subscription = require('../models/Subscription');
 const bcrypt = require('bcrypt'); // Import bcrypt for password comparison
 
@@ -145,6 +147,46 @@ exports.deleteUser = async (req, res) => {
   } catch (error) {
     console.error('Error deleting user and related cars:', error);
     res.status(500).send('Error deleting user and related cars');
+  }
+};
+
+//_____________________Feedback part_______________________//
+exports.giveFeedback = async (req, res) => {
+  try {
+    const { email, rateOption, description } = req.body;
+
+    // Check if the user exists
+    const user = await Users.findOne({ where: { userEmail: email } });
+    if (!user) {
+      return res.status(404).send('User not found');
+    }
+
+    // Check if the user has already given feedback today
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const existingFeedback = await Feedback.findOne({
+      where: {
+        userId:user.userId,
+        createdAt: {
+          [Op.gte]: today // Find feedbacks created today or later
+        }
+      }
+    });
+    if (existingFeedback) {
+      return res.status(400).send('User has already given feedback today');
+    }
+
+    // Create the feedback
+    const newFeedback = await Feedback.create({
+      userId:user.userId,
+      rateOption,
+      description
+    });
+
+    res.status(201).json(newFeedback);
+  } catch (error) {
+    console.error('Error giving feedback:', error);
+    res.status(500).send('Error giving feedback');
   }
 };
 
