@@ -1,14 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MyHomePageOwner extends StatefulWidget {
-  const MyHomePageOwner({super.key});
+  const MyHomePageOwner({Key? key});
 
   @override
   State<MyHomePageOwner> createState() => _MyHomePageOwnerState();
 }
 
 class _MyHomePageOwnerState extends State<MyHomePageOwner> {
+  String _greeting = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _updateGreeting();
+  }
+
+  void _updateGreeting() {
+    final currentTime = DateTime.now();
+    final hour = currentTime.hour;
+
+    setState(() {
+      if (hour >= 6 && hour < 12) {
+        _greeting = 'Good Morning';
+      } else if (hour >= 12 && hour < 18) {
+        _greeting = 'Good Afternoon';
+      } else {
+        _greeting = 'Good Night';
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,7 +55,7 @@ class _MyHomePageOwnerState extends State<MyHomePageOwner> {
                     const SizedBox(height: 50),
                     ListTile(
                       contentPadding:
-                          const EdgeInsets.symmetric(horizontal: 30),
+                      const EdgeInsets.symmetric(horizontal: 30),
                       title: Text(
                         'Hello Awab!',
                         style: Theme.of(context)
@@ -40,15 +64,19 @@ class _MyHomePageOwnerState extends State<MyHomePageOwner> {
                             ?.copyWith(color: Colors.white),
                       ),
                       subtitle: Text(
-                        'Good Morning',
+                        _greeting,
                         style: Theme.of(context)
                             .textTheme
                             .titleMedium
                             ?.copyWith(color: Colors.white54),
                       ),
-                      trailing: const CircleAvatar(
-                        radius: 30,
-                        backgroundImage: AssetImage('assets/images/awab5.jpg'),
+                      trailing: IconButton(
+                        icon: Icon(Icons.exit_to_app), // Log-out icon
+                        color: Colors.white,
+                        onPressed: () {
+                          // Log out functionality
+                          _logOut();
+                        },
                       ),
                     ),
                     const SizedBox(height: 30)
@@ -62,7 +90,7 @@ class _MyHomePageOwnerState extends State<MyHomePageOwner> {
                   decoration: const BoxDecoration(
                       color: Colors.white,
                       borderRadius:
-                          BorderRadius.only(topLeft: Radius.circular(200))),
+                      BorderRadius.only(topLeft: Radius.circular(200))),
                   child: GridView.count(
                     padding: EdgeInsets.zero,
                     shrinkWrap: true,
@@ -77,6 +105,12 @@ class _MyHomePageOwnerState extends State<MyHomePageOwner> {
                         // Navigate to subscription page when item is clicked
                         Navigator.pushNamed(context, '/register_parking_area');
                       }),
+                      itemDashboard(
+                          'Extend Area', CupertinoIcons.arrow_up, Colors.orange,
+                              () {
+                            // Navigate to subscription page when item is clicked
+                            Navigator.pushNamed(context, '/extend_area');
+                          }),
                       const SizedBox(height: 0.0),
                       const SizedBox(height: 0.0),
                       const SizedBox(height: 0.0),
@@ -95,8 +129,8 @@ class _MyHomePageOwnerState extends State<MyHomePageOwner> {
     );
   }
 
-  itemDashboard(String title, IconData iconData, Color background,
-          VoidCallback onTap) =>
+  Widget itemDashboard(String title, IconData iconData, Color background,
+      VoidCallback onTap) =>
       GestureDetector(
         onTap: onTap,
         child: Container(
@@ -130,4 +164,12 @@ class _MyHomePageOwnerState extends State<MyHomePageOwner> {
           ),
         ),
       );
+
+  // Log-out functionality
+  void _logOut() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear(); // Clear all stored data
+    // Navigate to the login page or any other initial page
+    Navigator.pushNamedAndRemoveUntil(context, '/log_in', (route) => false);
+  }
 }

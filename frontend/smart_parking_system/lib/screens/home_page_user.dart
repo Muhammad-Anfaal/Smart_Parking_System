@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
+import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 String img = '';
 
@@ -37,13 +39,36 @@ Future<String> loadProfile(String email) async {
 }
 
 class MyHomePageUser extends StatefulWidget {
-  const MyHomePageUser({super.key});
+  const MyHomePageUser({Key? key});
 
   @override
   State<MyHomePageUser> createState() => _MyHomePageUserState();
 }
 
 class _MyHomePageUserState extends State<MyHomePageUser> {
+  String _greeting = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _updateGreeting();
+  }
+
+  void _updateGreeting() {
+    final currentTime = DateTime.now();
+    final hour = currentTime.hour;
+
+    setState(() {
+      if (hour >= 6 && hour < 12) {
+        _greeting = 'Good Morning';
+      } else if (hour >= 12 && hour < 18) {
+        _greeting = 'Good Afternoon';
+      } else {
+        _greeting = 'Good Night';
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     getImage();
@@ -76,7 +101,7 @@ class _MyHomePageUserState extends State<MyHomePageUser> {
                             ?.copyWith(color: Colors.white),
                       ),
                       subtitle: Text(
-                        'Good Morning',
+                        _greeting,
                         style: Theme.of(context)
                             .textTheme
                             .titleMedium
@@ -85,14 +110,14 @@ class _MyHomePageUserState extends State<MyHomePageUser> {
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          // IconButton(
-                          //   icon: const Icon(Icons.notifications),
-                          //   color: Colors.white,
-                          //   onPressed: () {
-                          //     // Navigate to notification screen
-                          //     Navigator.pushNamed(context, '/notification');
-                          //   },
-                          // ),
+                          IconButton(
+                            icon: Icon(Icons.exit_to_app), // Log-out icon
+                            color: Colors.white,
+                            onPressed: () {
+                              // Log out functionality
+                              _logOut();
+                            },
+                          ),
                           CircleAvatar(
                             radius: 30,
                             backgroundImage: File(img).existsSync()
@@ -141,10 +166,10 @@ class _MyHomePageUserState extends State<MyHomePageUser> {
                       }),
                       itemDashboard(
                           'Feedback', CupertinoIcons.mail_solid, Colors.purple,
-                          () {
-                        // Navigate to subscription page when item is clicked
-                        Navigator.pushNamed(context, '/feedback_page');
-                      }),
+                              () {
+                            // Navigate to subscription page when item is clicked
+                            Navigator.pushNamed(context, '/feedback_page');
+                          }),
                       const SizedBox(height: 0.0),
                       const SizedBox(height: 0.0),
                       const SizedBox(height: 0.0),
@@ -195,4 +220,12 @@ class _MyHomePageUserState extends State<MyHomePageUser> {
           ),
         ),
       );
+
+  // Log-out functionality
+  void _logOut() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear(); // Clear all stored data
+    // Navigate to the login page or any other initial page
+    Navigator.pushNamedAndRemoveUntil(context, '/log_in', (route) => false);
+  }
 }
