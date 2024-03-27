@@ -29,8 +29,9 @@ class _ParkingRegistrationState extends State<ParkingRegistration> {
     List<String>? carsJson = prefs.getStringList('registered_cars');
     if (carsJson != null) {
       setState(() {
-        _registeredCars =
-            carsJson.map((carJson) => Map<String, String>.from(jsonDecode(carJson))).toList();
+        _registeredCars = carsJson
+            .map((carJson) => Map<String, String>.from(jsonDecode(carJson)))
+            .toList();
       });
     }
   }
@@ -38,7 +39,8 @@ class _ParkingRegistrationState extends State<ParkingRegistration> {
   // Save registered cars to SharedPreferences
   Future<void> _saveRegisteredCars() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String> carsJson = _registeredCars.map((car) => jsonEncode(car)).toList();
+    List<String> carsJson =
+        _registeredCars.map((car) => jsonEncode(car)).toList();
     await prefs.setStringList('registered_cars', carsJson);
   }
 
@@ -47,9 +49,6 @@ class _ParkingRegistrationState extends State<ParkingRegistration> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Car Details'),
-        backgroundColor: Colors.blue,
-
-
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -72,121 +71,143 @@ class _ParkingRegistrationState extends State<ParkingRegistration> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       // Show input fields if less than 3 cars registered
-                      if (_registeredCars.length < 3) ...[
-                        TextFormField(
-                          controller: _registrationController,
-                          decoration: InputDecoration(
-                              labelText: 'Car Registration Number', labelStyle: TextStyle(color: Colors.black)),
-                          style: TextStyle(color: Colors.black),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter car registration number';
-                            }
-                            if (!RegExp(r'^[A-Z]{2,3}-\d{1,4}$').hasMatch(value)) {
-                              return 'Invalid car registration number. Format should be XXX-1 to XXX-XXXX';
-                            }
-                            return null;
-                          },
+                      Visibility(
+                        visible: _registeredCars.length < 3,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            TextFormField(
+                              controller: _registrationController,
+                              decoration: InputDecoration(
+                                  labelText: 'Car Registration Number',
+                                  labelStyle: TextStyle(color: Colors.black)),
+                              style: TextStyle(color: Colors.black),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter car registration number';
+                                }
+                                if (!RegExp(r'^[A-Z]{2,3}-\d{1,4}$')
+                                    .hasMatch(value)) {
+                                  return 'Invalid car registration number. Format should be XXX-1 to XXX-XXXX';
+                                }
+                                return null;
+                              },
+                            ),
+                            TextFormField(
+                              controller: _carStateController,
+                              decoration: InputDecoration(
+                                  labelText: 'Car State',
+                                  labelStyle: TextStyle(color: Colors.black)),
+                              style: TextStyle(color: Colors.black),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter car state';
+                                }
+                                return null;
+                              },
+                            ),
+                            TextFormField(
+                              controller: _carModelController,
+                              decoration: InputDecoration(
+                                  labelText: 'Car Model',
+                                  labelStyle: TextStyle(color: Colors.black)),
+                              style: TextStyle(color: Colors.black),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter car model';
+                                }
+                                int model;
+                                try {
+                                  model = int.parse(value);
+                                } catch (e) {
+                                  return 'Please enter a valid integer for car model';
+                                }
+                                if (model > 2024) {
+                                  return 'Car model should not be greater than 2024';
+                                }
+                                return null;
+                              },
+                            ),
+                            TextFormField(
+                              controller: _carColorController,
+                              decoration: InputDecoration(
+                                  labelText: 'Car Color',
+                                  labelStyle: TextStyle(color: Colors.black)),
+                              style: TextStyle(color: Colors.black),
+                              validator: (value) {
+                                if (value?.isEmpty ?? true) {
+                                  return 'Please enter car color';
+                                }
+                                return null;
+                              },
+                            ),
+                            SizedBox(height: 20),
+                          ],
                         ),
-                        TextFormField(
-                          controller: _carStateController,
-                          decoration:
-                          InputDecoration(labelText: 'Car State', labelStyle: TextStyle(color: Colors.black)),
-                          style: TextStyle(color: Colors.black),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter car state';
-                            }
-                            return null;
-                          },
-                        ),
-                        TextFormField(
-                          controller: _carModelController,
-                          decoration:
-                          InputDecoration(labelText: 'Car Model', labelStyle: TextStyle(color: Colors.black)),
-                          style: TextStyle(color: Colors.black),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter car model';
-                            }
-                            int model;
-                            try {
-                              model = int.parse(value);
-                            } catch (e) {
-                              return 'Please enter a valid integer for car model';
-                            }
-                            if (model > 2024) {
-                              return 'Car model should not be greater than 2024';
-                            }
-                            return null;
-                          },
-                        ),
-                        TextFormField(
-                          controller: _carColorController,
-                          decoration:
-                          InputDecoration(labelText: 'Car Color', labelStyle: TextStyle(color: Colors.black)),
-                          style: TextStyle(color: Colors.black),
-                          validator: (value) {
-                            if (value?.isEmpty ?? true) {
-                              return 'Please enter car color';
-                            }
-                            return null;
-                          },
-                        ),
-                        SizedBox(height: 20),
-                      ],
+                      ),
                       // Register Car button
                       ElevatedButton(
                         onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            _registerCar();
+                          if (_registeredCars.length < 3) {
+                            if (_formKey.currentState!.validate()) {
+                              _registerCar();
+                            }
                           }
                         },
-                        child: Text('Register Car', style: TextStyle(color: Colors.white)),
+                        child: Text('Register Car',
+                            style: TextStyle(color: Colors.white)),
                         style: ElevatedButton.styleFrom(primary: Colors.blue),
                       ),
                       SizedBox(height: 20),
                       // Display registered cars
                       Text(
                         'Registered Cars:',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black),
                       ),
                       SizedBox(height: 10),
-                      Expanded(
-                        child: ListView.builder(
-                          itemCount: _registeredCars.length,
-                          itemBuilder: (context, index) {
-                            final car = _registeredCars[index];
-                            return Container(
-                              margin: EdgeInsets.symmetric(vertical: 4.0),
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.black),
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                              child: Card(
-                                color: Colors.white,
-                                child: ListTile(
-                                  title: Text('Car ${index + 1}', style: TextStyle(color: Colors.black)),
-                                  subtitle: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text('Registration Number: ${car['registration']}', style: TextStyle(color: Colors.black)),
-                                      Text('Car State: ${car['carState']}', style: TextStyle(color: Colors.black)),
-                                      Text('Car Model: ${car['carModel']}', style: TextStyle(color: Colors.black)),
-                                      Text('Color: ${car['color']}', style: TextStyle(color: Colors.black)),
-                                    ],
-                                  ),
-                                  trailing: IconButton(
-                                    icon: Icon(Icons.delete, color: Colors.red),
-                                    onPressed: () {
-                                      _deleteCar(index);
-                                    },
-                                  ),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: _registeredCars.length,
+                        itemBuilder: (context, index) {
+                          final car = _registeredCars[index];
+                          return Container(
+                            margin: EdgeInsets.symmetric(vertical: 4.0),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.black),
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            child: Card(
+                              color: Colors.white,
+                              child: ListTile(
+                                title: Text('Car ${index + 1}',
+                                    style: TextStyle(color: Colors.black)),
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                        'Registration Number: ${car['registration']}',
+                                        style: TextStyle(color: Colors.black)),
+                                    Text('Car State: ${car['carState']}',
+                                        style: TextStyle(color: Colors.black)),
+                                    Text('Car Model: ${car['carModel']}',
+                                        style: TextStyle(color: Colors.black)),
+                                    Text('Color: ${car['color']}',
+                                        style: TextStyle(color: Colors.black)),
+                                  ],
+                                ),
+                                trailing: IconButton(
+                                  icon: Icon(Icons.delete, color: Colors.red),
+                                  onPressed: () {
+                                    _deleteCar(index);
+                                  },
                                 ),
                               ),
-                            );
-                          },
-                        ),
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),
@@ -200,27 +221,9 @@ class _ParkingRegistrationState extends State<ParkingRegistration> {
   }
 
   void _registerCar() {
-    if (_registeredCars.length >= 3) {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text('Maximum Limit Reached'),
-            content: Text('You have already registered 3 cars.'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text('OK'),
-              ),
-            ],
-          );
-        },
-      );
-      return;
-    }
-
     String registrationNumber = _registrationController.text;
-    bool isDuplicate = _registeredCars.any((car) => car['registration'] == registrationNumber);
+    bool isDuplicate =
+        _registeredCars.any((car) => car['registration'] == registrationNumber);
 
     if (isDuplicate) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -229,7 +232,8 @@ class _ParkingRegistrationState extends State<ParkingRegistration> {
             children: [
               Icon(Icons.error_outline, color: Colors.red),
               SizedBox(width: 8),
-              Text('Registration number already exists', style: TextStyle(color: Colors.red)),
+              Text('Registration number already exists',
+                  style: TextStyle(color: Colors.red)),
             ],
           ),
         ),
@@ -245,7 +249,7 @@ class _ParkingRegistrationState extends State<ParkingRegistration> {
       'color': _carColorController.text,
     });
 
-// Clear input field controllers
+    // Clear input field controllers
     _registrationController.clear();
     _carStateController.clear();
     _carModelController.clear();
@@ -255,49 +259,48 @@ class _ParkingRegistrationState extends State<ParkingRegistration> {
     _saveRegisteredCars();
 
     ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-    content: Text('Car registered successfully'),
-    backgroundColor: Colors.green,
-    ),
+      SnackBar(
+        content: Text('Car registered successfully'),
+        backgroundColor: Colors.green,
+      ),
     );
     setState(() {});
-    }
-
-    void _deleteCar(int index) {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text('Delete Car'),
-            content: Text('Are you sure you want to delete this car?'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  _registeredCars.removeAt(index);
-                  // Save registered cars to SharedPreferences after deleting
-                  _saveRegisteredCars();
-                  Navigator.pop(context);
-                  setState(() {});
-                },
-                child: Text('Yes'),
-              ),
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text('No'),
-              ),
-            ],
-          );
-        },
-      );
-    }
-
-    @override
-    void dispose() {
-      _registrationController.dispose();
-      _carColorController.dispose();
-      _carStateController.dispose();
-      _carModelController.dispose();
-      super.dispose();
-    }
   }
 
+  void _deleteCar(int index) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Delete Car'),
+          content: Text('Are you sure you want to delete this car?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                _registeredCars.removeAt(index);
+                // Save registered cars to SharedPreferences after deleting
+                _saveRegisteredCars();
+                Navigator.pop(context);
+                setState(() {});
+              },
+              child: Text('Yes'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('No'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _registrationController.dispose();
+    _carColorController.dispose();
+    _carStateController.dispose();
+    _carModelController.dispose();
+    super.dispose();
+  }
+}

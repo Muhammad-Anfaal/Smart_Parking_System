@@ -6,8 +6,19 @@ void preferences() async {
   prefs.clear();
 }
 
-class SelectModule extends StatelessWidget {
+class SelectModule extends StatefulWidget {
   const SelectModule({super.key});
+
+  @override
+  State<SelectModule> createState() => _SelectModuleState();
+}
+
+class _SelectModuleState extends State<SelectModule> {
+  @override
+  void initState() {
+    super.initState();
+    preferences();
+  }
 
   @override
   Widget build(BuildContext context) {

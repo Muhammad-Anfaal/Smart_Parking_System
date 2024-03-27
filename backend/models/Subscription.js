@@ -20,7 +20,7 @@ const Subscription = sequelize.define('Subscription', {
     }
   },
   subscriptionType: {
-    type: Sequelize.ENUM('1 month', '2 month', '3 month'),
+    type: Sequelize.ENUM('1 months', '2 months', '3 months'),
     allowNull: false
   },
   subscriptionStartDate: {

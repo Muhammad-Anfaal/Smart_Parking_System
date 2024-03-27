@@ -4,19 +4,20 @@ const User = require('../models/User');
 // Function to create a subscription for a user
 exports.createSubscription = async (req, res) => {
   try {
-    const { email, subscriptionType} = req.body;
+    const { email, subscriptionType } = req.body;
 
     // Check if the user exists
-    
+
     const user = await User.findOne({ where: { userEmail: email } });
     if (!user) {
       return res.status(404).send('User not found');
     }
 
     // Check if the user already has a subscription
-    const existingSubscription = await Subscription.findOne({ where: { userId:user.userId } });
+    const existingSubscription = await Subscription.findOne({ where: { userId: user.userId } });
     if (existingSubscription) {
-      return res.status(400).send('User already has an active subscription');
+      console.log('User already has subscription');
+      return res.status(400).send('User already has subscription');
     }
 
     // Calculate the subscription end date based on subscription type
@@ -24,9 +25,9 @@ exports.createSubscription = async (req, res) => {
     let subscriptionEndDate = new Date();
     if (subscriptionType === '1 month') {
       subscriptionEndDate.setMonth(subscriptionEndDate.getMonth() + 1);
-    } else if (subscriptionType === '2 month') {
+    } else if (subscriptionType === '2 months') {
       subscriptionEndDate.setMonth(subscriptionEndDate.getMonth() + 2);
-    } else if (subscriptionType === '3 month') {
+    } else if (subscriptionType === '3 months') {
       subscriptionEndDate.setMonth(subscriptionEndDate.getMonth() + 3);
     } else {
       return res.status(400).send('Invalid subscription type');
@@ -59,7 +60,7 @@ exports.getUserSubscription = async (req, res) => {
     }
 
     // Find the user's subscription
-    const subscription = await Subscription.findOne({ where: { userId:user.userId } });
+    const subscription = await Subscription.findOne({ where: { userId: user.userId } });
     if (!subscription) {
       return res.status(404).send('User does not have an active subscription');
     }

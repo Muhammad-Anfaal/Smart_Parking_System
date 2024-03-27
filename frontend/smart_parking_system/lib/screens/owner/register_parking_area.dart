@@ -1,6 +1,41 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+
+Future<void> parkingAreaRegister(String email, String name, String location,
+    int capacity, String image, String status) async {
+  String ipAddress = '192.168.137.1'; // lan adapter ip address
+  final url =
+      Uri.parse('http://$ipAddress:3000/parkingArea/registerparkingarea');
+
+  try {
+    final Map<dynamic, dynamic> data = {
+      "email": email,
+      "parkingAreaName": name,
+      "parkingAreaLocation": location,
+      "parkingAreaCapacity": capacity,
+      "parkingAreaImage": image,
+      "parkingAreaStatus": status
+    };
+    final response = await http.post(
+      url,
+      body: jsonEncode(data),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+    if (response.statusCode == 200) {
+      print('success');
+      print(response.body);
+    }
+  } catch (e) {
+    print('Error: $e');
+  }
+}
 
 class RegisterParkingArea extends StatelessWidget {
   const RegisterParkingArea({Key? key}) : super(key: key);
@@ -79,7 +114,7 @@ class _ElevatedCardExampleState extends State<ElevatedCardExample> {
     }
   }
 
-  void _validateAndSubmit() {
+  Future<void> _validateAndSubmit() async {
     setState(() {
       nameError = _nameValidator(nameController.text);
       capacityError = _capacityValidator(capacityController.text);
@@ -87,12 +122,32 @@ class _ElevatedCardExampleState extends State<ElevatedCardExample> {
     });
 
     if (nameError == null && capacityError == null && locationError == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Wait for approval'),
-        ),
-      );
+      SharedPreferences? prefs = await SharedPreferences.getInstance();
+      String? email = prefs?.getString('email'); // Add null check here
+      print(email);
+      print("*************&&&&&&&&*&*&*&*&*&&*&*&*&**&*&*&&*");
+      if (email != null) {
+        // Check if email is not null
+        parkingAreaRegister(
+          email,
+          nameController.text,
+          locationController.text,
+          int.parse(capacityController.text),
+          '',
+          'Active',
+        );
+      } else {
+        print('Email is null');
+      }
     }
+
+// if (nameError == null && capacityError == null && locationError == null) {
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     SnackBar(
+    //       content: Text('Wait for approval'),
+    //     ),
+    //   );
+    // }
   }
 
   String? _nameValidator(String value) {

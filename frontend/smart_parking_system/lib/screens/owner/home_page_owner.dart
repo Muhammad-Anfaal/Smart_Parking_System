@@ -1,5 +1,10 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MyHomePageOwner extends StatefulWidget {
@@ -11,11 +16,51 @@ class MyHomePageOwner extends StatefulWidget {
 
 class _MyHomePageOwnerState extends State<MyHomePageOwner> {
   String _greeting = '';
+  String img = '';
+  String userName = '';
+
+  Future<void> getImage() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool profileImage = prefs.getBool("profileImage") ?? false;
+    prefs.setBool('parkingArea', false);
+    if (profileImage) {
+      img = prefs.getString('img')!;
+      return;
+    }
+
+    Future<String> loadProfile(String email) async {
+      String ipAddress = '192.168.137.1'; // lan adapter ip address
+      final url = Uri.parse('http://$ipAddress:3000/user/users/$email');
+
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        Map<dynamic, dynamic> data = jsonDecode(response.body);
+        userName = data['userName'];
+        print(data);
+        String bs4str = data['userImage'];
+        Uint8List bytes = base64Decode(bs4str);
+        String dir = (await getApplicationDocumentsDirectory()).path;
+        File file = File('$dir/profile.jpg');
+        File decodedimgfile = await file.writeAsBytes(bytes);
+        return decodedimgfile.path;
+      } else {
+        throw Exception('Failed to load profile');
+      }
+    }
+
+    String email = prefs.getString('email')!;
+    img = await loadProfile(email);
+    prefs.setString('img', img);
+    prefs.setBool("profileImage", true);
+
+    setState(() {});
+  }
 
   @override
   void initState() {
     super.initState();
     _updateGreeting();
+    getImage();
   }
 
   void _updateGreeting() {
@@ -55,9 +100,9 @@ class _MyHomePageOwnerState extends State<MyHomePageOwner> {
                     const SizedBox(height: 50),
                     ListTile(
                       contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 30),
+                          const EdgeInsets.symmetric(horizontal: 30),
                       title: Text(
-                        'Hello Awab!',
+                        'Hello $userName!',
                         style: Theme.of(context)
                             .textTheme
                             .headlineSmall
@@ -70,13 +115,26 @@ class _MyHomePageOwnerState extends State<MyHomePageOwner> {
                             .titleMedium
                             ?.copyWith(color: Colors.white54),
                       ),
-                      trailing: IconButton(
-                        icon: Icon(Icons.exit_to_app), // Log-out icon
-                        color: Colors.white,
-                        onPressed: () {
-                          // Log out functionality
-                          _logOut();
-                        },
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.exit_to_app), // Log-out icon
+                            color: Colors.white,
+                            onPressed: () {
+                              // Log out functionality
+                              _logOut();
+                            },
+                          ),
+                          CircleAvatar(
+                            radius: 30,
+                            backgroundImage: File(img).existsSync()
+                                ? FileImage(File(img))
+                                : const AssetImage('assets/images/profile.png')
+                                    as ImageProvider<Object>,
+                            // MemoryImage(ImageLib.encodeJpg(img!)),
+                          ),
+                        ],
                       ),
                     ),
                     const SizedBox(height: 30)
@@ -90,7 +148,7 @@ class _MyHomePageOwnerState extends State<MyHomePageOwner> {
                   decoration: const BoxDecoration(
                       color: Colors.white,
                       borderRadius:
-                      BorderRadius.only(topLeft: Radius.circular(200))),
+                          BorderRadius.only(topLeft: Radius.circular(200))),
                   child: GridView.count(
                     padding: EdgeInsets.zero,
                     shrinkWrap: true,
@@ -107,10 +165,10 @@ class _MyHomePageOwnerState extends State<MyHomePageOwner> {
                       }),
                       itemDashboard(
                           'Extend Area', CupertinoIcons.arrow_up, Colors.orange,
-                              () {
-                            // Navigate to subscription page when item is clicked
-                            Navigator.pushNamed(context, '/extend_area');
-                          }),
+                          () {
+                        // Navigate to subscription page when item is clicked
+                        Navigator.pushNamed(context, '/extend_area');
+                      }),
                       const SizedBox(height: 0.0),
                       const SizedBox(height: 0.0),
                       const SizedBox(height: 0.0),
@@ -129,8 +187,8 @@ class _MyHomePageOwnerState extends State<MyHomePageOwner> {
     );
   }
 
-  Widget itemDashboard(String title, IconData iconData, Color background,
-      VoidCallback onTap) =>
+  itemDashboard(String title, IconData iconData, Color background,
+          VoidCallback onTap) =>
       GestureDetector(
         onTap: onTap,
         child: Container(
@@ -170,6 +228,7 @@ class _MyHomePageOwnerState extends State<MyHomePageOwner> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.clear(); // Clear all stored data
     // Navigate to the login page or any other initial page
-    Navigator.pushNamedAndRemoveUntil(context, '/log_in', (route) => false);
+    Navigator.pushNamedAndRemoveUntil(
+        context, '/select_module', (route) => false);
   }
 }
