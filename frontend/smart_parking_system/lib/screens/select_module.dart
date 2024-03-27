@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+void preferences() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.clear();
+}
 
 class SelectModule extends StatelessWidget {
   const SelectModule({super.key});
 
   @override
   Widget build(BuildContext context) {
+    preferences();
     return Scaffold(
       appBar: AppBar(
         title: const Text("Smart Parking System"),

@@ -1,7 +1,10 @@
 import 'dart:convert';
-
+import 'dart:io';
+import 'dart:typed_data';
+import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ParkingArea {
   final String imageName;
@@ -14,33 +17,6 @@ class ParkingArea {
       required this.capacity});
 }
 
-Future<List<ParkingArea>> loadData() async {
-  String ipAddress = '192.168.137.1'; // lan adapter ip address
-  final url = Uri.parse('http://$ipAddress:3000/parkingArea/allparkingareas');
-  List<ParkingArea> parkingAreas = [];
-  ParkingArea parkingArea;
-
-  try {
-    final response = await http.get(url);
-    if (response.statusCode == 200) {
-      print('success');
-      print(response.body);
-      Map<String, dynamic> data = jsonDecode(response.body);
-      for (var i = 0; i < data.length; i++) {
-        parkingArea = ParkingArea(
-            imageName: data[i]['parkingAreaImage'],
-            parkingAreaName: data[i]['parkingAreaName'],
-            capacity: data[i]['parkingAreaCapacity']);
-        parkingAreas.add(parkingArea);
-      }
-    }
-    return parkingAreas;
-  } catch (e) {
-    print('Error: $e');
-    return [];
-  }
-}
-
 class ReservationPage extends StatefulWidget {
   const ReservationPage({Key? key}) : super(key: key);
 
@@ -49,10 +25,62 @@ class ReservationPage extends StatefulWidget {
 }
 
 class _ReservationPageState extends State<ReservationPage> {
-  List<ParkingArea> parkingAreas = loadData() as List<ParkingArea>;
+  List<ParkingArea> parkingAreas = [];
+
+  Future<void> getData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool parkingArea = prefs.getBool("parkinArea") ?? false;
+    if (parkingArea) {
+      print("Trueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
+      return;
+    }
+
+    Future<void> loadData() async {
+      String ipAddress = '192.168.137.1'; // lan adapter ip address
+      final url =
+          Uri.parse('http://$ipAddress:3000/parkingArea/allparkingareas');
+      ParkingArea parkingArea;
+
+      try {
+        final response = await http.get(url);
+        if (response.statusCode == 200) {
+          print('success');
+          print(response.body);
+          List<dynamic> data = jsonDecode(response.body);
+          for (int i = 0; i < data.length; i++) {
+            String bs4str = data[i]['parkingAreaImage'];
+            Uint8List bytes = base64Decode(bs4str);
+            String dir = (await getApplicationDocumentsDirectory()).path;
+            File file = File('$dir/profile.jpg');
+            File decodedimgfile = await file.writeAsBytes(bytes);
+            parkingArea = ParkingArea(
+                imageName: decodedimgfile.path,
+                parkingAreaName: data[i]['parkingAreaName'].toString(),
+                capacity: data[i]['parkingAreaCapacity'].toString());
+            parkingAreas.add(parkingArea);
+          }
+        }
+        print(parkingAreas[0].parkingAreaName);
+        prefs.setBool("parkingArea", true);
+        setState(() {});
+      } catch (e) {
+        print('%%%Error: $e');
+      }
+    }
+
+    loadData();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
 
   @override
   Widget build(BuildContext context) {
+    print(
+        "************************&&&&&&&&&&&&&&&&&&*************************parkingAreas:$parkingAreas");
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -126,7 +154,10 @@ class _ReservationPageState extends State<ReservationPage> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15),
                   image: DecorationImage(
-                    image: AssetImage(imageName),
+                    image: File(imageName).existsSync()
+                        ? FileImage(File(imageName))
+                        : const AssetImage('assets/images/parkingArea.jpeg')
+                            as ImageProvider<Object>,
                     fit: BoxFit.cover,
                   ),
                 ),
