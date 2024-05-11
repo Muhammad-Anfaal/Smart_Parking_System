@@ -4,6 +4,7 @@ import 'package:smart_parking_system/screens/Admin/home_page_admin.dart';
 import 'package:smart_parking_system/screens/Admin/manage_parking_area.dart';
 import 'package:smart_parking_system/screens/Admin/manage_subscriptions.dart';
 import 'package:smart_parking_system/screens/car_registration.dart';
+import 'package:smart_parking_system/screens/extend_time.dart';
 import 'package:smart_parking_system/screens/feedback_page.dart';
 import 'package:smart_parking_system/screens/owner/extend_area.dart';
 import 'package:smart_parking_system/screens/owner/statistics.dart';
@@ -31,7 +32,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: '/home_page_owner',
+      initialRoute: '/home_page_user',
       onGenerateRoute: (settings) {
         if (settings.name == '/log_in') {
           final args = settings.arguments as Map<String, String>? ?? {};
@@ -86,6 +87,7 @@ class MyApp extends StatelessWidget {
         '/manage_parking_area': (context) => ManageParkingArea(),
         '/extend_area':(context)=>ExtendArea(),
         '/statistics':(context)=>StatisticsPage(),
+        'extend_time':(context)=>ExtendTime(),
       },
     );
   }
