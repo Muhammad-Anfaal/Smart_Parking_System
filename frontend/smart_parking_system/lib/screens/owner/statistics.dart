@@ -48,17 +48,22 @@ class _StatisticsPageState extends State<StatisticsPage> {
       body: SingleChildScrollView(
         child: Center(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: parkingAreas.map((parkingArea) {
-              return SizedBox(
-                width: 300,
-                child: ParkingCard(
-                  name: parkingArea.name,
-                  totalCapacity: parkingArea.totalCapacity,
-                  availableCapacity: parkingArea.availableCapacity,
+            children: [
+              Card(
+                elevation: 4,
+                child: ExpansionTile(
+                  title: Text('Parking Areas'),
+                  children: parkingAreas.map((parkingArea) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: ParkingCard(parkingArea: parkingArea),
+                    );
+                  }).toList(),
                 ),
-              );
-            }).toList(),
+              ),
+              SizedBox(height: 20),
+              ReviewCard(),
+            ],
           ),
         ),
       ),
@@ -67,14 +72,10 @@ class _StatisticsPageState extends State<StatisticsPage> {
 }
 
 class ParkingCard extends StatelessWidget {
-  final String name;
-  final int totalCapacity;
-  final int availableCapacity;
+  final ParkingAreaData parkingArea;
 
   ParkingCard({
-    required this.name,
-    required this.totalCapacity,
-    required this.availableCapacity,
+    required this.parkingArea,
   });
 
   @override
@@ -89,7 +90,7 @@ class ParkingCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              name,
+              parkingArea.name,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -101,19 +102,19 @@ class ParkingCard extends StatelessWidget {
               width: 180,
               height: 180,
               child: DonutChart(
-                totalCapacity: totalCapacity,
-                availableCapacity: availableCapacity,
+                totalCapacity: parkingArea.totalCapacity,
+                availableCapacity: parkingArea.availableCapacity,
               ),
             ),
             SizedBox(height: 10),
             CapacityCard(
               title: 'Total Capacity',
-              value: totalCapacity,
+              value: parkingArea.totalCapacity,
             ),
             SizedBox(height: 10),
             CapacityCard(
               title: 'Available Capacity',
-              value: availableCapacity,
+              value: parkingArea.availableCapacity,
             ),
           ],
         ),
@@ -122,7 +123,7 @@ class ParkingCard extends StatelessWidget {
   }
 
   Color _calculateCardColor() {
-    double percentage = availableCapacity / totalCapacity;
+    double percentage = parkingArea.availableCapacity / parkingArea.totalCapacity;
     if (percentage > 0.8) {
       return Colors.redAccent;
     } else if (percentage > 0.5) {
@@ -200,6 +201,63 @@ class CapacityCard extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class ReviewCard extends StatelessWidget {
+  final int numberOfStars = 5; // Number of stars to display
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 4,
+      child: Padding(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Reviews',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 10),
+            // Check if there's no review data available
+            // If so, display placeholder stars
+            // Otherwise, display the actual review content
+            _buildReviewContent(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildReviewContent() {
+    // Simulate whether review data is available or not
+    bool hasReviewData = false;
+
+    if (hasReviewData) {
+      // Display actual review content
+      // Replace this with your review content widget
+      return Container(
+        // Add your review content here
+        child: Text('Actual review content'),
+      );
+    } else {
+      // Display placeholder stars
+      return Row(
+        children: List.generate(
+          numberOfStars,
+              (index) => Icon(
+            Icons.star,
+            color: Colors.amber,
+            size: 30,
+          ),
+        ),
+      );
+    }
   }
 }
 
