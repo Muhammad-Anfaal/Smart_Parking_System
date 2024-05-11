@@ -48,117 +48,116 @@ class _ParkingRegistrationState extends State<ParkingRegistration> {
       appBar: AppBar(
         title: Text('Car Details'),
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [Colors.blue, Colors.green],
-            ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Colors.blue, Colors.green],
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Card(
-              color: Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      // Show input fields if less than 3 cars registered
-                      Visibility(
-                        visible: _registeredCars.length < 3,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            TextFormField(
-                              controller: _registrationController,
-                              decoration: InputDecoration(
-                                  labelText: 'Car Registration Number', labelStyle: TextStyle(color: Colors.black)),
-                              style: TextStyle(color: Colors.black),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter car registration number';
-                                }
-                                if (!RegExp(r'^[A-Z]{2,3}-\d{1,4}$').hasMatch(value)) {
-                                  return 'Invalid car registration number. Format should be XXX-1 to XXX-XXXX';
-                                }
-                                return null;
-                              },
-                            ),
-                            TextFormField(
-                              controller: _carStateController,
-                              decoration:
-                              InputDecoration(labelText: 'Car State', labelStyle: TextStyle(color: Colors.black)),
-                              style: TextStyle(color: Colors.black),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter car state';
-                                }
-                                return null;
-                              },
-                            ),
-                            TextFormField(
-                              controller: _carModelController,
-                              decoration:
-                              InputDecoration(labelText: 'Car Model', labelStyle: TextStyle(color: Colors.black)),
-                              style: TextStyle(color: Colors.black),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter car model';
-                                }
-                                int model;
-                                try {
-                                  model = int.parse(value);
-                                } catch (e) {
-                                  return 'Please enter a valid integer for car model';
-                                }
-                                if (model > 2024) {
-                                  return 'Car model should not be greater than 2024';
-                                }
-                                return null;
-                              },
-                            ),
-                            TextFormField(
-                              controller: _carColorController,
-                              decoration:
-                              InputDecoration(labelText: 'Car Color', labelStyle: TextStyle(color: Colors.black)),
-                              style: TextStyle(color: Colors.black),
-                              validator: (value) {
-                                if (value?.isEmpty ?? true) {
-                                  return 'Please enter car color';
-                                }
-                                return null;
-                              },
-                            ),
-                            SizedBox(height: 20),
-                          ],
-                        ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Card(
+            color: Colors.white,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Show input fields if less than 3 cars registered
+                    Visibility(
+                      visible: _registeredCars.length < 3,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          TextFormField(
+                            controller: _registrationController,
+                            decoration: InputDecoration(
+                                labelText: 'Car Registration Number', labelStyle: TextStyle(color: Colors.black)),
+                            style: TextStyle(color: Colors.black),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter car registration number';
+                              }
+                              if (!RegExp(r'^[A-Z]{2,3}-\d{1,4}$').hasMatch(value)) {
+                                return 'Invalid car registration number. Format should be XXX-1 to XXX-XXXX';
+                              }
+                              return null;
+                            },
+                          ),
+                          TextFormField(
+                            controller: _carStateController,
+                            decoration:
+                            InputDecoration(labelText: 'Car State', labelStyle: TextStyle(color: Colors.black)),
+                            style: TextStyle(color: Colors.black),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter car state';
+                              }
+                              return null;
+                            },
+                          ),
+                          TextFormField(
+                            controller: _carModelController,
+                            decoration:
+                            InputDecoration(labelText: 'Car Model', labelStyle: TextStyle(color: Colors.black)),
+                            style: TextStyle(color: Colors.black),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter car model';
+                              }
+                              int model;
+                              try {
+                                model = int.parse(value);
+                              } catch (e) {
+                                return 'Please enter a valid integer for car model';
+                              }
+                              if (model > 2024) {
+                                return 'Car model should not be greater than 2024';
+                              }
+                              return null;
+                            },
+                          ),
+                          TextFormField(
+                            controller: _carColorController,
+                            decoration:
+                            InputDecoration(labelText: 'Car Color', labelStyle: TextStyle(color: Colors.black)),
+                            style: TextStyle(color: Colors.black),
+                            validator: (value) {
+                              if (value?.isEmpty ?? true) {
+                                return 'Please enter car color';
+                              }
+                              return null;
+                            },
+                          ),
+                          SizedBox(height: 20),
+                        ],
                       ),
-                      // Register Car button
-                      ElevatedButton(
-                        onPressed: () {
-                          if (_registeredCars.length < 3) {
-                            if (_formKey.currentState!.validate()) {
-                              _registerCar();
-                            }
+                    ),
+                    // Register Car button
+                    ElevatedButton(
+                      onPressed: () {
+                        if (_registeredCars.length < 3) {
+                          if (_formKey.currentState!.validate()) {
+                            _registerCar();
                           }
-                        },
-                        child: Text('Register Car', style: TextStyle(color: Colors.white)),
-                        style: ElevatedButton.styleFrom(primary: Colors.blue),
-                      ),
-                      SizedBox(height: 20),
-                      // Display registered cars
-                      Text(
-                        'Registered Cars:',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
-                      ),
-                      SizedBox(height: 10),
-                      ListView.builder(
-                        shrinkWrap: true,
+                        }
+                      },
+                      child: Text('Register Car', style: TextStyle(color: Colors.white)),
+                      style: ElevatedButton.styleFrom(primary: Colors.blue),
+                    ),
+                    SizedBox(height: 20),
+                    // Display registered cars
+                    Text(
+                      'Registered Cars:',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
+                    ),
+                    SizedBox(height: 10),
+                    Expanded(
+                      child: ListView.builder(
                         itemCount: _registeredCars.length,
                         itemBuilder: (context, index) {
                           final car = _registeredCars[index];
@@ -192,8 +191,8 @@ class _ParkingRegistrationState extends State<ParkingRegistration> {
                           );
                         },
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -220,7 +219,6 @@ class _ParkingRegistrationState extends State<ParkingRegistration> {
         ),
       );
 
-
       return;
     }
 
@@ -234,7 +232,8 @@ class _ParkingRegistrationState extends State<ParkingRegistration> {
     // Clear input field controllers
     _registrationController.clear();
     _carStateController.clear();
-    _carModelController.clear();
+    _carModelController
+        .clear();
     _carColorController.clear();
 
     // Save registered cars to SharedPreferences
@@ -286,3 +285,4 @@ class _ParkingRegistrationState extends State<ParkingRegistration> {
     super.dispose();
   }
 }
+
