@@ -79,15 +79,13 @@ class _ParkingRegistrationState extends State<ParkingRegistration> {
                             TextFormField(
                               controller: _registrationController,
                               decoration: InputDecoration(
-                                  labelText: 'Car Registration Number',
-                                  labelStyle: TextStyle(color: Colors.black)),
+                                  labelText: 'Car Registration Number', labelStyle: TextStyle(color: Colors.black)),
                               style: TextStyle(color: Colors.black),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return 'Please enter car registration number';
                                 }
-                                if (!RegExp(r'^[A-Z]{2,3}-\d{1,4}$')
-                                    .hasMatch(value)) {
+                                if (!RegExp(r'^[A-Z]{2,3}-\d{1,4}$').hasMatch(value)) {
                                   return 'Invalid car registration number. Format should be XXX-1 to XXX-XXXX';
                                 }
                                 return null;
@@ -95,9 +93,8 @@ class _ParkingRegistrationState extends State<ParkingRegistration> {
                             ),
                             TextFormField(
                               controller: _carStateController,
-                              decoration: InputDecoration(
-                                  labelText: 'Car State',
-                                  labelStyle: TextStyle(color: Colors.black)),
+                              decoration:
+                              InputDecoration(labelText: 'Car State', labelStyle: TextStyle(color: Colors.black)),
                               style: TextStyle(color: Colors.black),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
@@ -108,9 +105,8 @@ class _ParkingRegistrationState extends State<ParkingRegistration> {
                             ),
                             TextFormField(
                               controller: _carModelController,
-                              decoration: InputDecoration(
-                                  labelText: 'Car Model',
-                                  labelStyle: TextStyle(color: Colors.black)),
+                              decoration:
+                              InputDecoration(labelText: 'Car Model', labelStyle: TextStyle(color: Colors.black)),
                               style: TextStyle(color: Colors.black),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
@@ -130,9 +126,8 @@ class _ParkingRegistrationState extends State<ParkingRegistration> {
                             ),
                             TextFormField(
                               controller: _carColorController,
-                              decoration: InputDecoration(
-                                  labelText: 'Car Color',
-                                  labelStyle: TextStyle(color: Colors.black)),
+                              decoration:
+                              InputDecoration(labelText: 'Car Color', labelStyle: TextStyle(color: Colors.black)),
                               style: TextStyle(color: Colors.black),
                               validator: (value) {
                                 if (value?.isEmpty ?? true) {
@@ -182,20 +177,14 @@ class _ParkingRegistrationState extends State<ParkingRegistration> {
                             child: Card(
                               color: Colors.white,
                               child: ListTile(
-                                title: Text('Car ${index + 1}',
-                                    style: TextStyle(color: Colors.black)),
+                                title: Text('Car ${index + 1}', style: TextStyle(color: Colors.black)),
                                 subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
-                                        'Registration Number: ${car['registration']}',
-                                        style: TextStyle(color: Colors.black)),
-                                    Text('Car State: ${car['carState']}',
-                                        style: TextStyle(color: Colors.black)),
-                                    Text('Car Model: ${car['carModel']}',
-                                        style: TextStyle(color: Colors.black)),
-                                    Text('Color: ${car['color']}',
-                                        style: TextStyle(color: Colors.black)),
+                                    Text('Registration Number: ${car['registration']}', style: TextStyle(color: Colors.black)),
+                                    Text('Car State: ${car['carState']}', style: TextStyle(color: Colors.black)),
+                                    Text('Car Model: ${car['carModel']}', style: TextStyle(color: Colors.black)),
+                                    Text('Color: ${car['color']}', style: TextStyle(color: Colors.black)),
                                   ],
                                 ),
                                 trailing: IconButton(
@@ -238,6 +227,7 @@ class _ParkingRegistrationState extends State<ParkingRegistration> {
           ),
         ),
       );
+
 
       return;
     }
