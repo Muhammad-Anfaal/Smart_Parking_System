@@ -285,7 +285,7 @@ class PaymentCard extends StatelessWidget {
                 }
               },
               style: ElevatedButton.styleFrom(
-                primary: Colors.white,
+                backgroundColor: Colors.white,
               ),
               child: Text('Proceed to Payment',
                   style: TextStyle(color: Colors.black)),

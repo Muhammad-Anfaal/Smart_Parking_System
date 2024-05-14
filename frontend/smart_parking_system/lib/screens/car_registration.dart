@@ -156,7 +156,8 @@ class _ParkingRegistrationState extends State<ParkingRegistration> {
                         },
                         child: Text('Register Car',
                             style: TextStyle(color: Colors.white)),
-                        style: ElevatedButton.styleFrom(primary: Colors.blue),
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue),
                       ),
                       SizedBox(height: 20),
                       // Display registered cars

@@ -183,7 +183,8 @@ class _FeedbackPageState extends State<FeedbackPage> {
                 ElevatedButton(
                   onPressed: _submitFeedback,
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.blueGrey, // Set button color to blue
+                    backgroundColor:
+                        Colors.blueGrey, // Set button color to blue
                   ),
                   child: const Text(
                     'Submit',
