@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SelectTime extends StatefulWidget {
   const SelectTime({Key? key}) : super(key: key);
@@ -14,6 +17,35 @@ class _SelectTimeState extends State<SelectTime> {
   TimeOfDay? startTime;
   TimeOfDay? endTime;
   double perHourRate = 50.0;
+
+  Future<void> selectTime(String startTime, String endTime, String amount,
+      String date, String email) async {
+    String ipAddress = '192.168.137.1'; // lan adapter ip address
+    final url = Uri.parse('http://$ipAddress:3800/selectTime/registertime');
+
+    try {
+      final Map<dynamic, dynamic> data = {
+        "email": email,
+        "startTime": startTime,
+        "endTime": endTime,
+        "amount": amount,
+        "date": date,
+      };
+      final response = await http.post(
+        url,
+        body: jsonEncode(data),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
+      if (response.statusCode == 200) {
+        print('success');
+        print(response.body);
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
 
   void _onDaySelected(DateTime day, DateTime focusedDay) {
     if (!day.isBefore(DateTime.now())) {
@@ -95,7 +127,8 @@ class _SelectTimeState extends State<SelectTime> {
             context: context,
             builder: (context) => AlertDialog(
               title: Text('Error'),
-              content: Text('Difference between start time and end time must be greater than 1 hour.'),
+              content: Text(
+                  'Difference between start time and end time must be greater than 1 hour.'),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
@@ -117,7 +150,6 @@ class _SelectTimeState extends State<SelectTime> {
       });
     }
   }
-
 
   bool isTimeSelected() {
     return startTime != null && endTime != null;
@@ -216,7 +248,7 @@ class _SelectTimeState extends State<SelectTime> {
                       ElevatedButton(
                         onPressed: () => _selectTime(context, true),
                         child:
-                        Text('${startTime?.format(context) ?? "Select"}'),
+                            Text('${startTime?.format(context) ?? "Select"}'),
                       ),
                     ],
                   ),
@@ -255,7 +287,7 @@ class _SelectTimeState extends State<SelectTime> {
                   SizedBox(height: 8),
                   Text('Rs $perHourRate',
                       style:
-                      TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 ],
               ),
             ),
@@ -268,9 +300,19 @@ class _SelectTimeState extends State<SelectTime> {
           SizedBox(height: 10),
           ElevatedButton(
             onPressed: isTimeSelected()
-                ? () {
-              Navigator.pushNamed(context, '/payment_page', arguments: {'price':price()});
-            }
+                ? () async {
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              
+                    selectTime(
+                      startTime!.format(context),
+                      endTime!.format(context),
+                      price().toString(),
+                      today.toString().split(" ")[0],
+
+                    );
+                    Navigator.pushNamed(context, '/payment_page',
+                        arguments: {'price': price()});
+                  }
                 : null,
             child: Text('Proceed to Payment'),
           ),

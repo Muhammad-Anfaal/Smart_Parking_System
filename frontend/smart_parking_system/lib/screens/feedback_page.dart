@@ -79,6 +79,9 @@ class _FeedbackPageState extends State<FeedbackPage> {
                   _rating = 0;
                   _commentController.clear();
                 });
+                Future.delayed(const Duration(seconds: 2), () {
+                  Navigator.pushReplacementNamed(context, '/home_page_user');
+                });
               },
               child: const Text('Yes'),
             ),

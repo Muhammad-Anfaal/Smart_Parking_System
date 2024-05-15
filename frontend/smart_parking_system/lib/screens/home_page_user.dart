@@ -150,6 +150,12 @@ class _MyHomePageUserState extends State<MyHomePageUser> {
                         // Navigate to subscription page when item is clicked
                         Navigator.pushNamed(context, '/subscription');
                       }),
+                      itemDashboard(
+                          'Extend Time', CupertinoIcons.clock, Colors.green,
+                          () {
+                        // Navigate to subscription page when item is clicked
+                        Navigator.pushNamed(context, '/extend_time');
+                      }),
                       itemDashboard('Car Details', CupertinoIcons.car_detailed,
                           Colors.indigo, () {
                         // Navigate to subscription page when item is clicked

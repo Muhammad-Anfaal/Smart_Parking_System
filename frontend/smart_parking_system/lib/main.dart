@@ -4,8 +4,10 @@ import 'package:smart_parking_system/screens/Admin/home_page_admin.dart';
 import 'package:smart_parking_system/screens/Admin/manage_parking_area.dart';
 import 'package:smart_parking_system/screens/Admin/manage_subscriptions.dart';
 import 'package:smart_parking_system/screens/car_registration.dart';
+import 'package:smart_parking_system/screens/extend_time.dart';
 import 'package:smart_parking_system/screens/feedback_page.dart';
 import 'package:smart_parking_system/screens/owner/extend_area.dart';
+import 'package:smart_parking_system/screens/owner/statistics.dart';
 import 'package:smart_parking_system/screens/pin_code.dart';
 import '/screens/payment_page.dart';
 import 'screens/log_in.dart';
@@ -84,6 +86,8 @@ class MyApp extends StatelessWidget {
         '/manage_subscriptions': (context) => ManageSubscriptions(),
         '/manage_parking_area': (context) => ManageParkingArea(),
         '/extend_area': (context) => ExtendArea(),
+        '/statistics': (context) => StatisticsPage(),
+        '/extend_time': (context) => ExtendTime(),
       },
     );
   }

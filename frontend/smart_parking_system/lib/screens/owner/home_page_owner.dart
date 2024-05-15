@@ -154,6 +154,13 @@ class _MyHomePageOwnerState extends State<MyHomePageOwner> {
                         // Navigate to subscription page when item is clicked
                         Navigator.pushNamed(context, '/extend_area');
                       }),
+                      itemDashboard(
+                          'Statistics',
+                          CupertinoIcons.chart_bar_square_fill,
+                          Colors.purple, () {
+                        // Navigate to subscription page when item is clicked
+                        Navigator.pushNamed(context, '/statistics');
+                      }),
                       const SizedBox(height: 0.0),
                       const SizedBox(height: 0.0),
                       const SizedBox(height: 0.0),

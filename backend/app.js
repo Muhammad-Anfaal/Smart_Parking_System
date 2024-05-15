@@ -11,6 +11,7 @@ const Car_routes = require('./routes/Car_routes');
 const Subscription_routes = require('./routes/Subscription_routes');
 const ParkingArea_routes = require('./routes/ParkingArea_routes');
 const Admin_routes = require('./routes/Admin_routes');
+const SelectTime_routes = require('./routes/SelectTime_routes');
 
 const sequelize = require('./db');
 // Optional: Load database configuration from separate file
@@ -62,6 +63,7 @@ app.use('/car', Car_routes);
 app.use('/subscription', Subscription_routes);
 app.use('/parkingArea', ParkingArea_routes);
 app.use('/admin', Admin_routes);
+app.use('/selectTime', SelectTime_routes);
 //app.use('/admin',Admin_routes);
 
 
