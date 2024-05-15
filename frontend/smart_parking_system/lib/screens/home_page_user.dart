@@ -1,42 +1,9 @@
 import 'dart:convert';
-import 'dart:io';
 import 'dart:typed_data';
-import 'package:image/image.dart' as ImageLib;
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
-import 'package:path_provider/path_provider.dart';
-import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-String img = '';
-
-Future getImage() async {
-  img = await loadProfile('h@gmail.com');
-  print(
-      "????????????????????????????????????????????????????????????????????????????????????");
-  print(img);
-}
-
-Future<String> loadProfile(String email) async {
-  String ipAddress = '192.168.137.1'; // lan adapter ip address
-  final url = Uri.parse('http://$ipAddress:3000/user/users/$email');
-
-  final response = await http.get(url);
-  if (response.statusCode == 200) {
-    Map<dynamic, dynamic> data = jsonDecode(response.body);
-    print(data);
-    String bs4str = data['userImage'];
-    // String base64String = bs4str.substring(2, bs4str.length - 1);
-    Uint8List bytes = base64Decode(bs4str);
-    String dir = (await getApplicationDocumentsDirectory()).path;
-    File file = File('$dir/profile.jpg');
-    File decodedimgfile = await file.writeAsBytes(bytes);
-    return decodedimgfile.path;
-  } else {
-    throw Exception('Failed to load profile');
-  }
-}
 
 class MyHomePageUser extends StatefulWidget {
   const MyHomePageUser({Key? key});
@@ -47,6 +14,28 @@ class MyHomePageUser extends StatefulWidget {
 
 class _MyHomePageUserState extends State<MyHomePageUser> {
   String _greeting = '';
+  String userName = '';
+  Uint8List? img;
+
+  Future<void> loadProfile() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String email = prefs.getString('email')!;
+
+    String ipAddress = '192.168.137.1'; // lan adapter ip address
+    final url = Uri.parse('http://$ipAddress:3800/user/users/$email');
+
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      Map<dynamic, dynamic> data = jsonDecode(response.body);
+      print('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&');
+      setState(() {
+        userName = data['userName'];
+        img = Uint8List.fromList(List<int>.from(data['userImage']['data']));
+      });
+    } else {
+      throw Exception('Failed to load profile');
+    }
+  }
 
   @override
   void initState() {
@@ -66,12 +55,12 @@ class _MyHomePageUserState extends State<MyHomePageUser> {
       } else {
         _greeting = 'Good Night';
       }
+      loadProfile();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    getImage();
     return Scaffold(
       backgroundColor: Colors.blue[600],
       body: SafeArea(
@@ -94,7 +83,7 @@ class _MyHomePageUserState extends State<MyHomePageUser> {
                       contentPadding:
                           const EdgeInsets.symmetric(horizontal: 30),
                       title: Text(
-                        'Hello Awab!',
+                        'Hello $userName!',
                         style: Theme.of(context)
                             .textTheme
                             .headlineSmall
@@ -118,14 +107,16 @@ class _MyHomePageUserState extends State<MyHomePageUser> {
                               _logOut();
                             },
                           ),
-                          CircleAvatar(
-                            radius: 30,
-                            backgroundImage: File(img).existsSync()
-                                ? FileImage(File(img))
-                                : const AssetImage('assets/images/profile.png')
-                                    as ImageProvider<Object>,
-                            // MemoryImage(ImageLib.encodeJpg(img!)),
-                          ),
+                          img != null
+                              ? ClipOval(
+                                  child: Image.memory(
+                                    img!,
+                                    fit: BoxFit.cover,
+                                    width: 50.0,
+                                    height: 50.0,
+                                  ),
+                                )
+                              : Text('No image selected'),
                         ],
                       ),
                     ),
@@ -159,11 +150,6 @@ class _MyHomePageUserState extends State<MyHomePageUser> {
                         // Navigate to subscription page when item is clicked
                         Navigator.pushNamed(context, '/subscription');
                       }),
-                      itemDashboard('Extend Time', CupertinoIcons.clock,
-                          Colors.yellowAccent, () {
-                            // Navigate to subscription page when item is clicked
-                            Navigator.pushNamed(context, '/extend_time');
-                          }),
                       itemDashboard('Car Details', CupertinoIcons.car_detailed,
                           Colors.indigo, () {
                         // Navigate to subscription page when item is clicked
@@ -171,10 +157,10 @@ class _MyHomePageUserState extends State<MyHomePageUser> {
                       }),
                       itemDashboard(
                           'Feedback', CupertinoIcons.mail_solid, Colors.purple,
-                              () {
-                            // Navigate to subscription page when item is clicked
-                            Navigator.pushNamed(context, '/feedback_page');
-                          }),
+                          () {
+                        // Navigate to subscription page when item is clicked
+                        Navigator.pushNamed(context, '/feedback_page');
+                      }),
                       const SizedBox(height: 0.0),
                       const SizedBox(height: 0.0),
                       const SizedBox(height: 0.0),
@@ -231,6 +217,7 @@ class _MyHomePageUserState extends State<MyHomePageUser> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.clear(); // Clear all stored data
     // Navigate to the login page or any other initial page
-    Navigator.pushNamedAndRemoveUntil(context, '/log_in', (route) => false);
+    Navigator.pushNamedAndRemoveUntil(
+        context, '/select_module', (route) => false);
   }
 }

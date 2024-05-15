@@ -21,9 +21,76 @@ class _JazzCashState extends State<JazzCash> {
   TextEditingController cvcController = TextEditingController();
 
   void payment() async {
-    setState(() {
-      isLoading = true;
-    });
+    // Validate fields
+    if (selectedScheme == null ||
+        cardNumberController.text.isEmpty ||
+        cvcController.text.isEmpty) {
+      // Show error dialog if any field is empty
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Error"),
+            content: Text("All fields are required."),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text("OK"),
+              ),
+            ],
+          );
+        },
+      );
+      return;
+    }
+
+    // Validate card number
+    if (int.tryParse(cardNumberController.text) == null) {
+      // Show error dialog if card number is not an integer
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Error"),
+            content: Text("Card number must be an integer."),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text("OK"),
+              ),
+            ],
+          );
+        },
+      );
+      return;
+    }
+
+    // Validate CVC
+    if (cvcController.text.length != 3 || int.tryParse(cvcController.text) == null) {
+      // Show error dialog if CVC is not an integer of length 3
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Error"),
+            content: Text("CVC must be an integer of length 3."),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text("OK"),
+              ),
+            ],
+          );
+        },
+      );
+      return;
+    }
 
     // Show confirmation dialog
     showDialog(
@@ -154,7 +221,7 @@ class _JazzCashState extends State<JazzCash> {
     }
 
     setState(() {
-      isLoading = true;
+      isLoading = false;
     });
   }
 

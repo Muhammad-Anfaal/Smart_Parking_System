@@ -4,7 +4,7 @@ const Users = require('../models/User'); // Import your User model
 const Car = require('../models/Car'); // Import your Car model
 const Feedback = require('../models/Feedback'); // Import your Feedback model
 const { Op } = require('sequelize');
-// const Subscription = require('../models/Subscription');
+const Subscription = require('../models/Subscription');
 const bcrypt = require('bcrypt'); // Import bcrypt for password comparison
 
 // const jwt = require('jsonwebtoken');
@@ -152,10 +152,14 @@ exports.deleteUser = async (req, res) => {
     }
 
     // Find all cars belonging to the user
-    const userCars = await Car.findAll({ where: { userId: user.userId } });
+    // const userCars = await Car.findAll({ where: { userId: user.userId } });
 
     // Delete all cars belonging to the user
     await Car.destroy({ where: { userId: user.userId } });
+
+    // Delete all subscriptions belonging to the user
+    // const subscription = await Subscription.findAll({ where: { userId: user.userId } });
+    await Subscription.destroy({ where: { userId: user.userId } });
 
     // Delete the user
     await user.destroy();
@@ -183,7 +187,7 @@ exports.giveFeedback = async (req, res) => {
     today.setHours(0, 0, 0, 0);
     const existingFeedback = await Feedback.findOne({
       where: {
-        userId:user.userId,
+        userId: user.userId,
         createdAt: {
           [Op.gte]: today // Find feedbacks created today or later
         }
@@ -195,7 +199,7 @@ exports.giveFeedback = async (req, res) => {
 
     // Create the feedback
     const newFeedback = await Feedback.create({
-      userId:user.userId,
+      userId: user.userId,
       rateOption,
       description
     });
