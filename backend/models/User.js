@@ -44,7 +44,7 @@ const Users = sequelize.define('Users', {
     allowNull: false,
     validate: {
       len: {
-        args: [5], // Minimum length of 5 characters (avoids city names less than 5 characters)
+        args: [3], // Minimum length of 5 characters (avoids city names less than 5 characters)
         msg: 'City name must be at least 5 characters long.'
       }
     }
@@ -92,7 +92,7 @@ const Users = sequelize.define('Users', {
     },
   },
   userImage: {
-    type: Sequelize.BLOB,
+    type: Sequelize.BLOB('long'),
     allowNull: true
   }
 });

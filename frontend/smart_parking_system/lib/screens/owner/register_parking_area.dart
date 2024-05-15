@@ -8,19 +8,19 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> parkingAreaRegister(String email, String name, String location,
-    int capacity, Uint8List? image, String status) async {
+    int capacity, Uint8List? image, String status, BuildContext context) async {
   String ipAddress = '192.168.137.1'; // lan adapter ip address
   final url =
       Uri.parse('http://$ipAddress:3800/parkingArea/registerparkingarea');
 
   try {
     final Map<dynamic, dynamic> data = {
-      "email": email,
       "parkingAreaName": name,
       "parkingAreaLocation": location,
       "parkingAreaCapacity": capacity,
       "parkingAreaImage": image,
-      "parkingAreaStatus": status
+      "parkingAreaStatus": status,
+      "email": email
     };
     final response = await http.post(
       url,
@@ -32,6 +32,11 @@ Future<void> parkingAreaRegister(String email, String name, String location,
     if (response.statusCode == 200) {
       print('success');
       print(response.body);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Parking Area Registered Successfully'),
+        ),
+      );
     }
   } catch (e) {
     print('Error: $e');
@@ -132,14 +137,9 @@ class _ElevatedCardExampleState extends State<ElevatedCardExample> {
       print("*************&&&&&&&&*&*&*&*&*&&*&*&*&**&*&*&&*");
       if (email != null) {
         // Check if email is not null
-        parkingAreaRegister(
-          email,
-          nameController.text,
-          locationController.text,
-          int.parse(capacityController.text),
-          _imageBytes,
-          'Active',
-        );
+        parkingAreaRegister(email, nameController.text, locationController.text,
+            int.parse(capacityController.text), _imageBytes, 'Active', context);
+        Navigator.pop(context);
       } else {
         print('Email is null');
       }

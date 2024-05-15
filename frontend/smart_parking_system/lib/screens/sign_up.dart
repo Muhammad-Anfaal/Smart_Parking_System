@@ -20,7 +20,7 @@ Future<void> signUpUser(
     String address,
     String phone,
     String userType,
-    String imageBytes) async {
+    Uint8List? imageBytes) async {
   // String ipAddress = '10.0.2.2'; // for emulator
   // String ipAddress = '127.0.0.1'; // for browser
   // String ipAddress = '10.20.16.37'; // laptop address HAHAHAHAHAHAHAHAHAHAHAHAHA
@@ -117,6 +117,7 @@ class _SignUpPageState extends State<SignUpPage> {
   TextEditingController password = TextEditingController();
   TextEditingController confirmPassword = TextEditingController();
   String imageBytes = '';
+  Uint8List? _imageBytes;
 
   final nameValidator = ffv.MultiValidator([
     ffv.RequiredValidator(errorText: 'name is required'),
@@ -370,7 +371,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                   address.text,
                                   phone.text,
                                   widget.userType,
-                                  imageBytes, // Pass image path
+                                  _imageBytes, // Pass image path
                                 );
                                 Navigator.pop(context);
                               }
@@ -399,29 +400,18 @@ class _SignUpPageState extends State<SignUpPage> {
 
   // Function to handle image picking
   Future<void> _pickImage() async {
-    final ImagePicker _picker = ImagePicker();
-    final XFile? pickedImage = await _picker.pickImage(
-      source: ImageSource.gallery,
-    );
-    if (pickedImage != null) {
-      print(
-          '###########################################################################################################################');
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
-      try {
-        Directory documentDirectory = await getApplicationDocumentsDirectory();
-        const fileName = 'picked_image.jpg';
-        final savedImage = await File(_imageFile!.path)
-            .copy('${documentDirectory.path}/$fileName');
-        print('Image saved to: ${savedImage.path}');
-        imageBytes = base64Encode(await savedImage.readAsBytes());
-        print(
-            '&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&Image bytes: $imageBytes');
-      } catch (e) {
-        print('Error: $e');
-      }
+    if (pickedFile != null) {
+      File imageFile = File(pickedFile.path);
       setState(() {
-        _imageFile = pickedImage;
+        _imageBytes = imageFile.readAsBytesSync();
+        _imageFile = pickedFile;
+        print(_imageBytes);
       });
+    } else {
+      print('No image selected.');
     }
   }
 }

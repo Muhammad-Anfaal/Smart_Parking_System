@@ -1,10 +1,8 @@
 import 'dart:convert';
-import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
-import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MyHomePageUser extends StatefulWidget {
@@ -16,51 +14,33 @@ class MyHomePageUser extends StatefulWidget {
 
 class _MyHomePageUserState extends State<MyHomePageUser> {
   String _greeting = '';
-  String img = '';
   String userName = '';
+  Uint8List? img;
 
-  Future<void> getImage() async {
+  Future<void> loadProfile() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool profileImage = prefs.getBool("profileImage") ?? false;
-    prefs.setBool('parkingArea', false);
-    if (profileImage) {
-      img = prefs.getString('img')!;
-      return;
-    }
-
-    Future<String> loadProfile(String email) async {
-      String ipAddress = '192.168.137.1'; // lan adapter ip address
-      final url = Uri.parse('http://$ipAddress:3800/user/users/$email');
-
-      final response = await http.get(url);
-      if (response.statusCode == 200) {
-        Map<dynamic, dynamic> data = jsonDecode(response.body);
-        userName = data['userName'];
-        print(data);
-        String bs4str = data['userImage'];
-        Uint8List bytes = base64Decode(bs4str);
-        String dir = (await getApplicationDocumentsDirectory()).path;
-        File file = File('$dir/profile.jpg');
-        File decodedimgfile = await file.writeAsBytes(bytes);
-        return decodedimgfile.path;
-      } else {
-        throw Exception('Failed to load profile');
-      }
-    }
-
     String email = prefs.getString('email')!;
-    img = await loadProfile(email);
-    prefs.setString('img', img);
-    prefs.setBool("profileImage", true);
 
-    setState(() {});
+    String ipAddress = '192.168.137.1'; // lan adapter ip address
+    final url = Uri.parse('http://$ipAddress:3800/user/users/$email');
+
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      Map<dynamic, dynamic> data = jsonDecode(response.body);
+      print('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&');
+      setState(() {
+        userName = data['userName'];
+        img = Uint8List.fromList(List<int>.from(data['userImage']['data']));
+      });
+    } else {
+      throw Exception('Failed to load profile');
+    }
   }
 
   @override
   void initState() {
     super.initState();
     _updateGreeting();
-    getImage();
   }
 
   void _updateGreeting() {
@@ -75,6 +55,7 @@ class _MyHomePageUserState extends State<MyHomePageUser> {
       } else {
         _greeting = 'Good Night';
       }
+      loadProfile();
     });
   }
 
@@ -126,14 +107,16 @@ class _MyHomePageUserState extends State<MyHomePageUser> {
                               _logOut();
                             },
                           ),
-                          CircleAvatar(
-                            radius: 30,
-                            backgroundImage: File(img).existsSync()
-                                ? FileImage(File(img))
-                                : const AssetImage('assets/images/profile.png')
-                                    as ImageProvider<Object>,
-                            // MemoryImage(ImageLib.encodeJpg(img!)),
-                          ),
+                          img != null
+                              ? ClipOval(
+                                  child: Image.memory(
+                                    img!,
+                                    fit: BoxFit.cover,
+                                    width: 50.0,
+                                    height: 50.0,
+                                  ),
+                                )
+                              : Text('No image selected'),
                         ],
                       ),
                     ),

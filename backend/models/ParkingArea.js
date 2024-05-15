@@ -45,8 +45,9 @@ const ParkingArea = sequelize.define('ParkingArea', {
     }
   },
   parkingAreaImage: {
-    type: Sequelize.STRING,
+    type: Sequelize.BLOB('long'),
     allowNull: true,
+    
   },
   parkingAreaStatus: {
     type: Sequelize.ENUM('Active', 'Inactive'),

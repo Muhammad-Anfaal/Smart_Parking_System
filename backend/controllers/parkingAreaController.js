@@ -23,7 +23,7 @@ exports.registerParkingArea = async (req, res) => {
       parkingAreaStatus
     });
 
-    res.status(201).json(newParkingArea);
+    res.status(200).json(newParkingArea);
   } catch (error) {
     console.error('Error registering parking area:', error);
     res.status(500).send('Error registering parking area');

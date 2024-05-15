@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ParkingArea {
-  final String imageName;
+  final Uint8List imageName;
   final String parkingAreaName;
   final String capacity;
 
@@ -48,13 +48,15 @@ class _ReservationPageState extends State<ReservationPage> {
           print(response.body);
           List<dynamic> data = jsonDecode(response.body);
           for (int i = 0; i < data.length; i++) {
-            String bs4str = data[i]['parkingAreaImage'];
-            Uint8List bytes = base64Decode(bs4str);
-            String dir = (await getApplicationDocumentsDirectory()).path;
-            File file = File('$dir/profile.jpg');
-            File decodedimgfile = await file.writeAsBytes(bytes);
+            // String bs4str = data[i]['parkingAreaImage'];
+            // Uint8List bytes = base64Decode(bs4str);
+            // String dir = (await getApplicationDocumentsDirectory()).path;
+            // File file = File('$dir/profile.jpg');
+            // File decodedimgfile = await file.writeAsBytes(bytes);
             parkingArea = ParkingArea(
-                imageName: decodedimgfile.path,
+                // imageName: decodedimgfile.path,
+                imageName: Uint8List.fromList(
+                    List<int>.from(data[i]['parkingAreaImage']['data'])),
                 parkingAreaName: data[i]['parkingAreaName'].toString(),
                 capacity: data[i]['parkingAreaCapacity'].toString());
             parkingAreas.add(parkingArea);
@@ -134,7 +136,7 @@ class _ReservationPageState extends State<ReservationPage> {
   }
 
   Widget ElevatedCardExample(
-      String imageName, String parkingAreaName, String capacity) {
+      Uint8List imageName, String parkingAreaName, String capacity) {
     return GestureDetector(
       onTap: () {
         // Navigate to the select time page when the card is tapped
@@ -149,19 +151,22 @@ class _ReservationPageState extends State<ReservationPage> {
           child: Stack(
             children: [
               Container(
-                width: 350,
-                height: 200,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
-                  image: DecorationImage(
-                    image: File(imageName).existsSync()
-                        ? FileImage(File(imageName))
-                        : const AssetImage('assets/images/parkingArea.jpeg')
-                            as ImageProvider<Object>,
-                    fit: BoxFit.cover,
+                  width: 350,
+                  height: 200,
+                  child: imageName != null
+                      ? Image.memory(imageName!, fit: BoxFit.cover)
+                      : Text('No image selected')
+                  // decoration: BoxDecoration(
+                  //   borderRadius: BorderRadius.circular(15),
+                  //   image: DecorationImage(
+                  //     image: File(imageName).existsSync()
+                  //         ? FileImage(File(imageName))
+                  //         : const AssetImage('assets/images/parkingArea.jpeg')
+                  //             as ImageProvider<Object>,
+                  //     fit: BoxFit.cover,
+                  //   ),
+                  // ),
                   ),
-                ),
-              ),
               Positioned(
                 bottom: 10,
                 left: 10,
