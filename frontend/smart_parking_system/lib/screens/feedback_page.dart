@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> giveFeedback(String email, String rating, String desc) async {
   String ipAddress = '192.168.137.1'; // lan adapter ip address
-  final url = Uri.parse('http://$ipAddress:3000/user/feedback');
+  final url = Uri.parse('http://$ipAddress:3800/user/feedback');
 
   try {
     final Map<dynamic, dynamic> data = {

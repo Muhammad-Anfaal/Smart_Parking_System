@@ -30,7 +30,7 @@ class _MyHomePageOwnerState extends State<MyHomePageOwner> {
 
     Future<String> loadProfile(String email) async {
       String ipAddress = '192.168.137.1'; // lan adapter ip address
-      final url = Uri.parse('http://$ipAddress:3000/user/users/$email');
+      final url = Uri.parse('http://$ipAddress:3800/user/users/$email');
 
       final response = await http.get(url);
       if (response.statusCode == 200) {

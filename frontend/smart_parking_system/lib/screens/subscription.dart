@@ -9,7 +9,7 @@ bool flag = true;
 
 Future<void> loadData(String subscriptionType) async {
   String ipAddress = '192.168.137.1'; // lan adapter ip address
-  final url = Uri.parse('http://$ipAddress:3000/subscription/create');
+  final url = Uri.parse('http://$ipAddress:3800/subscription/create');
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String email = prefs.getString('email')!;
 

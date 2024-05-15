@@ -13,7 +13,7 @@ Future<bool> loginUser(String email, String pass, String utype) async {
   String ipAddress = '192.168.137.1'; // lan adapter ip address
   // String ipAddress = '192.168.18.14'; // wifi ip address
 
-  final url = Uri.parse('http://$ipAddress:3000/user/validateuser');
+  final url = Uri.parse('http://$ipAddress:3800/user/validateuser');
 
   try {
     final Map<dynamic, dynamic> data = {

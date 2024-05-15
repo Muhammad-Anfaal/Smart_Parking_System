@@ -38,7 +38,7 @@ class _ReservationPageState extends State<ReservationPage> {
     Future<void> loadData() async {
       String ipAddress = '192.168.137.1'; // lan adapter ip address
       final url =
-          Uri.parse('http://$ipAddress:3000/parkingArea/allparkingareas');
+          Uri.parse('http://$ipAddress:3800/parkingArea/allparkingareas');
       ParkingArea parkingArea;
 
       try {

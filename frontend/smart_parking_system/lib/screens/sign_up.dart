@@ -27,7 +27,7 @@ Future<void> signUpUser(
   // laptop address HAHAHAHAHAHAHAHAHAHAHAHAHA
   String ipAddress = '192.168.137.1'; // lan adapter ip address
   // String ipAddress = '192.168.18.14'; // wifi ip address
-  final url = Uri.parse('http://$ipAddress:3000/user/createuser');
+  final url = Uri.parse('http://$ipAddress:3800/user/createuser');
 
   try {
     final Map<dynamic, dynamic> data = {

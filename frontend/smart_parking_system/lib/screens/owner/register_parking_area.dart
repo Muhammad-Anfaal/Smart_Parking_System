@@ -10,7 +10,7 @@ Future<void> parkingAreaRegister(String email, String name, String location,
     int capacity, String image, String status) async {
   String ipAddress = '192.168.137.1'; // lan adapter ip address
   final url =
-      Uri.parse('http://$ipAddress:3000/parkingArea/registerparkingarea');
+      Uri.parse('http://$ipAddress:3800/parkingArea/registerparkingarea');
 
   try {
     final Map<dynamic, dynamic> data = {
