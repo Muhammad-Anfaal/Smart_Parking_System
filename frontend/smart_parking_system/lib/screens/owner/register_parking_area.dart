@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -7,7 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> parkingAreaRegister(String email, String name, String location,
-    int capacity, String image, String status) async {
+    int capacity, Uint8List? image, String status) async {
   String ipAddress = '192.168.137.1'; // lan adapter ip address
   final url =
       Uri.parse('http://$ipAddress:3800/parkingArea/registerparkingarea');
@@ -86,6 +87,7 @@ class _ElevatedCardExampleState extends State<ElevatedCardExample> {
   late TextEditingController capacityController;
   late TextEditingController locationController;
   late String imagePath;
+  Uint8List? _imageBytes;
   String? nameError;
   String? capacityError;
   String? locationError;
@@ -97,6 +99,7 @@ class _ElevatedCardExampleState extends State<ElevatedCardExample> {
     capacityController = TextEditingController();
     locationController = TextEditingController();
     imagePath = '';
+    _imageBytes = null;
   }
 
   Future<void> _pickImage() async {
@@ -104,13 +107,14 @@ class _ElevatedCardExampleState extends State<ElevatedCardExample> {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
-      final imageBytes = await pickedFile.readAsBytes();
-      print(imageBytes);
-
+      File imageFile = File(pickedFile.path);
       setState(() {
+        _imageBytes = imageFile.readAsBytesSync();
         imagePath = pickedFile.path;
-        print(pickedFile.path);
+        print(_imageBytes);
       });
+    } else {
+      print('No image selected.');
     }
   }
 
@@ -133,7 +137,7 @@ class _ElevatedCardExampleState extends State<ElevatedCardExample> {
           nameController.text,
           locationController.text,
           int.parse(capacityController.text),
-          '',
+          _imageBytes,
           'Active',
         );
       } else {
