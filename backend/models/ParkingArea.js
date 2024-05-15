@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize');
 const Users  = require('./User'); // Import your User model
+const SelectTime = require('./SelectTime'); // Import your SelectTime model
 const config = require('../config/database'); // Assuming your config file is there
 
 const sequelize = new Sequelize(config); // Create Sequelize instance
@@ -47,7 +48,7 @@ const ParkingArea = sequelize.define('ParkingArea', {
   parkingAreaImage: {
     type: Sequelize.BLOB('long'),
     allowNull: true,
-    
+
   },
   parkingAreaStatus: {
     type: Sequelize.ENUM('Active', 'Inactive'),

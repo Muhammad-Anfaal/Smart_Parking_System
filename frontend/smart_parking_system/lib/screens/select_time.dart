@@ -26,11 +26,19 @@ class _SelectTimeState extends State<SelectTime> {
     try {
       final Map<dynamic, dynamic> data = {
         "email": email,
-        "startTime": startTime,
-        "endTime": endTime,
+        "starttime": startTime,
+        "endtime": endTime,
         "amount": amount,
         "date": date,
       };
+
+      print("***********************************************************8");
+      print(startTime);
+      print(endTime);
+      print(amount);
+      print(date);
+      print(email);
+      print("***********************************************************8");
       final response = await http.post(
         url,
         body: jsonEncode(data),
@@ -301,15 +309,16 @@ class _SelectTimeState extends State<SelectTime> {
           ElevatedButton(
             onPressed: isTimeSelected()
                 ? () async {
-              SharedPreferences prefs = await SharedPreferences.getInstance();
-              
+                    SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    String email = prefs.getString('email')!;
+                    print('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&7');
                     selectTime(
-                      startTime!.format(context),
-                      endTime!.format(context),
-                      price().toString(),
-                      today.toString().split(" ")[0],
-
-                    );
+                        startTime!.format(context),
+                        endTime!.format(context),
+                        price().toString(),
+                        today.toString().split(" ")[0],
+                        email);
                     Navigator.pushNamed(context, '/payment_page',
                         arguments: {'price': price()});
                   }

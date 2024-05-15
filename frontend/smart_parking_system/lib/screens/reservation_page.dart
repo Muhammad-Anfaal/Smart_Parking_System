@@ -155,18 +155,7 @@ class _ReservationPageState extends State<ReservationPage> {
                   height: 200,
                   child: imageName != null
                       ? Image.memory(imageName!, fit: BoxFit.cover)
-                      : Text('No image selected')
-                  // decoration: BoxDecoration(
-                  //   borderRadius: BorderRadius.circular(15),
-                  //   image: DecorationImage(
-                  //     image: File(imageName).existsSync()
-                  //         ? FileImage(File(imageName))
-                  //         : const AssetImage('assets/images/parkingArea.jpeg')
-                  //             as ImageProvider<Object>,
-                  //     fit: BoxFit.cover,
-                  //   ),
-                  // ),
-                  ),
+                      : Text('No image selected')),
               Positioned(
                 bottom: 10,
                 left: 10,
