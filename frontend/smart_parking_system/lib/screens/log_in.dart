@@ -84,7 +84,8 @@ class _LogInPageState extends State<LogInPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blue[600],
-        title: const Text('Smart Parking System'),
+        title: const Text("Smart Parking System",
+            style: TextStyle(color: Colors.white)),
         centerTitle: true,
         automaticallyImplyLeading: false,
       ),
@@ -206,6 +207,9 @@ class _LogInPageState extends State<LogInPage> {
                             context: context,
                             title: '',
                             desc: 'Invalid Credentials.',
+                            style: const AlertStyle(
+                              overlayColor: Colors.black,
+                            ),
                           ).show();
                         }
                       }

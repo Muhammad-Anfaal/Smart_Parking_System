@@ -25,7 +25,8 @@ class _SelectModuleState extends State<SelectModule> {
     preferences();
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Smart Parking System"),
+        title: const Text("Smart Parking System",
+            style: TextStyle(color: Colors.white)),
         centerTitle: true,
         backgroundColor: Colors.blue[600],
         automaticallyImplyLeading: false,
@@ -75,6 +76,7 @@ class _SelectModuleState extends State<SelectModule> {
                               'User',
                               style: TextStyle(
                                 fontSize: 25.0,
+                                color: Colors.white,
                               ),
                             ),
                           ),
@@ -97,6 +99,7 @@ class _SelectModuleState extends State<SelectModule> {
                               'Owner',
                               style: TextStyle(
                                 fontSize: 25.0,
+                                color: Colors.white,
                               ),
                             ),
                           ),

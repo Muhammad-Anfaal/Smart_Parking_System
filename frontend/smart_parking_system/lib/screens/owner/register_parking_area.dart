@@ -139,7 +139,6 @@ class _ElevatedCardExampleState extends State<ElevatedCardExample> {
         // Check if email is not null
         parkingAreaRegister(email, nameController.text, locationController.text,
             int.parse(capacityController.text), _imageBytes, 'Active', context);
-        Navigator.pop(context);
       } else {
         print('Email is null');
       }
