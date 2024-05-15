@@ -1,6 +1,47 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+
+Future<void> parkingAreaRegister(String email, String name, String location,
+    int capacity, Uint8List? image, String status, BuildContext context) async {
+  String ipAddress = '192.168.137.1'; // lan adapter ip address
+  final url =
+      Uri.parse('http://$ipAddress:3800/parkingArea/registerparkingarea');
+
+  try {
+    final Map<dynamic, dynamic> data = {
+      "parkingAreaName": name,
+      "parkingAreaLocation": location,
+      "parkingAreaCapacity": capacity,
+      "parkingAreaImage": image,
+      "parkingAreaStatus": status,
+      "email": email
+    };
+    final response = await http.post(
+      url,
+      body: jsonEncode(data),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+    if (response.statusCode == 200) {
+      print('success');
+      print(response.body);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Parking Area Registered Successfully'),
+        ),
+      );
+    }
+  } catch (e) {
+    print('Error: $e');
+  }
+}
 
 class RegisterParkingArea extends StatelessWidget {
   const RegisterParkingArea({Key? key}) : super(key: key);
@@ -51,6 +92,7 @@ class _ElevatedCardExampleState extends State<ElevatedCardExample> {
   late TextEditingController capacityController;
   late TextEditingController locationController;
   late String imagePath;
+  Uint8List? _imageBytes;
   String? nameError;
   String? capacityError;
   String? locationError;
@@ -62,6 +104,7 @@ class _ElevatedCardExampleState extends State<ElevatedCardExample> {
     capacityController = TextEditingController();
     locationController = TextEditingController();
     imagePath = '';
+    _imageBytes = null;
   }
 
   Future<void> _pickImage() async {
@@ -69,17 +112,18 @@ class _ElevatedCardExampleState extends State<ElevatedCardExample> {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
-      final imageBytes = await pickedFile.readAsBytes();
-      print(imageBytes);
-
+      File imageFile = File(pickedFile.path);
       setState(() {
+        _imageBytes = imageFile.readAsBytesSync();
         imagePath = pickedFile.path;
-        print(pickedFile.path);
+        print(_imageBytes);
       });
+    } else {
+      print('No image selected.');
     }
   }
 
-  void _validateAndSubmit() {
+  Future<void> _validateAndSubmit() async {
     setState(() {
       nameError = _nameValidator(nameController.text);
       capacityError = _capacityValidator(capacityController.text);
@@ -87,12 +131,26 @@ class _ElevatedCardExampleState extends State<ElevatedCardExample> {
     });
 
     if (nameError == null && capacityError == null && locationError == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Wait for approval'),
-        ),
-      );
+      SharedPreferences? prefs = await SharedPreferences.getInstance();
+      String? email = prefs?.getString('email'); // Add null check here
+      print(email);
+      print("*************&&&&&&&&*&*&*&*&*&&*&*&*&**&*&*&&*");
+      if (email != null) {
+        // Check if email is not null
+        parkingAreaRegister(email, nameController.text, locationController.text,
+            int.parse(capacityController.text), _imageBytes, 'Active', context);
+      } else {
+        print('Email is null');
+      }
     }
+
+// if (nameError == null && capacityError == null && locationError == null) {
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     SnackBar(
+    //       content: Text('Wait for approval'),
+    //     ),
+    //   );
+    // }
   }
 
   String? _nameValidator(String value) {

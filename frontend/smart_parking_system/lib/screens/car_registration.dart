@@ -29,8 +29,9 @@ class _ParkingRegistrationState extends State<ParkingRegistration> {
     List<String>? carsJson = prefs.getStringList('registered_cars');
     if (carsJson != null) {
       setState(() {
-        _registeredCars =
-            carsJson.map((carJson) => Map<String, String>.from(jsonDecode(carJson))).toList();
+        _registeredCars = carsJson
+            .map((carJson) => Map<String, String>.from(jsonDecode(carJson)))
+            .toList();
       });
     }
   }
@@ -38,7 +39,8 @@ class _ParkingRegistrationState extends State<ParkingRegistration> {
   // Save registered cars to SharedPreferences
   Future<void> _saveRegisteredCars() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String> carsJson = _registeredCars.map((car) => jsonEncode(car)).toList();
+    List<String> carsJson =
+        _registeredCars.map((car) => jsonEncode(car)).toList();
     await prefs.setStringList('registered_cars', carsJson);
   }
 
@@ -77,13 +79,15 @@ class _ParkingRegistrationState extends State<ParkingRegistration> {
                             TextFormField(
                               controller: _registrationController,
                               decoration: InputDecoration(
-                                  labelText: 'Car Registration Number', labelStyle: TextStyle(color: Colors.black)),
+                                  labelText: 'Car Registration Number',
+                                  labelStyle: TextStyle(color: Colors.black)),
                               style: TextStyle(color: Colors.black),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return 'Please enter car registration number';
                                 }
-                                if (!RegExp(r'^[A-Z]{2,3}-\d{1,4}$').hasMatch(value)) {
+                                if (!RegExp(r'^[A-Z]{2,3}-\d{1,4}$')
+                                    .hasMatch(value)) {
                                   return 'Invalid car registration number. Format should be XXX-1 to XXX-XXXX';
                                 }
                                 return null;
@@ -91,8 +95,9 @@ class _ParkingRegistrationState extends State<ParkingRegistration> {
                             ),
                             TextFormField(
                               controller: _carStateController,
-                              decoration:
-                              InputDecoration(labelText: 'Car State', labelStyle: TextStyle(color: Colors.black)),
+                              decoration: InputDecoration(
+                                  labelText: 'Car State',
+                                  labelStyle: TextStyle(color: Colors.black)),
                               style: TextStyle(color: Colors.black),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
@@ -103,8 +108,9 @@ class _ParkingRegistrationState extends State<ParkingRegistration> {
                             ),
                             TextFormField(
                               controller: _carModelController,
-                              decoration:
-                              InputDecoration(labelText: 'Car Model', labelStyle: TextStyle(color: Colors.black)),
+                              decoration: InputDecoration(
+                                  labelText: 'Car Model',
+                                  labelStyle: TextStyle(color: Colors.black)),
                               style: TextStyle(color: Colors.black),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
@@ -124,8 +130,9 @@ class _ParkingRegistrationState extends State<ParkingRegistration> {
                             ),
                             TextFormField(
                               controller: _carColorController,
-                              decoration:
-                              InputDecoration(labelText: 'Car Color', labelStyle: TextStyle(color: Colors.black)),
+                              decoration: InputDecoration(
+                                  labelText: 'Car Color',
+                                  labelStyle: TextStyle(color: Colors.black)),
                               style: TextStyle(color: Colors.black),
                               validator: (value) {
                                 if (value?.isEmpty ?? true) {
@@ -147,14 +154,19 @@ class _ParkingRegistrationState extends State<ParkingRegistration> {
                             }
                           }
                         },
-                        child: Text('Register Car', style: TextStyle(color: Colors.white)),
-                        style: ElevatedButton.styleFrom(primary: Colors.blue),
+                        child: Text('Register Car',
+                            style: TextStyle(color: Colors.white)),
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue),
                       ),
                       SizedBox(height: 20),
                       // Display registered cars
                       Text(
                         'Registered Cars:',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black),
                       ),
                       SizedBox(height: 10),
                       ListView.builder(
@@ -171,14 +183,20 @@ class _ParkingRegistrationState extends State<ParkingRegistration> {
                             child: Card(
                               color: Colors.white,
                               child: ListTile(
-                                title: Text('Car ${index + 1}', style: TextStyle(color: Colors.black)),
+                                title: Text('Car ${index + 1}',
+                                    style: TextStyle(color: Colors.black)),
                                 subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text('Registration Number: ${car['registration']}', style: TextStyle(color: Colors.black)),
-                                    Text('Car State: ${car['carState']}', style: TextStyle(color: Colors.black)),
-                                    Text('Car Model: ${car['carModel']}', style: TextStyle(color: Colors.black)),
-                                    Text('Color: ${car['color']}', style: TextStyle(color: Colors.black)),
+                                    Text(
+                                        'Registration Number: ${car['registration']}',
+                                        style: TextStyle(color: Colors.black)),
+                                    Text('Car State: ${car['carState']}',
+                                        style: TextStyle(color: Colors.black)),
+                                    Text('Car Model: ${car['carModel']}',
+                                        style: TextStyle(color: Colors.black)),
+                                    Text('Color: ${car['color']}',
+                                        style: TextStyle(color: Colors.black)),
                                   ],
                                 ),
                                 trailing: IconButton(
@@ -205,7 +223,8 @@ class _ParkingRegistrationState extends State<ParkingRegistration> {
 
   void _registerCar() {
     String registrationNumber = _registrationController.text;
-    bool isDuplicate = _registeredCars.any((car) => car['registration'] == registrationNumber);
+    bool isDuplicate =
+        _registeredCars.any((car) => car['registration'] == registrationNumber);
 
     if (isDuplicate) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -214,12 +233,12 @@ class _ParkingRegistrationState extends State<ParkingRegistration> {
             children: [
               Icon(Icons.error_outline, color: Colors.red),
               SizedBox(width: 8),
-              Text('Registration number already exists', style: TextStyle(color: Colors.red)),
+              Text('Registration number already exists',
+                  style: TextStyle(color: Colors.red)),
             ],
           ),
         ),
       );
-
 
       return;
     }

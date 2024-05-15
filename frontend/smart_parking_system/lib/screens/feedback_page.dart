@@ -1,4 +1,34 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+
+Future<void> giveFeedback(String email, String rating, String desc) async {
+  String ipAddress = '192.168.137.1'; // lan adapter ip address
+  final url = Uri.parse('http://$ipAddress:3800/user/feedback');
+
+  try {
+    final Map<dynamic, dynamic> data = {
+      "email": email,
+      "rateOption": rating,
+      "description": desc,
+    };
+    final response = await http.post(
+      url,
+      body: jsonEncode(data),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+    if (response.statusCode == 200) {
+      print('success');
+      print(response.body);
+    }
+  } catch (e) {
+    print('Error: $e');
+  }
+}
 
 class FeedbackPage extends StatefulWidget {
   const FeedbackPage({Key? key}) : super(key: key);
@@ -11,12 +41,17 @@ class _FeedbackPageState extends State<FeedbackPage> {
   int _rating = 0;
   final TextEditingController _commentController = TextEditingController();
 
-  void _submitFeedback() {
+  Future<void> _submitFeedback() async {
     if (_rating == 0) {
       // Show error message if rating is not selected
       _showSnackbar('Please select a rating', Colors.red);
       return;
     }
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? email = prefs.getString('email');
+    String r = getRatingLabel(_rating);
+    giveFeedback(email!, r, _commentController.text);
 
     showDialog(
       context: context,
@@ -75,12 +110,15 @@ class _FeedbackPageState extends State<FeedbackPage> {
       appBar: AppBar(
         backgroundColor: Colors.blue, // Set app bar color to blue
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white), // Set back arrow color to white
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          // Set back arrow color to white
           onPressed: () {
             Navigator.of(context).pop();
           },
         ),
-        title: const Text('Feedback Page', style: TextStyle(color: Colors.white)), // Set title text color to white
+        title: const Text('Feedback Page',
+            style: TextStyle(
+                color: Colors.white)), // Set title text color to white
       ),
       body: Center(
         child: Card(
@@ -126,11 +164,13 @@ class _FeedbackPageState extends State<FeedbackPage> {
                 ),
                 const SizedBox(height: 20.0),
                 TextField(
-                  controller: _commentController, // Set the text controller
+                  controller: _commentController,
+                  // Set the text controller
                   decoration: InputDecoration(
                     hintText: 'Enter your feedback here...',
                     border: OutlineInputBorder(),
-                    fillColor: Colors.white, // Set text field background color to white
+                    fillColor: Colors.white,
+                    // Set text field background color to white
                     filled: true,
                   ),
                   maxLines: 3,
@@ -143,11 +183,13 @@ class _FeedbackPageState extends State<FeedbackPage> {
                 ElevatedButton(
                   onPressed: _submitFeedback,
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.blueGrey, // Set button color to blue
+                    backgroundColor:
+                        Colors.blueGrey, // Set button color to blue
                   ),
                   child: const Text(
                     'Submit',
-                    style: TextStyle(color: Colors.white), // Set text color to white
+                    style: TextStyle(
+                        color: Colors.white), // Set text color to white
                   ),
                 ),
               ],

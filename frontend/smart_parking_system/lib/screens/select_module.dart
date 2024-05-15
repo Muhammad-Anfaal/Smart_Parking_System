@@ -1,13 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class SelectModule extends StatelessWidget {
+void preferences() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.clear();
+}
+
+class SelectModule extends StatefulWidget {
   const SelectModule({super.key});
 
   @override
+  State<SelectModule> createState() => _SelectModuleState();
+}
+
+class _SelectModuleState extends State<SelectModule> {
+  @override
+  void initState() {
+    super.initState();
+    preferences();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    preferences();
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Smart Parking System"),
+        title: const Text("Smart Parking System",
+            style: TextStyle(color: Colors.white)),
         centerTitle: true,
         backgroundColor: Colors.blue[600],
         automaticallyImplyLeading: false,
@@ -57,6 +76,7 @@ class SelectModule extends StatelessWidget {
                               'User',
                               style: TextStyle(
                                 fontSize: 25.0,
+                                color: Colors.white,
                               ),
                             ),
                           ),
@@ -79,6 +99,7 @@ class SelectModule extends StatelessWidget {
                               'Owner',
                               style: TextStyle(
                                 fontSize: 25.0,
+                                color: Colors.white,
                               ),
                             ),
                           ),

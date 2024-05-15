@@ -1,8 +1,9 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
-const port = process.env.PORT || 3000;
-app.use(bodyParser.json());
+const port = process.env.PORT || 3800;
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
 // Import the routes file
 const User_routes = require('./routes/User_routes');
