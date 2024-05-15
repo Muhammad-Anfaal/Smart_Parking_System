@@ -92,7 +92,7 @@ const Users = sequelize.define('Users', {
     },
   },
   userImage: {
-    type: Sequelize.TEXT,
+    type: Sequelize.BLOB,
     allowNull: true
   }
 });
