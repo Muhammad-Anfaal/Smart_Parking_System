@@ -1,6 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ExtendTime extends StatefulWidget {
   const ExtendTime({Key? key}) : super(key: key);
@@ -15,6 +18,41 @@ class _ExtendTimeState extends State<ExtendTime> {
   bool _extensionConfirmed = false;
   bool _buttonsEnabled = true; // Track whether buttons should be enabled or not
 
+  Future<void> extendTime(int amount, String endTime) async {
+    String ipAddress = '192.168.137.1'; // lan adapter ip address
+    final url = Uri.parse('http://$ipAddress:3800/selectTime/extendtime');
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String email = prefs.getString('email')!;
+
+    try {
+      final Map<dynamic, dynamic> data = {
+        "email": email,
+        "endtime": endTime,
+        "amount": amount,
+      };
+
+      print("***********************************************************8");
+      print(endTime);
+      print(amount);
+      print(email);
+      print("***********************************************************8");
+      final response = await http.put(
+        url,
+        body: jsonEncode(data),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
+      if (response.statusCode == 200) {
+        print('success');
+        print(response.body);
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -23,11 +61,11 @@ class _ExtendTimeState extends State<ExtendTime> {
 
     // Set the start time to 7:00 PM on the current date
     _startTime =
-        DateTime(currentDate.year, currentDate.month, currentDate.day, 18, 0);
+        DateTime(currentDate.year, currentDate.month, currentDate.day, 14, 0);
 
     // Set the end time to 11:00 PM on the current date
     _endTime =
-        DateTime(currentDate.year, currentDate.month, currentDate.day, 23, 0);
+        DateTime(currentDate.year, currentDate.month, currentDate.day, 11, 0);
   }
 
   void _handleExtendTime(DateTime newEndTime, int price) {

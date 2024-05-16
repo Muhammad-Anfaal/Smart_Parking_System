@@ -26,6 +26,10 @@ const SelectTime = sequelize.define('SelectTime', {
         type: Sequelize.DATEONLY,
         allowNull: false
     },
+    parkingAreaName: {
+        type: Sequelize.STRING,
+        allowNull: true
+    },
     userId: {
         type: Sequelize.INTEGER,
         references: {

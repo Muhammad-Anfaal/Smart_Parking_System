@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
+
+List<dynamic> data = [];
 
 class StatisticsPage extends StatefulWidget {
   @override
@@ -9,6 +14,26 @@ class StatisticsPage extends StatefulWidget {
 class _StatisticsPageState extends State<StatisticsPage> {
   List<ParkingAreaData> parkingAreas = [];
 
+  Future<void> fetchData() async {
+    String ipAddress = '192.168.137.1'; // lan adapter ip address
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String email = prefs.getString('email')!;
+
+    final url = Uri.parse('http://$ipAddress:3800/usertimes/$email');
+
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        print('success');
+        print(response.body);
+        data = jsonDecode(response.body);
+        print(data.length);
+      }
+    } catch (e) {
+      print('%%%Error: $e');
+    }
+  }
 
   @override
   void initState() {
@@ -21,13 +46,17 @@ class _StatisticsPageState extends State<StatisticsPage> {
     // Simulate fetching data from a database
     // Replace this with your actual database fetching logic
     List<Map<String, dynamic>> dataFromDatabase = [
-      {'name': 'Parking Area 1', 'totalCapacity': 100, 'availableCapacity': 50},
-      {'name': 'Parking Area 2', 'totalCapacity': 150, 'availableCapacity': 75},
       {
-        'name': 'Parking Area 3',
-        'totalCapacity': 200,
-        'availableCapacity': 130
+        'name': 'fast cfd',
+        'totalCapacity': 250,
+        'availableCapacity': 250 - data.length
       },
+      // {'name': 'Parking Area 2', 'totalCapacity': 150, 'availableCapacity': 75},
+      // {
+      //   'name': 'Parking Area 3',
+      //   'totalCapacity': 200,
+      //   'availableCapacity': 130
+      // },
     ];
 
     // Convert data from database to ParkingAreaData objects and add them to the list
@@ -67,7 +96,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                 ),
               ),
               SizedBox(height: 20),
-              ReviewCard(),
+              // ReviewCard(),
             ],
           ),
         ),
@@ -256,12 +285,11 @@ class ReviewCard extends StatelessWidget {
       return Row(
         children: List.generate(
           numberOfStars,
-              (index) =>
-              Icon(
-                Icons.star,
-                color: Colors.amber,
-                size: 30,
-              ),
+          (index) => Icon(
+            Icons.star,
+            color: Colors.amber,
+            size: 30,
+          ),
         ),
       );
     }

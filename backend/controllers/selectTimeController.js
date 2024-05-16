@@ -3,7 +3,7 @@ const User = require('../models/User');
 
 exports.registerTime = async (req, res) => {
     try {
-        const { email, starttime, endtime, date, amount } = req.body;
+        const { email, starttime, endtime, date, amount, parkingareaname } = req.body;
 
         // Check if the user exists
         const user = await User.findOne({ where: { userEmail: email } });
@@ -18,7 +18,8 @@ exports.registerTime = async (req, res) => {
             startTime: starttime,
             endTime: endtime,
             date,
-            amount
+            amount,
+            parkingAreaName: parkingareaname
         });
 
 
@@ -30,6 +31,43 @@ exports.registerTime = async (req, res) => {
     }
 }
 
+exports.extendTime = async (req, res) => {
+    try {
+        const { email, endtime, amount } = req.body;
+
+        // Check if the user exists
+        const user = await User.findOne({ where: { userEmail: email } });
+        if (!user) {
+            return res.status(404).send('User not found');
+        }
+
+        const userId = user.userId;
+
+        // Find the time by id
+        const time = await SelectTime.findOne({ where: { userId: user.UserID } });
+        if (!time) {
+            return res.status(404).send('Time not found');
+        }
+
+        // Declare an integer variable
+        const newAmount = amount + time.amount;
+        
+
+        // Update the time
+        await time.update({
+            endTime: endtime,
+            newAmount
+        });
+
+        res.json(time);
+
+    } catch (error) {
+        console.error('Error extending time:', error);
+        res.status(500).send('Error extending time');
+    }
+}
+
+
 exports.getUserTimes = async (req, res) => {
     try {
         const email = req.body.email;
@@ -40,7 +78,7 @@ exports.getUserTimes = async (req, res) => {
         }
 
         // Fetch all times belonging to the user
-        const userTime = await SelectTime.findOne({ where: { userId: user.userId } });
+        const userTime = await SelectTime.findAll({ where: { parkingAreaName: 'fast cfd' } });
 
         res.json(userTime);
     } catch (error) {

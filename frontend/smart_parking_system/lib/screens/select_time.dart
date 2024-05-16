@@ -23,6 +23,8 @@ class _SelectTimeState extends State<SelectTime> {
     String ipAddress = '192.168.137.1'; // lan adapter ip address
     final url = Uri.parse('http://$ipAddress:3800/selectTime/registertime');
 
+    String parkingAreaName = "fast cfd";
+
     try {
       final Map<dynamic, dynamic> data = {
         "email": email,
@@ -30,6 +32,7 @@ class _SelectTimeState extends State<SelectTime> {
         "endtime": endTime,
         "amount": amount,
         "date": date,
+        "parkingareaname": parkingAreaName,
       };
 
       print("***********************************************************8");
