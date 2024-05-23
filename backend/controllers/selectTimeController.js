@@ -51,7 +51,7 @@ exports.extendTime = async (req, res) => {
 
         // Declare an integer variable
         const newAmount = amount + time.amount;
-        
+
 
         // Update the time
         await time.update({
@@ -70,17 +70,12 @@ exports.extendTime = async (req, res) => {
 
 exports.getUserTimes = async (req, res) => {
     try {
-        const email = req.body.email;
-
-        const user = await User.findOne({ where: { userEmail: email } });
-        if (!user) {
-            return res.status(404).send('User not found');
-        }
-
         // Fetch all times belonging to the user
         const userTime = await SelectTime.findAll({ where: { parkingAreaName: 'fast cfd' } });
 
-        res.json(userTime);
+        length(userTime)
+
+        res.json(length(userTime));
     } catch (error) {
         console.error('Error fetching user times:', error);
         res.status(500).send('Error fetching user times');

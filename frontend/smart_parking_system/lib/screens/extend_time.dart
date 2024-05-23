@@ -61,11 +61,11 @@ class _ExtendTimeState extends State<ExtendTime> {
 
     // Set the start time to 7:00 PM on the current date
     _startTime =
-        DateTime(currentDate.year, currentDate.month, currentDate.day, 14, 0);
+        DateTime(currentDate.year, currentDate.month, currentDate.day, 12, 0);
 
     // Set the end time to 11:00 PM on the current date
     _endTime =
-        DateTime(currentDate.year, currentDate.month, currentDate.day, 11, 0);
+        DateTime(currentDate.year, currentDate.month, currentDate.day, 13, 0);
   }
 
   void _handleExtendTime(DateTime newEndTime, int price) {

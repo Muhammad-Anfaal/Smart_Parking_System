@@ -16,20 +16,18 @@ class _StatisticsPageState extends State<StatisticsPage> {
 
   Future<void> fetchData() async {
     String ipAddress = '192.168.137.1'; // lan adapter ip address
-
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String email = prefs.getString('email')!;
-
-    final url = Uri.parse('http://$ipAddress:3800/usertimes/$email');
+    final url = Uri.parse('http://$ipAddress:3800/usertimes');
 
     try {
       final response = await http.get(url);
-      if (response.statusCode == 200) {
-        print('success');
-        print(response.body);
+      print('success');
+      print(response.body);
+      print(jsonDecode(response.body));
+      setState(() {
         data = jsonDecode(response.body);
-        print(data.length);
-      }
+      });
+      print('***********************************************');
+      print(data.length);
     } catch (e) {
       print('%%%Error: $e');
     }
@@ -43,14 +41,13 @@ class _StatisticsPageState extends State<StatisticsPage> {
   }
 
   void fetchDataFromDatabase() {
+    // fetchData();
     // Simulate fetching data from a database
     // Replace this with your actual database fetching logic
+    print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
+    print(data.length);
     List<Map<String, dynamic>> dataFromDatabase = [
-      {
-        'name': 'fast cfd',
-        'totalCapacity': 250,
-        'availableCapacity': 250 - data.length
-      },
+      {'name': 'fast cfd', 'totalCapacity': 250, 'availableCapacity': 247},
       // {'name': 'Parking Area 2', 'totalCapacity': 150, 'availableCapacity': 75},
       // {
       //   'name': 'Parking Area 3',
